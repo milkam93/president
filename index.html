@@ -1743,6 +1743,15 @@ function ending(id){const en=END[id];let got={};try{got=JSON.parse(sGet(ENDKEY)|
 const VERSION='베타';
 const FEEDBACK_EMAIL='';   // 받을 이메일 주소를 넣으면 ‘메일로 보내기’ 버튼이 생겨요
 const FEEDBACK_FORM='';    // 구글 설문지 등 주소를 넣으면 ‘설문지 열기’ 버튼이 생겨요
+const FEEDBACK_ENDPOINT='';   // ← 구글 Apps Script 웹 앱 주소(https://script.google.com/macros/s/.../exec)를 따옴표 안에 붙여 넣으세요
+function sendFb(){const tn={bug:'버그·오류',fun:'재미있어요',hard:'어렵거나 헷갈려요',idea:'아이디어'}[FB.type]||'기타';
+  const body=JSON.stringify({type:tn,star:FB.star||'',text:FB.text.trim(),name:FB.name.trim()||'익명',ctx:fbContext(),ver:VERSION});
+  $('#fbgo').disabled=true;$('#fbgo').textContent='보내는 중…';
+  const t=new Promise((_,rej)=>setTimeout(()=>rej('timeout'),8000));
+  Promise.race([fetch(FEEDBACK_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body}),t]).then(renderFbSent).catch(()=>renderFbDone())}
+function renderFbSent(){$('#fbcard').innerHTML=`<div class="swap"><div class="head"><div class="ic">💌</div><div><span class="tag">의견 보내기</span><h2 id="fbt">잘 받았어요!</h2></div></div>
+   <p class="tx" style="font-size:15px">소중한 의견 고마워요. 게임을 더 좋게 만드는 데 꼭 참고할게요.</p>
+   <div class="row2" style="justify-content:flex-end;margin-top:14px"><button class="btn" id="fbx">닫기</button></div></div>`;$('#fbx').onclick=closeFeedback;$('#fbx').focus({preventScroll:true})}
 let FB={type:'',star:0,prev:false};
 function fbContext(){if(!S)return'시작 화면';if(ENDING)return`엔딩 (${S.flags.presWin?S.age:S.deathAge}세)`;return`${S.age}세, ${stage()}`}
 function openFeedback(){const m=$('#fbm');if(m.classList.contains('show'))return;FB={type:'',star:0,prev:PAUSED};PAUSED=true;
@@ -1756,12 +1765,12 @@ function renderFbForm(){const types=[['bug','🐞 버그·오류'],['fun','😀 
    <div class="fbl"><label for="fbtext">자세한 내용</label></div><textarea id="fbtext" maxlength="1000" rows="5" placeholder="예) 수능 다음에 선택 창이 두 번 떴어요 / 정치 활동이 너무 어려워요 / 직업이 더 많았으면 좋겠어요">${FB.text||''}</textarea>
    <div class="fbl"><label for="fbname">닉네임 (선택)</label></div><input id="fbname" maxlength="20" value="${FB.name||''}" autocomplete="off">
    <p class="fbctx">함께 전달되는 정보: ${fbContext()}</p>
-   <div class="row2" style="justify-content:flex-end;margin-top:14px"><button class="btn ghost" id="fbx">닫기</button><button class="btn" id="fbgo">의견 만들기</button></div></div>`;
+   <div class="row2" style="justify-content:flex-end;margin-top:14px"><button class="btn ghost" id="fbx">닫기</button><button class="btn" id="fbgo">${FEEDBACK_ENDPOINT?'의견 보내기':'의견 만들기'}</button></div></div>`;
   document.querySelectorAll('.fbt').forEach(b=>b.onclick=()=>{FB.type=b.dataset.k;keep();renderFbForm()});
   document.querySelectorAll('.fbs').forEach(b=>b.onclick=()=>{FB.star=+b.dataset.n;keep();renderFbForm()});
   const keep=()=>{FB.text=$('#fbtext').value;FB.name=$('#fbname').value};
   $('#fbx').onclick=closeFeedback;
-  $('#fbgo').onclick=()=>{keep();if(!FB.text.trim()&&!FB.star){$('#fbtext').focus();$('#fbtext').placeholder='내용을 적거나 별점을 골라 주세요.';return}renderFbDone()}}
+  $('#fbgo').onclick=()=>{keep();if(!FB.text.trim()&&!FB.star){$('#fbtext').focus();$('#fbtext').placeholder='내용을 적거나 별점을 골라 주세요.';return}if(FEEDBACK_ENDPOINT)sendFb();else renderFbDone()}}
 function fbMessage(){const tn={bug:'버그·오류',fun:'재미있어요',hard:'어렵거나 헷갈려요',idea:'아이디어'}[FB.type]||'기타';
   const d=new Date();return`[태어난 김에 대통령까지 ${VERSION} 의견]
 종류: ${tn}
