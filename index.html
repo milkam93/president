@@ -1743,8 +1743,7 @@ function ending(id){const en=END[id];let got={};try{got=JSON.parse(sGet(ENDKEY)|
 const VERSION='베타';
 const FEEDBACK_EMAIL='';   // 받을 이메일 주소를 넣으면 ‘메일로 보내기’ 버튼이 생겨요
 const FEEDBACK_FORM='';    // 구글 설문지 등 주소를 넣으면 ‘설문지 열기’ 버튼이 생겨요
-const FEEDBACK_ENDPOINT='https://script.google.com/macros/s/AKfycbw1KmJA9uoX-T3yI9omrEjOrO_JyrUO-Z3XyVZgK1cl4iIN7TOP61wpO1ULG7-hPw/exec
-';   // ← 구글 Apps Script 웹 앱 주소(https://script.google.com/macros/s/.../exec)를 따옴표 안에 붙여 넣으세요
+const FEEDBACK_ENDPOINT='https://script.google.com/macros/s/AKfycbw1KmJA9uoX-T3yI9omrEjOrO_JyrUO-Z3XyVZgK1cl4iIN7TOP61wpO1ULG7-hPw/exec';   // ← 구글 Apps Script 웹 앱 주소(https://script.google.com/macros/s/.../exec)를 따옴표 안에 붙여 넣으세요
 function sendFb(){const tn={bug:'버그·오류',fun:'재미있어요',hard:'어렵거나 헷갈려요',idea:'아이디어'}[FB.type]||'기타';
   const body=JSON.stringify({type:tn,star:FB.star||'',text:FB.text.trim(),name:FB.name.trim()||'익명',ctx:fbContext(),ver:VERSION});
   $('#fbgo').disabled=true;$('#fbgo').textContent='보내는 중…';
