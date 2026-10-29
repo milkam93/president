@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>태어난 김에 대통령까지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef3fa; --grid:#dbe5f2; --paper:#ffffff; --ink:#1b2433; --muted:#667185; --line:#d5deeb;
+  --chip:#e8eef7; --blue:#1f4fa3; --red:#d23b33; --gold:#b98a1e; --good:#23804f; --bad:#c13a32; --pink:#c2508a;
+  --goodbg:#e2f3e9; --badbg:#fbe5e3; --btntx:#ffffff; --shadow:0 1px 0 rgba(27,36,51,.06),0 10px 30px rgba(31,79,163,.08);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1624; --grid:#17233a; --paper:#152036; --ink:#e7edf7; --muted:#9aa7bd; --line:#26344f;
+    --chip:#1d2a44; --blue:#86abf2; --red:#ff7166; --gold:#e6b955; --good:#6fd29a; --bad:#ff8a80; --pink:#f08bbf;
+    --goodbg:#163327; --badbg:#3a1d1f; --btntx:#0e1624; --shadow:0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1624; --grid:#17233a; --paper:#152036; --ink:#e7edf7; --muted:#9aa7bd; --line:#26344f;
+  --chip:#1d2a44; --blue:#86abf2; --red:#ff7166; --gold:#e6b955; --good:#6fd29a; --bad:#ff8a80; --pink:#f08bbf;
+  --goodbg:#163327; --badbg:#3a1d1f; --btntx:#0e1624; --shadow:0 10px 30px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;line-height:1.7;
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;-webkit-font-smoothing:antialiased}
+.dh{font-family:'Do Hyeon','Noto Sans KR',sans-serif;font-weight:400;letter-spacing:-.01em}
+#app{max-width:720px;margin:0 auto;padding:18px 14px 70px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px 22px;box-shadow:var(--shadow)}
+button{font:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.btn{background:var(--blue);color:var(--btntx);border:0;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;font-size:16px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--blue)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.note{display:block;margin-top:10px;font-size:13.5px;color:var(--muted);background:var(--chip);border-radius:10px;padding:8px 12px}
+b.ok{color:var(--good)} b.no{color:var(--bad)}
+
+/* 타이틀 */
+.title{text-align:center;padding:40px 22px 34px}
+.emblem{width:92px;height:92px;border-radius:50%;margin:0 auto 18px;position:relative;transform:rotate(-33deg);
+  background:linear-gradient(180deg,var(--red) 50%,var(--blue) 50%)}
+.emblem::before,.emblem::after{content:'';position:absolute;width:46px;height:46px;border-radius:50%;top:23px}
+.emblem::before{left:0;background:var(--red)}
+.emblem::after{left:46px;background:var(--blue)}
+.title h1{margin:0;font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1.08}
+.title h1 span{display:block;font-size:.62em;color:var(--muted)}
+.title p{color:var(--muted);max-width:30em;margin:16px auto 26px}
+.tbtns{display:grid;gap:10px;max-width:300px;margin:0 auto}
+.meta{font-size:12.5px;color:var(--muted);margin-top:22px}
+
+/* 캐릭터 생성 */
+.field{margin:18px 0}
+.field label{display:block;font-weight:700;margin-bottom:8px}
+.nrow{display:flex;gap:8px}
+.nrow input{flex:1;min-width:0;font:inherit;font-size:17px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tal{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:12px;cursor:pointer;text-align:left}
+.opt small{display:block;color:var(--muted);font-size:12.5px}
+.opt.on{border-color:var(--blue);background:var(--chip)}
+
+/* HUD */
+#hud{margin-bottom:14px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.who .nm{font-family:'Do Hyeon',sans-serif;font-size:26px;line-height:1.1}
+.who .sg{color:var(--muted);font-size:14px}
+.age{font-family:'Do Hyeon',sans-serif;font-size:46px;line-height:.9;color:var(--blue);white-space:nowrap}
+.age small{font-size:18px;margin-left:2px}
+.lifebar{height:5px;background:var(--chip);border-radius:9px;margin:12px 0 10px;overflow:hidden}
+.lifebar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:9px;transition:width .8s}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--chip);border-radius:999px;padding:3px 11px;font-size:13px;white-space:nowrap}
+.bars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.bar .l{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:2px}
+.bar .l b{color:var(--ink)}
+.bar .t{height:7px;background:var(--chip);border-radius:9px;overflow:hidden;margin-top:2px}
+.bar .f{height:100%;border-radius:9px;transition:width .6s}
+
+/* 이벤트 */
+.ev{animation:rise .35s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.ev .head{display:flex;align-items:center;gap:12px}
+.ev .ic{font-size:38px;line-height:1}
+.tag{display:inline-block;font-size:12.5px;color:var(--red);border:1.5px solid currentColor;border-radius:6px;padding:0 8px;font-weight:700}
+.ev h2{font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:28px;line-height:1.2;margin:4px 0 0}
+.ev .tx{font-size:16.5px;margin-top:14px}
+.choices{display:grid;gap:10px;margin-top:20px}
+.cbtn{position:relative;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:13px 16px 13px 46px;color:var(--ink);cursor:pointer;font-size:15.5px;line-height:1.5}
+.cbtn::before{content:'';position:absolute;left:14px;top:50%;width:20px;height:20px;margin-top:-10px;border:1.5px dashed var(--line);border-radius:50%}
+.cbtn:hover:not(.lock){border-color:var(--blue)}
+.cbtn:hover:not(.lock)::before{border-color:var(--red)}
+.cbtn.lock{opacity:.5;cursor:not-allowed}
+.cbtn .rq{display:block;font-size:12.5px;color:var(--bad);margin-top:2px}
+.cbtn.stamp::before{border:2.5px solid var(--red);border-style:solid;background:radial-gradient(circle,transparent 45%,transparent 46%);animation:stamp .28s ease-out}
+.cbtn.stamp::after{content:'卜';position:absolute;left:14px;top:50%;width:20px;margin-top:-11px;text-align:center;color:var(--red);font-weight:900;font-size:14px;animation:stamp .28s ease-out}
+@keyframes stamp{from{transform:scale(1.8);opacity:0}}
+.deltas{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.d{font-size:13.5px;font-weight:700;border-radius:8px;padding:3px 10px}
+.d.up{color:var(--good);background:var(--goodbg)}
+.d.dn{color:var(--bad);background:var(--badbg)}
+.next{margin-top:22px;display:flex;justify-content:flex-end}
+
+/* 시간 배분 */
+.fl{display:grid;gap:8px;margin-top:16px}
+.frow{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px}
+.frow.has{border-color:var(--blue);background:var(--chip)}
+.frow.lock{opacity:.45}
+.frow .fi{font-size:24px;text-align:center}
+.frow .fn b{display:block;font-size:15.5px}
+.frow .fn span{font-size:12.5px;color:var(--muted)}
+.fc{display:flex;align-items:center;gap:8px}
+.mini{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:18px;cursor:pointer;line-height:1}
+.mini:disabled{opacity:.35;cursor:not-allowed}
+.cnt{min-width:16px;text-align:center;font-weight:900;font-size:17px}
+.fbot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px}
+.dots{display:flex;gap:5px}
+.dots i{width:13px;height:13px;border-radius:50%;border:2px solid var(--red)}
+.dots i.on{background:var(--red)}
+.fin{margin-top:10px;font-size:14px;color:var(--muted)}
+
+/* 투표 막대 */
+.votes{margin-top:16px;display:grid;gap:10px}
+.vr{display:grid;grid-template-columns:72px 1fr 52px;align-items:center;gap:8px;font-size:14px}
+.vr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vt{height:22px;background:var(--chip);border-radius:6px;overflow:hidden}
+.vf{height:100%;width:var(--w);animation:grow 1.6s cubic-bezier(.2,.8,.2,1)}
+.vf.me{background:var(--blue)} .vf.op{background:var(--muted)}
+@keyframes grow{from{width:0}}
+
+/* 기록 */
+#logbox{margin-top:16px}
+.logc{padding:18px 20px}
+.logc h3{margin:0 0 8px;font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:20px}
+.lg{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:14px;padding:5px 0;border-top:1px dashed var(--line)}
+.lg .a{color:var(--muted);font-weight:700}
+.lg.imp .t{font-weight:700;color:var(--blue)}
+.linkbtn{background:none;border:0;color:var(--blue);cursor:pointer;padding:6px 0;font-size:14px;font-weight:700}
+
+/* 엔딩 */
+.end{text-align:center}
+.end .big{font-size:64px;line-height:1}
+.end h1{font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:clamp(32px,8vw,46px);line-height:1.15;margin:10px 0 4px}
+.end .sub{color:var(--muted)}
+.end .desc{text-align:left;margin-top:18px;font-size:16px}
+.tbl{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px;text-align:left}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line)}
+.tbl th{color:var(--muted);font-weight:500}
+.sec{margin-top:24px;text-align:left}
+.sec h3{font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:21px;margin:0 0 6px}
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:14px}
+.dex div{border:1.5px solid var(--line);border-radius:12px;padding:12px;text-align:center;font-size:14px}
+.dex div.lock{color:var(--muted);border-style:dashed}
+.dex .e{font-size:30px;display:block}
+.row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+@media (max-width:520px){
+  .card{padding:20px 16px}
+  .bars{gap:5px}
+  .bar .l{font-size:11px}
+  .ev h2{font-size:24px}
+  .age{font-size:38px}
+}
+
+/* 관찰자 모드 */
+#logbox{margin-top:0}
+#focus{margin-top:14px}
+#main:empty{display:none}
+#main{margin-top:14px}
+#hud:empty,#logbox:empty,#focus:empty{display:none}
+#logbox:not(:empty){margin-bottom:0}
+.agebox{text-align:right}
+.mo{font-size:13px;color:var(--muted);margin-top:4px}
+.live{font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--good);margin-left:6px;vertical-align:middle}
+.live::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px;animation:blink 1.6s infinite}
+.live.off{color:var(--muted)} .live.off::before{animation:none}
+@keyframes blink{50%{opacity:.25}}
+.lgl{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.lg.new{animation:logIn .6s ease-out}
+@keyframes logIn{from{opacity:0;transform:translateY(-6px);background:var(--chip)}}
+.lg.f .t{color:var(--muted)}
+.lg.y{border-top:1.5px solid var(--line);margin-top:4px}
+.lg.y .t{font-weight:700;color:var(--red)}
+.lg.a .t b{color:var(--ink)}
+.ld{display:inline-block;font-size:11.5px;font-weight:700;border-radius:6px;padding:0 6px;margin:1px 2px 0 0}
+.ld.up{color:var(--good);background:var(--goodbg)} .ld.dn{color:var(--bad);background:var(--badbg)}
+.fcard{padding:18px 20px}
+.fcard h3{margin:0;font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:20px}
+.fcard h3 small{font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--muted);margin-left:4px}
+.fhint{margin:2px 0 12px;font-size:13.5px;color:var(--muted)}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fchip{display:flex;align-items:center;gap:8px;text-align:left;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.fchip .fi{font-size:22px}
+.fchip b{display:block;font-size:14.5px;line-height:1.3}
+.fchip small{display:block;font-size:11.5px;color:var(--muted);line-height:1.35}
+.fchip.on{border-color:var(--blue);background:var(--chip);box-shadow:inset 0 0 0 1px var(--blue)}
+.fchip:disabled{opacity:.4;cursor:not-allowed}
+.fchip:not(:disabled):hover{transform:translateY(-1px)}
+.ctrl{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn.sm{padding:8px 14px;font-size:14px}
+.spd{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.sbtn{background:var(--paper);color:var(--muted);border:0;padding:7px 11px;font-size:13px;cursor:pointer}
+.sbtn.on{background:var(--blue);color:var(--btntx);font-weight:700}
+@media (max-width:560px){.fgrid{grid-template-columns:repeat(2,1fr)}.fchip small{display:none}.lgl{max-height:200px}}
+
+/* 팝업 */
+#modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px))}
+#modal.show{display:flex}
+.mbk{position:absolute;inset:0;background:rgba(9,16,30,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:fadeIn .35s ease-out}
+.mcard{position:relative;width:100%;max-width:560px;max-height:100%;overflow-y:auto;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px 22px;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:popIn .45s cubic-bezier(.18,.9,.22,1.12)}
+.mcard .swap{animation:swapIn .4s ease-out}
+.mcard .tx{font-size:16.5px;margin-top:14px}
+.mcard h2{font-family:'Do Hyeon',sans-serif;font-weight:400;font-size:27px;line-height:1.2;margin:4px 0 0}
+.mcard .head{display:flex;align-items:center;gap:12px}
+.mcard .ic{font-size:38px;line-height:1}
+.mage{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+#modal.hide .mbk{animation:fadeOut .3s forwards}
+#modal.hide .mcard{animation:popOut .3s forwards}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes fadeOut{to{opacity:0}}
+@keyframes popIn{from{opacity:0;transform:translateY(24px) scale(.94)}}
+@keyframes popOut{to{opacity:0;transform:translateY(12px) scale(.97)}}
+@keyframes swapIn{from{opacity:0;transform:translateX(14px)}}
+
+/* 인생 돌아보기 */
+#flash{position:fixed;inset:0;z-index:70;display:none;color:#eef2fa;
+  --blue:#86abf2;--red:#ff7166;--gold:#e6b955;--good:#6fd29a;--pink:#f08bbf}
+#flash.show{display:block}
+#flash.hide{animation:fadeOut .6s forwards}
+.fbg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#1c2b4a 0%,#0a111f 70%);animation:fadeIn .8s}
+.fstage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px))}
+.fx{max-width:520px;width:100%;text-align:center;animation:flick 2.3s ease-in-out both}
+@keyframes flick{0%{opacity:0;transform:scale(.96) translateY(14px);filter:blur(6px)}18%{opacity:1;transform:none;filter:none}82%{opacity:1;filter:none}100%{opacity:0;transform:scale(1.03) translateY(-10px);filter:blur(4px)}}
+.fage{font-family:'Do Hyeon',sans-serif;font-size:clamp(64px,18vw,110px);line-height:1;color:#86abf2}
+.fage small{font-size:.35em;margin-left:4px;color:#9aa7bd}
+.ftxt{font-size:clamp(19px,4.6vw,24px);font-weight:700;margin-top:14px;line-height:1.5}
+.fbig{font-family:'Do Hyeon',sans-serif;font-size:clamp(48px,13vw,84px);line-height:1.1}
+.fsub{color:#9aa7bd;font-size:17px;margin:6px 0}
+.fout .emblem{margin-bottom:22px}
+.fbars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:26px;font-size:12px;color:#9aa7bd}
+.fbars .ft{display:block;height:5px;background:rgba(255,255,255,.12);border-radius:5px;margin-top:4px;overflow:hidden}
+.fbars i{display:block;height:100%;border-radius:5px;animation:grow 1.4s ease-out}
+.fskip{position:absolute;right:16px;top:calc(16px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.1);color:#eef2fa;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 16px;font-size:14px;cursor:pointer}
+.fprog{position:absolute;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);height:3px;background:rgba(255,255,255,.08)}
+.fprog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#86abf2,#ff7166);transition:width .6s}
+
+
+/* 직접 고르는 활동 */
+#acts{margin-top:14px}
+#acts:empty{display:none}
+.atabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.atab{background:var(--chip);color:var(--ink);border:1.5px solid transparent;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer}
+.atab.on{background:var(--paper);border-color:var(--blue);color:var(--blue);font-weight:700}
+.agrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.abtn{display:flex;align-items:center;gap:10px;text-align:left;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;transition:border-color .2s,transform .2s}
+.abtn:not(.lock):hover{border-color:var(--blue);transform:translateY(-1px)}
+.abtn.lock{opacity:.55;cursor:not-allowed}
+.abtn .ai{font-size:22px}
+.abtn .an{flex:1;min-width:0}
+.abtn b{display:block;font-size:14.5px;line-height:1.3}
+.abtn small{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+.abtn .ac{font-size:12px;font-weight:700;color:var(--gold);white-space:nowrap}
+@media (max-width:560px){.agrid{grid-template-columns:1fr}.sbtn{padding:7px 8px}}
+.pxc{display:block;width:min(400px,84vw);aspect-ratio:16/9;margin:0 auto 18px;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:6px;box-shadow:0 0 0 3px rgba(255,255,255,.12),0 20px 50px rgba(0,0,0,.4)}
+.fx .fage{font-size:clamp(40px,12vw,64px)}
+.tbl td.better{color:var(--good);font-weight:700}
+.tbl td.worse{color:var(--bad);font-weight:700}
+
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.pstep{background:var(--chip);border-radius:10px;padding:5px 10px;font-size:14px;font-weight:700}
+.pstep small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.parr{color:var(--muted)}
+.qbonus{display:inline-block;font-size:13px;font-weight:700;color:var(--gold);background:var(--chip);border-radius:8px;padding:1px 8px;margin:2px 0}
+.yfin{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+.fint .fbig{font-size:clamp(34px,9vw,58px)}
+
+/* 의견 보내기 */
+#fbbtn{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--paper);color:var(--blue);border:1.5px solid var(--blue);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+#fbbtn:hover{background:var(--chip)}
+#fbm{position:fixed;inset:0;z-index:55;display:none;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px))}
+#fbm.show{display:flex}
+#fbm.hide .mbk{animation:fadeOut .3s forwards}
+#fbm.hide .mcard{animation:popOut .3s forwards}
+.fbl{font-weight:700;font-size:14px;margin:14px 0 6px}
+.fbtypes{display:flex;flex-wrap:wrap;gap:6px}
+.fbt{background:var(--chip);color:var(--ink);border:1.5px solid transparent;border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer}
+.fbt.on{border-color:var(--blue);background:var(--paper);color:var(--blue);font-weight:700}
+.fbstars{display:flex;gap:2px}
+.fbs{background:none;border:0;font-size:30px;line-height:1;color:var(--line);cursor:pointer;padding:2px}
+.fbs.on{color:var(--gold)}
+#fbcard textarea,#fbcard input{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);resize:vertical}
+.fbctx{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+#fbcard a.btn{text-decoration:none;display:inline-block}
+body{padding-bottom:56px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hud"></div>
+  <div id="logbox"></div>
+  <div id="focus"></div>
+  <div id="acts"></div>
+  <div id="main"></div>
+</div>
+<div id="modal"><div class="mbk"></div><div class="mcard" id="mcard" role="dialog" aria-modal="true" aria-labelledby="mt"></div></div>
+<div id="flash"></div>
+<button id="fbbtn" aria-haspopup="dialog">💬 의견 보내기</button>
+<div id="fbm"><div class="mbk"></div><div class="mcard" id="fbcard" role="dialog" aria-modal="true" aria-labelledby="fbt"></div></div>
+<script>
+'use strict';
+/* ================= 유틸 ================= */
+const $=q=>document.querySelector(q);
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const ch=p=>Math.random()<p;
+const cl=(v,a=0,b=100)=>Math.max(a,Math.min(b,Math.round(v)));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+let S=null,Q=[],PEND=[],CUR=null,EL=null,LOGALL=false;
+const SAVE='taedae_save_v1',ENDKEY='taedae_endings_v1';
+function sGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function sSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function sDel(k){try{localStorage.removeItem(k)}catch(e){}}
+
+const LBL={intel:'지능',health:'체력',social:'사교',civic:'시민의식',happy:'행복',money:'자산',fame:'명성',network:'인맥'};
+const STATS=['intel','health','social','civic','happy'];
+const BARC={intel:'var(--blue)',health:'var(--good)',social:'var(--gold)',civic:'var(--red)',happy:'var(--pink)'};
+const HS={science:'과학고',foreign:'외고',general:'고등학교',voc:'마이스터고',arts:'예술·체육고'};
+const EDU={med:'의과대학',top:'명문대',mid:'서울 소재 대학',local:'지역 대학',hs:'고등학교 졸업'};
+
+function N(j){const n=S.name,c=n.charCodeAt(n.length-1),b=c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0;
+  const m={'이':['이','가'],'은':['은','는'],'을':['을','를'],'과':['과','와']};const p=m[j];return n+(p?(b?p[0]:p[1]):'')}
+function won(v){v=Math.round(v);const s=v<0?'-':'';v=Math.abs(v);if(v>=10000){const e=Math.floor(v/10000),r=v%10000;return s+e+'억'+(r?' '+r.toLocaleString()+'만':'')+'원'}return s+v.toLocaleString()+'만원'}
+function fx(o){for(const k in o){const v=Math.round(o[k]);if(!v)continue;
+  if(k==='money'){S.money=Math.round(S.money+v);PEND.push([k,v]);continue}
+  const t=(k==='fame'||k==='network')?S:S.st,b=t[k],nv=Math.max(0,Math.min(100,b+dim(v,b)));t[k]=nv;
+  const d=Math.round(nv)-Math.round(b);if(d)PEND.push([k,d])}if(S.money<0)normMoney()}
+function dim(v,b){if(v<=0)return v;const m=b<45?1:Math.max(.2,1-(b-45)/62);return Math.max(1,Math.round(v*m))}
+function lg(t,imp,c){const e={a:S.age,t,imp:!!imp};if(c)e.c=c;if(imp)e.s=STATS.map(k=>Math.round(S.st[k]));S.log.push(e);
+  if(S.log.length>900){const i=S.log.findIndex(x=>x.c==='f');if(i>=0)S.log.splice(i,1)}if(typeof addLog==='function')addLog(e)}
+function assets(){return S.money+(S.house||0)-(S.loan||0)}
+function normMoney(){if(S.money<0){const d=-Math.round(S.money);S.loan=(S.loan||0)+d;S.money=0;lg(`모자란 돈 ${won(d)}을 대출로 메웠다.`,0,'f')}}
+function buyHouse(p){const pay=Math.min(S.money,p);S.money-=pay;S.loan=(S.loan||0)+(p-pay);S.house=p;return p-pay}
+
+/* ================= 데이터 ================= */
+const XP=[0,3,7,12,18],XPM=[0,6,9,14,20];
+const JOBS={
+  corp:{name:'대기업',stat:'intel',titles:['대기업 신입사원','대리','팀장','임원','대기업 CEO'],pay:[4500,5500,8000,15000,40000]},
+  public:{name:'공무원',stat:'civic',titles:['9급 공무원','주무관','사무관','서기관','고위공무원'],pay:[3000,4000,5500,7500,9500]},
+  law:{name:'법조',stat:'intel',titles:['로스쿨생','변호사','중견 변호사','로펌 대표 변호사','대법관'],pay:[-1500,7000,10000,20000,25000]},
+  med:{name:'의료',stat:'intel',titles:['의대생','전공의','전문의','병원 과장','병원장'],pay:[-1000,4500,15000,20000,30000]},
+  startup:{name:'창업',stat:'social',titles:['예비 창업가','스타트업 대표','성장기업 대표','유니콘 기업 대표','연쇄 창업가'],pay:[0,3000,8000,20000,50000]},
+  star:{name:'연예·스포츠',stat:'health',titles:['연습생·유망주','신인','인기 스타','톱스타','국민 레전드'],pay:[0,3000,15000,40000,60000]},
+  tech:{name:'기술직',stat:'health',titles:['기능공','숙련 기술자','현장 반장','공장장','대한민국 명장'],pay:[3200,4500,5500,7500,9000]},
+  sme:{name:'중소기업',stat:'social',titles:['중소기업 사원','주임','팀장','부장','중소기업 대표'],pay:[3000,3800,4800,6000,12000]},
+  ngo:{name:'시민단체',stat:'civic',titles:['시민단체 간사','활동가','사무국장','상임대표','시민사회 원로'],pay:[2600,3000,3600,4200,5000]},
+  teacher:{name:'교육',stat:'social',titles:['신규 교사','교사','부장 교사','교감','교장'],pay:[3600,4500,5500,6500,7500]},
+  creator:{name:'콘텐츠',stat:'social',titles:['초보 크리에이터','구독자 1만 크리에이터','인기 크리에이터','베스트셀러 작가','국민 크리에이터'],pay:[600,2000,5000,10000,15000]},
+  farmer:{name:'농업',stat:'health',titles:['초보 귀농인','농부','스마트팜 운영자','지역 농업 리더','농업 명인'],pay:[1500,2500,4000,6000,8000]},
+  politics:{name:'정치',stat:'civic',titles:['국회의원 보좌진','정당 정책위원','정당 대변인','당 최고위원','당 대표'],pay:[4500,5500,6500,7000,8000]},
+};
+const FT=[
+  {id:'study',g:'intel',name:'공부',icon:'📚',desc:'지능이 오른다',rate:()=>({intel:3,happy:-1})},
+  {id:'sport',g:'health',name:'운동',icon:'⚽',desc:'체력이 오른다',rate:()=>({health:3})},
+  {id:'friend',g:'social',name:'친구',icon:'🤝',desc:'사교와 행복이 오른다',rate:()=>({social:3,happy:1,network:.5})},
+  {id:'civic',g:'civic',name:'봉사·자치활동',icon:'⚖️',desc:'시민의식과 인맥이 오른다',rate:()=>({civic:3,network:.5})},
+  {id:'rest',g:'happy',name:'취미·휴식',icon:'🎮',desc:'행복이 오른다',rate:()=>({happy:4})},
+  {id:'job',g:'money',name:'아르바이트',icon:'💰',desc:'자산이 늘지만 조금 지친다',rq:'만 16세부터 가능',req:()=>S.age>=16,rate:()=>({money:75,happy:-1})},
+];
+const FA=[
+  {id:'career',g:'career',name:'일·커리어',icon:'💼',desc:'승진과 소득에 가까워진다',rate:u=>{
+    if(S.pol>0)return{fame:1.5,network:1,happy:-1};
+    if(!S.job)return{intel:.5,happy:-1};
+    if(!(S.job.lv===0&&['med','law'].includes(S.job.track)))S.xp+=u;
+    return{money:125,happy:-1,health:-1}}},
+  {id:'study',g:'intel',name:'자기계발',icon:'📖',desc:'지능이 오른다',rate:()=>({intel:2})},
+  {id:'health',g:'health',name:'건강관리',icon:'🏃',desc:'체력이 오른다',rate:()=>({health:3})},
+  {id:'people',g:'social',name:'인간관계',icon:'🥂',desc:'사교와 인맥이 오른다',rate:()=>({social:2,network:1.5})},
+  {id:'civic',g:'civic',name:'사회참여',icon:'📢',desc:'시민의식과 명성이 오른다',rate:()=>({civic:1.5,fame:1.5,network:.5})},
+  {id:'family',g:'happy',name:'휴식·가족',icon:'🏡',desc:'행복이 오른다',rate:()=>({happy:4,health:.5})},
+];
+
+const QUIZ={
+  vote4:{q:'반장 선거에서 “성적 상위 5명은 2표씩 행사한다”고 정했다. 어떤 선거 원칙에 어긋날까?',o:['보통선거','평등선거','직접선거','비밀선거'],a:1,e:'평등선거는 누구나 똑같이 1인 1표를 행사하는 원칙이에요. 대한민국 헌법은 보통·평등·직접·비밀선거의 4대 원칙을 정하고 있습니다.'},
+  secret:{q:'친구가 “누구 찍었는지 투표용지 보여줘”라고 한다. 이때 지켜야 할 선거 원칙은?',o:['보통선거','평등선거','직접선거','비밀선거'],a:3,e:'비밀선거는 누구에게 투표했는지 다른 사람이 알 수 없게 하는 원칙이에요. 그래야 눈치 보지 않고 자유롭게 투표할 수 있습니다.'},
+  rights:{q:'외모나 말투 때문에 놀림과 차별을 받는 친구. 가장 직접적으로 침해된 기본권은?',o:['평등권','참정권','청구권','사회권'],a:0,e:'평등권은 성별·종교·사회적 신분 등으로 차별받지 않을 권리예요(헌법 제11조). 모든 기본권의 바탕에는 인간의 존엄과 가치(제10조)가 있습니다.'},
+  sep:{q:'법을 만드는 곳(입법), 법을 집행하는 곳(행정), 재판하는 곳(사법)을 바르게 짝지은 것은?',o:['국회 / 정부 / 법원','정부 / 국회 / 법원','법원 / 정부 / 국회','국회 / 법원 / 정부'],a:0,e:'권력을 국회·정부·법원에 나누어 서로 견제하게 하는 것이 삼권분립이에요. 권력이 한곳에 몰리면 국민의 자유가 위협받기 때문입니다.'},
+  petition:{q:'위험한 통학로를 고쳐 달라고 구청에 문서로 요구했다. 이때 사용한 기본권은?',o:['자유권','청원권(청구권)','사회권','평등권'],a:1,e:'청원권은 국가기관에 문서로 의견이나 요구를 밝힐 수 있는 권리로, 청구권에 속해요. 국회 국민동의청원은 30일 안에 5만 명이 동의하면 국회 위원회에서 심사합니다.'},
+  voteage:{q:'대한민국에서 대통령·국회의원 선거에 투표할 수 있는 나이는?',o:['만 16세 이상','만 18세 이상','만 19세 이상','만 20세 이상'],a:1,e:'2019년 공직선거법 개정으로 선거권 연령이 만 19세에서 만 18세로 낮아졌어요. 2022년부터는 국회의원·지방선거 출마 나이(피선거권)도 만 18세가 되었습니다.'},
+  duty:{q:'다음 중 헌법이 정한 국민의 의무가 아닌 것은?',o:['국방의 의무','납세의 의무','투표의 의무','교육의 의무'],a:2,e:'투표는 의무가 아니라 권리(참정권)예요. 헌법이 정한 국민의 의무는 국방·납세·교육·근로의 의무와 환경보전의 의무, 재산권 행사를 공공복리에 맞게 할 의무입니다.'},
+  minwage:{q:'2026년 대한민국의 최저임금(시급)은 얼마일까?',o:['9,860원','10,030원','10,320원','11,000원'],a:2,e:'2026년 최저임금은 시간당 10,320원이에요(2025년은 10,030원). 최저임금보다 적게 주는 것은 위법이고, 일주일에 15시간 이상 일하면 주휴수당도 받을 수 있어요.'},
+  contract:{q:'사장님이 “근로계약서는 나중에 쓰자”고 한다. 올바른 설명은?',o:['아르바이트는 안 써도 된다','말로 한 약속이면 충분하다','사장은 근로계약서를 써서 근로자에게 줘야 한다','3개월이 지나야 쓴다'],a:2,e:'근로기준법에 따라 사용자는 임금·근로시간·휴일 등을 적은 근로계약서를 작성해 근로자에게 줘야 해요. 아르바이트도 마찬가지이고, 어기면 벌금을 물 수 있습니다.'},
+  jeonse:{q:'전세 계약 후 보증금을 지키기 위해 꼭 해야 할 일은?',o:['집주인과 친해지기','전입신고와 확정일자 받기','인테리어 하기','계약서 사진 찍어 두기'],a:1,e:'전입신고와 확정일자를 받으면 대항력과 우선변제권이 생겨 보증금을 보호받을 수 있어요. 계약 전에는 등기부등본으로 집에 걸린 빚(근저당)도 꼭 확인하세요.'},
+  assembly:{q:'대한민국 국회의원의 임기와 정원(제22대 국회 기준)으로 옳은 것은?',o:['4년, 300명','5년, 300명','4년, 250명','6년, 200명'],a:0,e:'국회의원은 임기 4년이고, 지역구 254명과 비례대표 46명을 합쳐 300명이에요.'},
+  president:{q:'대한민국 대통령 선거에 출마하려면 몇 살 이상이어야 할까?',o:['만 18세','만 30세','만 35세','만 40세'],a:3,e:'헌법 제67조에 따라 대통령 피선거권은 만 40세 이상이에요. 임기는 5년이고, 다시 출마할 수 없는 단임제입니다.'},
+  court:{q:'법률이 헌법에 어긋나는지 판단하고, 탄핵 심판을 하는 기관은?',o:['대법원','국회','헌법재판소','감사원'],a:2,e:'헌법재판소는 위헌법률심판, 탄핵심판, 정당해산심판, 권한쟁의심판, 헌법소원심판을 맡아요. 대통령 탄핵은 재판관 9명 중 6명 이상이 찬성해야 결정됩니다.'},
+  local:{q:'지방선거에서 주민이 직접 뽑지 않는 사람은?',o:['시장·도지사','교육감','지방의원','경찰청장'],a:3,e:'지방선거에서는 시·도지사, 시장·군수·구청장, 지방의원, 교육감을 뽑아요. 경찰청장은 대통령이 임명합니다.'},
+  referendum:{q:'헌법을 고치려면 마지막으로 반드시 거쳐야 하는 절차는?',o:['대통령 결재','국회 과반 찬성','국민투표','대법원 승인'],a:2,e:'헌법 개정안은 국회 재적의원 3분의 2 이상이 찬성한 뒤, 국민투표에서 유권자 과반수 투표와 투표자 과반수 찬성을 얻어야 확정돼요.'},
+  press:{q:'정부를 비판하는 기사를 썼다는 이유로 신문사 문을 닫게 한다면 침해되는 기본권은?',o:['언론·출판의 자유(자유권)','사회권','청구권','참정권'],a:0,e:'언론·출판의 자유는 대표적인 자유권이에요. 헌법 제21조는 언론·출판에 대한 허가나 검열을 인정하지 않습니다.'},
+  social:{q:'“모든 국민은 능력에 따라 균등하게 교육을 받을 권리를 가진다.” 이 권리는 어떤 기본권일까?',o:['자유권','평등권','사회권','청구권'],a:2,e:'사회권은 인간다운 생활을 위해 국가에 적극적인 보장을 요구할 수 있는 권리예요. 교육받을 권리, 근로의 권리, 환경권 등이 있습니다.'},
+  pension:{q:'노후 소득을 보장하기 위해 국가가 운영하는 대표적인 사회보험은?',o:['국민연금','개인연금','청약통장','적금'],a:0,e:'국민연금은 소득이 있을 때 보험료를 내고 나이가 들거나 장애·사망 시 연금을 받는 사회보험이에요. 건강보험, 고용보험, 산재보험과 함께 4대 보험이라 부릅니다.'},
+  veto:{q:'국회가 통과시킨 법률안에 대통령이 반대할 때 할 수 있는 일은?',o:['법률안을 폐기한다','국회에 다시 의결해 달라고 요구한다(재의요구)','국회를 해산한다','법률안을 대법원에 보낸다'],a:1,e:'대통령은 15일 안에 국회에 재의를 요구할 수 있어요(거부권). 국회가 재적의원 과반 출석, 출석의원 3분의 2 이상 찬성으로 다시 의결하면 법률로 확정됩니다. 현행 헌법에서 대통령은 국회를 해산할 수 없어요.'},
+  bribe:{q:'선거 때 유권자에게 돈이나 선물을 주는 행위는?',o:['관행이라 괜찮다','소액이면 괜찮다','공직선거법 위반으로 처벌된다','당선되면 문제없다'],a:2,e:'금품 제공은 공직선거법상 매수죄예요. 당선인이 징역형이나 100만 원 이상의 벌금형을 받으면 당선이 무효가 되고, 돈을 받은 유권자도 받은 금액의 최대 50배까지 과태료를 낼 수 있습니다.'},
+  hearing:{q:'국무총리나 장관 후보자의 자질을 국회가 검증하는 절차는?',o:['국정감사','인사청문회','국민투표','탄핵심판'],a:1,e:'인사청문회에서 국회의원들이 후보자의 능력과 도덕성을 질문하고 검증해요. 국무총리는 국회 동의가 있어야 임명할 수 있습니다.'},
+};
+const QDIFF={vote4:1,secret:1,rights:1,sep:1,voteage:1,contract:1,pension:1,bribe:1,petition:2,duty:2,minwage:2,jeonse:2,assembly:2,president:2,court:2,local:2,press:2,social:2,referendum:3,veto:3,hearing:3};
+const QREW={1:{civic:3,intel:2},2:{civic:4,intel:3},3:{civic:6,intel:4,fame:1}};
+function quizReward(k){const d=QDIFF[k]||2;S.qstreak=(S.qstreak||0)+1;const r=Object.assign({},QREW[d]);
+  const sb=Math.min(4,S.qstreak-1);if(sb>0){r.civic+=sb;r.intel+=Math.ceil(sb/2)}
+  const perfect=S.qc===S.qt&&S.qt>=3;if(perfect){for(const k2 in r)r[k2]=Math.round(r[k2]*1.5)}
+  for(const k2 in r){const t=k2==='fame'?S:S.st,b=t[k2];t[k2]=Math.min(100,b+r[k2]);const dlt=Math.round(t[k2])-Math.round(b);if(dlt)PEND.push([k2,dlt])}
+  return`<span class="qbonus">${'★'.repeat(d)} 난이도 보상${sb>0?` · 🔥 ${S.qstreak}연속 정답 보너스`:''}${perfect?' · 👑 전부 정답 가중 ×1.5':''}</span>`}
+const NEWS={court:'오늘의 뉴스: 헌법재판소 결정',referendum:'오늘의 뉴스: 개헌 논의',press:'오늘의 뉴스: 언론 자유',social:'오늘의 뉴스: 교육 격차'};
+
+function qz(k,title){const q=QUIZ[k];return{qk:k,when:()=>!S.usedQ[k],pre:()=>{S.usedQ[k]=1},icon:'📝',tag:`시민 교실 · 난이도 ${'★'.repeat(QDIFF[k]||2)}`,title:title||'사회 퀴즈',text:q.q,
+  choices:q.o.map((o,i)=>({t:o,fn:()=>{S.qt++;if(i===q.a){S.qc++;const rb=quizReward(k);return`<b class="ok">정답이에요!</b> ${rb}<br>${q.e}`}
+    S.qstreak=0;return`<b class="no">아쉬워요.</b> 정답은 <b>“${q.o[q.a]}”</b>입니다.<br>${q.e}`}}))}}
+
+/* ================= 하위 이벤트 ================= */
+const E={};
+E.clsPledge={icon:'📣',tag:'반장 선거',title:'나의 공약은?',text:'좋은 공약은 <b>우리 반에 꼭 필요하고, 반장이 실제로 지킬 수 있는</b> 약속이다. 어떤 공약을 내걸까?',choices:[
+  {t:'“급식 메뉴 건의함을 만들고, 매달 결과를 공개하겠습니다.”',fn:()=>clsRes(.38+S.st.social/250+S.st.civic/300,'real')},
+  {t:'“청소 당번을 공정하게 정하고, 매주 학급 회의를 열겠습니다.”',fn:()=>clsRes(.33+S.st.civic/200+S.st.social/400,'real')},
+  {t:'“숙제를 없애고, 매일 체육 시간을 만들겠습니다!”',fn:()=>clsRes(.45+S.st.social/200,'fake')},
+]};
+function clsRes(p,kind){if(ch(Math.min(.9,p))){S.flags.classPres=true;fx({fame:3,network:3,happy:5,social:2});lg('중학교 1학년 반장 당선',1);
+    if(kind==='fake'){fx({civic:2,social:-3});return'당선! 그런데 숙제와 시간표는 반장이 정할 수 있는 일이 아니었다. 실망한 친구들의 눈빛… <b>지킬 수 없는 공약은 결국 신뢰를 잃게 한다</b>는 걸 배웠다.'}
+    return'당선! 과반의 표를 얻었다. 약속한 공약을 하나씩 지켜 나가자 친구들의 신뢰가 쌓였다.'}
+  fx({civic:3,happy:-2});lg('반장 선거 낙선');return'아쉽게 낙선했다. 그래도 당선된 친구에게 먼저 축하를 건넸다. <b>결과에 승복하는 것</b>도 민주주의의 중요한 태도다.'}
+
+E.stuCamp={icon:'🎤',tag:'학생회장 선거',title:'선거운동 방법 정하기',text:'선거운동 기간은 일주일. 전교생의 마음을 얻을 방법을 골라야 한다.',choices:[
+  {t:'📋 전교생 설문조사로 공약 만들기',fn:()=>stuRes(.33+S.st.intel/300+S.st.civic/250)},
+  {t:'🎤 재치 있는 연설과 유세 퍼포먼스',fn:()=>stuRes(.33+S.st.social/180)},
+  {t:'🍫 “뽑아 주면 매점 간식 쏜다!” 약속하기',fn:()=>{if(ch(.6)){fx({civic:-3,happy:-5});lg('학생회장 선거 후보 자격 박탈');
+      return'학생 선거관리위원회가 <b>“선물이나 금품을 약속하는 것은 선거 규정 위반”</b>이라며 후보 자격을 박탈했다. 어른들의 선거에서도 금품 제공은 범죄다.'}
+    fx({civic:-2});return stuRes(.5+S.st.social/250)}},
+]};
+function stuRes(p){if(ch(Math.min(.9,p))){S.flags.stuPres=true;fx({fame:8,network:6,civic:3,happy:6});lg('전교 학생회장 당선',1);
+    return'개표 결과, 당선! 전교생 앞에서 당선 소감을 말하는 순간 손이 떨렸다. 학생회 회의를 이끌며 의견을 모으고 조율하는 법을 배웠다.'}
+  fx({happy:-3,civic:2});lg('전교 학생회장 선거 낙선');return'근소한 차이로 낙선했다. 하지만 선거를 치르며 많은 친구들을 알게 되었다.'}
+
+/* ================= 선거 시스템 ================= */
+const ELEC={
+  local:{name:'지방선거',seat:'시의원',dep:300,diff:38,pol:1,cool:4,q:'local'},
+  assembly:{name:'국회의원 선거',seat:'국회의원',dep:1500,diff:60,pol:2,cool:4,q:'assembly'},
+  pres:{name:'대통령 선거',seat:'대통령',dep:30000,diff:90,pol:4,cool:5,q:'president'},
+};
+function cool(k){return S.lastElec[k]===undefined||S.age-S.lastElec[k]>=ELEC[k].cool}
+function power(){return S.fame*.35+S.network*.25+S.st.civic*.15+S.st.social*.15+S.st.intel*.1}
+function elecDecide(k){const c=ELEC[k];
+  const intro={
+    gov:`4년마다 열리는 전국동시지방선거에서 시·도의 살림을 책임질 <b>시·도지사</b>를 뽑는다. 수백만 주민의 삶에 영향을 주는 자리다.<span class="note">💡 시·도지사 후보 기탁금은 5,000만원이에요.</span>`,
+    local:`4년마다 열리는 <b>전국동시지방선거</b>가 다가온다. 그동안의 활동을 바탕으로 ${N('이')} 사는 지역의 <b>시의원</b>에 출마할 수 있다.<span class="note">💡 지방선거에서는 시·도지사, 시장·군수·구청장, 지방의원, 교육감을 한 번에 뽑아요.</span>`,
+    assembly:`4년마다 치르는 <b>국회의원 선거(총선)</b>가 다가온다. 국회의원은 법을 만들고, 정부의 예산을 심의하고, 국정을 감시한다.<span class="note">💡 국회의원 피선거권은 만 18세 이상이에요.</span>`,
+    pres:`5년마다 돌아오는 <b>대통령 선거</b>. 당 안팎에서 ${N('이')} 출마해야 한다는 목소리가 커지고 있다. ${S.flags.presTry?`<b>${S.flags.presTry+1}번째 도전</b>이다. `:''}<span class="note">💡 대통령 피선거권: 만 40세 이상, 선거일 기준 국내에 5년 이상 거주</span>`}[k];
+  return{icon:'🗳️',tag:c.name,title:`${c.seat} 선거에 출마할까?`,
+    text:()=>`${intro}<br>후보 등록에는 기탁금 <b>${won(c.dep)}</b>이 필요하다. (득표율 15% 이상이면 전액, 10~15%면 절반을 돌려받는다.) 현재 자산은 ${won(S.money)}.`,
+    choices:()=>[
+      {t:'출마한다',req:()=>S.money>=c.dep,rq:'기탁금이 부족하다',fn:()=>startElec(k,true)},
+      {t:'후원회를 꾸려 기탁금을 모아 출마한다',req:()=>S.money<c.dep&&S.network>=35,rq:S.money>=c.dep?'직접 낼 수 있다':'인맥 35 이상 필요',fn:()=>{fx({network:-3});return startElec(k,false)}},
+      {t:'이번에는 출마하지 않는다',fn:()=>{S.lastElec[k]=S.age;return'다음 기회를 노리기로 했다. 정치는 타이밍이다.'}},
+    ]}}
+function startElec(k,paid){const c=ELEC[k];S.lastElec[k]=S.age;if(paid)S.money-=c.dep;EL={k,bonus:0,bribe:false,paid,dep:c.dep};
+  const chain=[];if(k==='pres')chain.push(E.primary);chain.push(pledgeEv(k),stratEv(),E.result);
+  return{t:`${c.seat} 후보로 등록했다. 이제 본격적인 선거운동이 시작된다.`,chain}}
+E.primary={el:1,icon:'🎙️',tag:'당내 경선',title:'대통령 후보 당내 경선',text:'본선에 나가려면 먼저 당의 후보가 되어야 한다. 경선 결과는 당원 투표와 국민 여론조사를 합쳐 결정된다.',choices:[
+  {t:'정책 비전 발표로 승부한다',fn:()=>primRes(.3+S.st.intel/200+S.fame/300)},
+  {t:'당내 조직력을 총동원한다',fn:()=>primRes(.25+S.network/180+S.fame/300)},
+  {t:'경쟁 후보의 약점을 집요하게 공격한다',fn:()=>{fx({civic:-3});return primRes(.38+S.fame/250,true)}},
+]};
+function primRes(p,neg){S.flags.presTry=(S.flags.presTry||0)+1;if(ch(Math.min(.72,p-.08))){fx({fame:5});lg('대통령 후보 당내 경선 승리',1);if(neg)EL.bonus-=.04;
+    return'경선 승리! 당의 공식 대통령 후보가 되었다.'+(neg?' 다만 거친 네거티브 공방으로 당이 갈라져 본선에서 힘을 모으기 어려워졌다.':' 경쟁자들도 승복하고 손을 맞잡았다.')}
+  S.flags.presLost=S.age;CH=CH.filter(e=>!e.el);fx({happy:-6,fame:2});lg('대통령 후보 경선 패배');return'경선에서 패배했다. 승복 연설에서 경쟁 후보의 승리를 축하하자, 오히려 정치인으로서 품격이 있다는 평가를 받았다.'}
+const PLEDGES={
+ local:[
+  {t:'🚌 마을버스 노선을 늘리고 배차 간격을 줄이겠습니다',b:()=>.03+S.st.intel/1500,o:{civic:1},r:'출퇴근길이 불편했던 주민들이 반겼다. 시 예산을 어디서 줄일지는 숙제로 남았다.'},
+  {t:'🅿️ 공원 부지 일부에 공영주차장을 크게 늘리겠습니다',b:()=>.05,o:{civic:-1},r:'주차난에 지친 주민들은 환호했지만, 환경단체는 “공원을 없애는 공약”이라며 반대 성명을 냈다.'},
+  {t:'🏫 동네마다 돌봄교실과 작은도서관을 만들겠습니다',b:()=>.03+(S.kids?.02:0),o:{civic:2},r:'맞벌이 부부들의 지지가 이어졌다.'},
+  {t:'🏗️ 오래된 동네 재개발을 적극 추진하겠습니다',b:()=>ch(.5)?.07:-.03,o:{},r:'집값 상승을 기대한 집주인들은 반겼지만, 세입자들은 “쫓겨나라는 말이냐”며 등을 돌렸다.'},
+  {t:'🗑️ 모두가 꺼리는 소각장, 지원금을 받고 우리 지역에 유치하겠습니다',b:()=>-.03,o:{civic:4,fame:3},r:'인기 없는 공약이지만 “누군가는 해야 할 결정을 피하지 않는다”는 평가를 받았다.'},
+  {t:'👵 경로당 무료 점심을 매일 제공하겠습니다',b:()=>.04,o:{},r:'어르신 유권자들의 지지가 크게 늘었다. 젊은 층은 “우리를 위한 공약은 없다”고 아쉬워했다.'},
+  {t:'🌳 하천을 따라 산책로와 자전거길을 잇겠습니다',b:()=>.03,o:{health:1},r:'저녁 산책을 즐기는 주민들이 좋아했다.'},
+  {t:'🚸 모든 학교 앞 통학로에 신호등과 단속 카메라를 설치하겠습니다',b:()=>.03,o:{civic:2},r:'학부모들의 큰 지지를 받았다. 운전자들 사이에서는 불만도 나왔다.'},
+  {t:'💸 “주민 1인당 100만원씩 드리겠습니다!”',b:()=>ch(.4)?.04:-.06,o:{civic:-4},r:'귀가 솔깃한 공약이었지만, 시의원에게는 그런 예산을 혼자 정할 권한이 없다는 지적이 쏟아졌다.'}],
+ assembly:[
+  {t:'🚇 지하철 노선을 우리 지역까지 연장하겠습니다',b:()=>ch(.6)?.06:.01,o:{},r:'주민들의 기대가 컸다. 다만 큰 국가사업은 예비타당성조사를 통과해야 해서, 실현까지 오랜 시간이 걸린다는 지적도 나왔다.'},
+  {t:'🏭 대기업 공장을 유치해 일자리 1만 개를 만들겠습니다',b:()=>.05,o:{civic:-1},r:'일자리를 원하는 청년층이 반겼다. 환경 오염을 걱정하는 목소리도 함께 커졌다.'},
+  {t:'📚 대학 등록금을 절반으로 줄이는 법을 만들겠습니다',b:()=>.04,o:{},r:'청년과 학부모의 지지가 높았다. 재원 마련을 두고 토론회에서 집중 공격을 받았다.'},
+  {t:'🏥 우리 지역에 공공 의대와 대형 병원을 세우겠습니다',b:()=>.04,o:{network:-2},r:'의료 공백에 지친 주민들은 환영했지만 의료계는 강하게 반발했다.'},
+  {t:'✂️ 국회의원 세비를 30% 줄이고 특권을 내려놓겠습니다',b:()=>.03,o:{fame:3,network:-3},r:'유권자들은 박수를 보냈지만 동료 정치인들의 눈총을 받았다.'},
+  {t:'🏘️ 청년 공공임대주택 5천 호를 짓겠습니다',b:()=>.04,o:{civic:1},r:'청년층이 반겼다. 부지 근처 주민들은 집값 하락을 걱정했다.'},
+  {t:'💳 지역화폐를 크게 늘려 골목상권을 살리겠습니다',b:()=>.02+S.st.intel/1500,o:{},r:'전통시장 상인들의 지지를 얻었다. 효과를 두고 경제학자들 사이에서 논쟁이 붙었다.'},
+  {t:'🛡️ 우리 지역 군부대 이전을 반드시 막겠습니다',b:()=>.03,o:{network:2},r:'지역 상권을 걱정하는 주민들이 지지했다. 국방부와의 협의는 쉽지 않아 보인다.'},
+  {t:'💸 “전 국민에게 1인당 1억 원 지급!”',b:()=>ch(.35)?.03:-.07,o:{civic:-4},r:'화제는 됐지만 “그 돈이면 나라 예산의 몇 배”라는 반박에 신뢰를 잃었다.'}],
+ pres:[
+  {t:'👶 저출생 극복 국가 프로젝트 (출산·육아 전 과정 국가 책임)',b:()=>.04,o:{civic:2},r:'젊은 부모들의 지지가 높았다. 수십조 원의 재원을 어떻게 마련할지가 숙제다.'},
+  {t:'📉 법인세를 낮춰 기업 투자를 늘리겠습니다',b:()=>ch(.5)?.06:-.02,o:{},r:'경제계는 환영했지만 “부자 감세”라는 비판도 거셌다.'},
+  {t:'🏛️ 행정수도 완성과 지방 분권',b:()=>.03+S.st.civic/2000,o:{civic:2},r:'비수도권의 지지가 크게 늘었다. 수도권 일부에서는 반발이 나왔다.'},
+  {t:'🌱 석탄 발전 조기 중단과 탄소중립 가속',b:()=>ch(.55)?.05:-.02,o:{civic:2},r:'미래 세대의 지지를 얻었지만 산업계와 노동자들은 일자리를 걱정했다.'},
+  {t:'💡 AI·반도체 초강대국 국가 전략',b:()=>.03+S.st.intel/1500,o:{},r:'미래 먹거리를 준비하는 후보라는 이미지가 생겼다.'},
+  {t:'🗳️ 대통령 4년 중임제 개헌 추진',b:()=>.02,o:{civic:3},r:'오래된 논쟁에 불을 붙였다. 지금 헌법은 대통령 임기를 5년 단임으로 정하고 있고, 개헌에는 국민투표가 필요하다.'},
+  {t:'🧓 기초연금을 크게 올리겠습니다',b:()=>.05,o:{},r:'어르신들의 지지가 높았지만 “미래 세대에 빚을 넘긴다”는 비판도 받았다.'},
+  {t:'🕊️ 남북 대화 재개와 평화 경제',b:()=>ch(.5)?.05:-.03,o:{},r:'지지층은 결집했지만 반대 진영의 비판도 거세졌다.'},
+  {t:'⚖️ 검찰·사법 개혁',b:()=>ch(.5)?.06:-.04,o:{},r:'개혁을 바라는 쪽은 열광했고, 반대쪽은 “보복 정치”라며 결집했다.'},
+  {t:'🏠 집값 안정을 위한 공급 대폭 확대와 보유세 강화',b:()=>ch(.5)?.05:-.03,o:{},r:'무주택자들은 반겼지만 집을 가진 사람들의 반발이 컸다.'},
+  {t:'💸 “기본소득 매달 100만원!”',b:()=>ch(.35)?.04:-.07,o:{civic:-3},r:'파격적인 공약에 관심이 쏠렸지만 재원 논쟁에서 밀렸다.'}]};
+function shuffle(a){return a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1])}
+function pledgeEv(k){const pool=PLEDGES[k==='gov'?'local':k];const picks=shuffle(pool).slice(0,6);
+  return{el:1,icon:'📋',tag:'선거 공약',title:'핵심 공약을 하나 정하자',
+  text:'유권자는 공약을 보고 후보를 고른다. 모두를 만족시키는 공약은 없다. 누구의 지지를 얻고, 누구의 반발을 감수할까?<span class="note">💡 좋은 공약은 필요성, 실현 가능성, 돈을 어디서 마련할지가 분명해요.</span>',
+  choices:picks.map(p=>({t:p.t,fn:()=>{EL.bonus+=p.b();fx(p.o||{});EL.pledge=p.t;return p.r}}))}}
+const STRATS=[
+  {t:'🚶 골목골목 발로 뛰는 유세',fn:()=>{EL.bonus+=(S.st.health-45)/400;fx({health:-3,network:2});return'하루 2만 보를 걸으며 시장과 골목을 누볐다. 운동화 두 켤레가 닳았다.'}},
+  {t:'📱 SNS·숏폼 영상으로 젊은 층 공략',fn:()=>{EL.bonus+=(S.st.social-45)/400;fx({fame:2});return'짧은 영상이 퍼지며 이름이 알려졌다. 다만 어르신들에게는 잘 닿지 않았다.'}},
+  {t:'🎙️ TV 토론회 준비에 집중',fn:()=>{EL.bonus+=(S.st.intel-45)/400;return'밤새 정책 자료를 외웠다. 날카로운 질문에도 침착하게 답했다.'}},
+  {t:'🧓 전통시장과 경로당을 하루도 빠짐없이 돈다',fn:()=>{EL.bonus+=.02+(S.st.social-50)/600;fx({health:-2});return'상인과 어르신들의 손을 잡았다. “젊은 사람이 싹싹하네.”'}},
+  {t:'🤝 시민단체·노동조합과 정책 협약을 맺는다',fn:()=>{EL.bonus+=(S.st.civic-50)/400+.01;fx({network:3});return'조직의 지지를 얻었다. 반대편에서는 “특정 집단의 후보”라는 공격이 나왔다.'}},
+  {t:'🌟 유명인에게 지원 유세를 부탁한다',req:()=>S.network>=45,rq:'인맥 45 이상 필요',fn:()=>{EL.bonus+=.04;fx({network:-2,fame:2});return'유명인이 함께 유세에 나서자 사람들이 몰려들었다.'}},
+  {t:'📺 TV·온라인 광고를 크게 집행한다',req:()=>S.money>=Math.round(ELEC[EL.k].dep*.6),rq:'광고비(현금)가 부족하다',fn:()=>{const c=Math.round(ELEC[EL.k].dep*.6);S.money-=c;EL.spent=c;EL.bonus+=.04;return`광고비로 ${won(c)}을 썼다. 어디서나 내 얼굴이 보였다.<span class="note">💡 선거공영제: 득표율 15% 이상이면 쓴 선거비용을 국가가 보전해 줘요(10~15%면 절반).</span>`}},
+  {t:'💬 상대 후보의 약점을 집요하게 공격한다 (네거티브)',fn:()=>{fx({civic:-3});if(ch(.5)){EL.bonus+=.06;return'상대 후보의 지지율이 흔들렸다. 하지만 선거판은 진흙탕이 됐다.'}EL.bonus-=.05;fx({fame:-2});return'역풍이 불었다. “정책은 없고 비방만 한다”는 비판이 쏟아졌다.'}},
+  {t:'🏛️ 타운홀 미팅으로 주민과 직접 토론한다',fn:()=>{EL.bonus+=(S.st.intel+S.st.civic-100)/600+.01;fx({civic:2});return'어려운 질문에도 피하지 않고 답했다. 진정성이 전해졌다.'}},
+  {t:'🤜🤛 비슷한 성향의 후보와 단일화를 협상한다',show:()=>EL.k!=='local',fn:()=>{if(ch(.4)){EL.bonus+=.09;lg('후보 단일화 성공');return'극적으로 단일화에 합의했다! 표가 한곳으로 모였다.'}EL.bonus-=.02;return'협상은 결렬됐다. 서로 감정만 상했다.'}},
+  {t:'🙋 자원봉사자 중심의 깨끗한 선거',fn:()=>{EL.bonus+=.01;fx({civic:3,happy:2});return'돈 대신 사람이 모였다. 화려하진 않았지만 떳떳했다.'}},
+];
+function stratEv(){const picks=shuffle(STRATS.filter(s=>!s.show||s.show())).slice(0,5);
+  return{el:1,icon:'🚩',tag:'선거운동',title:'선거운동 전략',text:'남은 기간은 2주. 어디에 힘을 쏟을까?',
+    choices:[...picks,{t:'✉️ 유권자들에게 몰래 돈봉투를 돌린다',fn:()=>{EL.bribe=true;fx({civic:-8});return'불안한 마음으로 봉투를 건넸다. 이 선택이 어떤 결과를 가져올지는 아무도 모른다.'}}]}}
+E.result={el:1,icon:'📺',tag:'개표 방송',title:'운명의 개표',text:'투표가 끝나고 개표 방송이 시작됐다. 캠프 사무실에 모인 사람들 모두 숨을 죽이고 화면을 바라본다.',choices:[{t:'결과를 확인한다',fn:()=>elecResult()}]};
+function voteBars(my,opp){return`<div class="votes"><div class="vr"><span>${S.name}</span><div class="vt"><div class="vf me" style="--w:${my}%"></div></div><b>${my}%</b></div><div class="vr"><span>상대 후보</span><div class="vt"><div class="vf op" style="--w:${opp}%"></div></div><b>${opp}%</b></div></div>`}
+function elecResult(){const k=EL.k,c=ELEC[k];
+  if(EL.bribe){if(ch(.65)){fx({fame:-20,civic:-5,happy:-12});S.flags.criminal=true;lg(`${c.seat} 선거 중 금품 살포 적발`,1);
+      return{t:'개표가 시작되기도 전에 속보가 떴다. <b>“후보 측 금품 살포 정황, 선관위 고발”</b>. 선거는 패배했고, 공직선거법 위반으로 재판에 넘겨졌다.',chain:[qz('bribe','공직선거법')]}}
+    EL.bonus+=.1;S.scandal++}
+  EL.bonus+=partyBonus(k);if(EL.spent)S.money+=EL.spent;const p=Math.max(.04,Math.min(k==='pres'?.55:.85,.5+(power()-c.diff)/32+EL.bonus));const win=ch(p);
+  const my=win?50+R(1,11):50-R(1,14),others=R(1,4),opp=100-my-others;
+  const html=voteBars(my,opp);
+  if(win){S.pol=Math.max(S.pol,c.pol);fx({fame:c.pol===4?20:c.pol===2?10:6,network:6,happy:10});lg(`${c.seat} 당선 (득표율 ${my}%)`,1);
+    if(k==='assembly'){S.flags.exMP=false;S.terms=(S.terms||0)+1}
+    if(k==='pres'){S.presAge=S.age;S.flags.presWin=true;return{t:`<b>당선 확실!</b> 캠프 사무실이 환호성으로 뒤덮였다. 대한민국의 새 대통령으로 ${N('이')} 선출되었다.`,html}}
+    return{t:`<b>당선!</b> ${c.seat} 배지를 달았다. 이제 유권자에게 한 약속을 지킬 차례다.`,html,chain:[qz(c.q)]}}
+  if(!EL.paid)fx({network:-2});
+  if(k==='pres')S.flags.presLost=S.age;fx({happy:-8,fame:k==='pres'?-8:3});lg(`${c.seat} 선거 낙선 (득표율 ${my}%)`,1);
+  return{t:`아쉽게 낙선했다. 득표율이 15%를 넘어 기탁금은 모두 돌려받았다. 이번에 얻은 표는 다음 도전의 밑거름이 될 것이다.`,html,chain:[qz(c.q)]}}
+
+/* ================= 진로·취업 ================= */
+function tryJob(tr,p){p+=(S.flags.prep||0)*.05;if(ch(Math.min(.95,p))){S.job={track:tr,lv:0};if(!S.flags.firstJobAge)S.flags.firstJobAge=S.age;S.xp=0;S.flags.prep=0;
+    if(tr==='startup')fx({money:-500});fx({happy:6});lg(`${JOBS[tr].titles[0]}(으)로 사회생활 시작`,1);
+    return{corp:'최종 합격! 사원증을 목에 걸고 첫 출근을 했다.',public:'공무원 시험 합격! 국민을 위해 일하는 공직자가 되었다.',law:'로스쿨 합격! 3년 뒤 변호사시험이 기다리고 있다.',politics:'국회의원 의원실에 보좌진으로 채용되었다. 여의도에서의 첫날, 국회의사당의 둥근 지붕이 눈앞에 있었다.',ngo:'시민단체의 간사로 일하게 되었다. 월급은 적지만 세상을 바꾸는 일에 함께한다는 자부심이 있다.',startup:'모아 둔 돈과 친구 두 명과 함께 작은 사무실을 얻었다. 창업의 첫날이다.',teacher:'임용시험 합격! 첫 담임 반 아이들의 이름을 밤새 외웠다.',creator:'첫 영상을 올렸다. 조회수는 37회. 그래도 시작이 반이다.',farmer:'시골로 내려가 작은 밭을 일구기 시작했다.',sme:'중소기업에 입사했다. 작은 회사라 이것저것 다 해야 하지만 배우는 게 많다.'}[tr]}
+  fx({happy:-5});lg(`${JOBS[tr].name} 도전 실패`);
+  return'아쉽게 떨어졌다. 대한민국 청년이 졸업 후 첫 일자리를 얻기까지 평균 11.3개월이 걸린다고 한다(2025). <b>‘일·커리어’에 시간을 쓰면 다음 도전의 합격 확률이 올라간다.</b>'}
+/* 수능 점수(지능 ± 컨디션)의 분포는 실제 진행 속도로 무작위 플레이한 100개 인생의 18세 지능으로 측정 */
+const UNI_CUT={med:94.3,top:80.6,mid:73.6};
+const PCT_PTS=[[35, 98.6], [40, 94.0], [45, 83.1], [50, 69.0], [55, 54.8], [60, 42.2], [65, 31.2], [70, 22.3], [73.6, 16.4], [76, 12.8], [78, 10.2], [80.6, 7.4], [84, 5.2], [88, 3.1], [91, 1.8], [94.3, 0.8], [97, 0.2], [100, 0.0]];
+function topPct(s){if(s<=PCT_PTS[0][0])return 95;for(let i=1;i<PCT_PTS.length;i++){const[a,pa]=PCT_PTS[i-1],[b,pb]=PCT_PTS[i];if(s<=b)return Math.max(.1,pa+(pb-pa)*(s-a)/(b-a))}return .1}
+function uni(k){S.flags.snDone=true;S.flags.retake=false;S.edu=k;if(k==='med'){S.job={track:'med',lv:0};S.xp=0}
+  fx({happy:k==='local'?2:6,network:2});lg(EDU[k]+' 입학',1);
+  return{med:'의과대학 합격! 6년의 긴 공부가 시작된다.',top:'명문대 합격 소식에 가족 모두가 울었다.',mid:'서울 소재 대학에 합격했다. 새로운 도시에서의 대학 생활이 기대된다.',local:'고향 근처의 대학에 진학했다. 학비 부담이 적고, 지역 사회와 가까이 지낼 수 있다.'}[k]}
+
+/* ================= 승진 ================= */
+function promoEvent(){if(!S.job||S.pol>0)return null;const tr=S.job.track,j=JOBS[tr],n=S.job.lv+1;if(n>4)return null;
+  if(S.xp<(tr==='med'?XPM:XP)[n])return null;
+  const need=20+n*10;
+  if(S.st[j.stat]<need){if(S.flags.warn===tr+n)return null;S.flags.warn=tr+n;
+    return{icon:'📋',tag:j.name,title:'승진 심사 보류',text:`경력은 충분하지만, 다음 단계로 가려면 <b>${LBL[j.stat]} ${need} 이상</b>이 필요하다는 평가를 받았다. (현재 ${S.st[j.stat]})`,choices:[{t:'더 노력하자',fn:()=>'부족한 부분을 채우기로 마음먹었다.'}]}}
+  if(tr==='law'&&n===1)return{icon:'📚',tag:'변호사시험',title:'변호사시험 날',text:'로스쿨 3년의 마지막 관문. 변호사시험 합격률은 대략 절반 정도다. 로스쿨 졸업 후 5년 안에 5번까지만 응시할 수 있다.',choices:[{t:'시험장으로 향한다',fn:()=>{
+      if(ch(.45+(S.st.intel-55)/60)){S.job.lv=1;fx({happy:8,fame:2});lg('변호사시험 합격, 변호사 개업',1);return'합격자 명단에서 내 이름을 찾았다. 이제 법정에 설 수 있다.'}
+      S.xp-=1;fx({happy:-6});return'불합격. 내년에 다시 도전한다.'}}]};
+  if(tr==='startup')return{icon:'🚀',tag:'창업',title:'투자 유치 미팅',text:`회사가 다음 단계로 성장할 기회가 왔다. 투자자들이 관심을 보이고 있다. 지금은 <b>${j.titles[S.job.lv]}</b>.`,choices:[
+      {t:'대규모 투자를 받아 공격적으로 확장한다',fn:()=>{if(ch(.42+S.st.social/400+S.st.intel/600)){S.job.lv=n;fx({money:n*2000,fame:n*3,happy:8,network:3});lg(`${j.titles[n]}로 성장`,n>=3);return`투자 유치 성공! 회사가 빠르게 성장해 <b>${j.titles[n]}</b>가 되었다.`}
+        S.xp=XP[S.job.lv];fx({money:-3000,happy:-10});lg('사업 확장 실패');return'무리한 확장이 독이 되었다. 직원들을 내보내야 했고, 빚이 늘었다. 그래도 회사는 살아남았다.'}},
+      {t:'천천히, 내실을 다지며 성장한다',fn:()=>{if(ch(.62)){S.job.lv=n;fx({money:n*800,happy:5});lg(`${j.titles[n]}로 성장`,n>=3);return`차근차근 성장해 <b>${j.titles[n]}</b>가 되었다.`}S.xp-=2;return'성장 속도가 더뎠다. 조금 더 시간이 필요하다.'}},
+    ]};
+  return{icon:'🎉',tag:j.name,title:n===4?'정상의 문턱':'승진 소식',text:`그동안의 노력이 인정받을 때가 왔다. 지금은 <b>${j.titles[S.job.lv]}</b>.`,choices:[{t:'결과를 확인한다',fn:()=>{
+    if(n===4&&!ch(.55+S.st[j.stat]/400)){S.xp-=3;fx({happy:-5});return'최종 문턱에서 아쉽게 밀렸다. 정상은 쉽게 허락되지 않는다.'}
+    S.job.lv=n;fx({happy:5,fame:n===4?12:n===3?4:2,network:3});if(tr==='star')fx({fame:10});lg(`${j.titles[n]} 자리에 오름`,n>=3);
+    return`축하합니다! <b>${j.titles[n]}</b> 자리에 올랐다.`}}]}}
+
+/* ================= 정해진 생애 이벤트 ================= */
+const SCRIPT=[
+/* --- 13세 중1 --- */
+{id:'cls',when:()=>S.age===13,icon:'🗳️',tag:'중학교 1학년',title:'우리 반 반장 선거',
+ text:()=>`설레는 중학교 입학식이 끝나고 2주가 지났다. 담임 선생님이 칠판에 크게 적으셨다. <b>“다음 주 금요일, 1학기 반장 선거”</b><br><br>민주주의 사회에서 대표는 선거로 뽑는다. 우리 반도 마찬가지다. ${N('은')} 어떻게 할까?`,
+ choices:[
+  {t:'반장 선거에 출마한다',fn:()=>({t:'후보 등록을 마쳤다. 이제 반 친구들에게 내세울 공약을 정해야 한다.',chain:[E.clsPledge,qz('vote4','선거의 4대 원칙')]})},
+  {t:'친한 친구의 선거운동을 돕는다',fn:()=>{fx({social:3,civic:2,network:2});lg('친구의 반장 선거 운동원으로 활약');return{t:'포스터를 그리고 쉬는 시간마다 친구를 홍보했다. 선거는 후보만 하는 게 아니라 모두가 함께 참여하는 것이라는 걸 느꼈다.',chain:[qz('vote4','선거의 4대 원칙')]}}},
+  {t:'관심 없다. 투표만 한다',fn:()=>{fx({happy:2});return{t:'조용히 투표용지에 도장을 찍었다. 그런데 막상 개표가 시작되니 조금 궁금해졌다.',chain:[qz('vote4','선거의 4대 원칙')]}}},
+ ]},
+{id:'free',when:()=>S.age===13,icon:'🧭',tag:'자유학기',title:'진로 탐색 주간',
+ text:()=>`중학교 1학년은 시험 부담 없이 진로를 탐색하는 <b>자유학기</b>다. 이번 주는 직업 체험의 날. ${N('은')} 어떤 체험 부스로 향할까?`,
+ choices:[
+  {t:'⚖️ 국회와 법원 견학 (정치·법)',fn:()=>intr('law','국회의사당 본회의장을 직접 봤다. 300개의 의석 가운데 하나에 언젠가 앉아 보고 싶다는 생각이 스쳤다.',{civic:4})},
+  {t:'🔬 대학 실험실 체험 (의학·과학)',fn:()=>intr('sci','현미경 속 세포가 신기했다. 하얀 가운을 입은 내 모습을 상상해 봤다.',{intel:4})},
+  {t:'📈 청소년 경제 캠프 (경영·경제)',fn:()=>intr('biz','모의 창업 대회에서 팀장을 맡았다. 사람을 모아 무언가를 만드는 일이 즐거웠다.',{social:2,intel:2})},
+  {t:'🎤 방송국과 체육관 체험 (예술·체육)',fn:()=>intr('arts','무대 조명 아래 서 보니 가슴이 뛰었다.',{health:2,happy:3})},
+  {t:'🔧 기술 공방 체험 (기술·공학)',fn:()=>intr('tech','직접 조립한 로봇이 움직였을 때의 짜릿함을 잊을 수 없다.',{health:2,intel:2})},
+ ]},
+/* --- 14세 중2 --- */
+{id:'bully',when:()=>S.age===14,icon:'🚸',tag:'중학교 2학년',title:'복도에서 본 장면',
+ text:'점심시간, 복도 끝에서 같은 반 친구가 몇몇 아이들에게 둘러싸여 있다. 말투와 외모를 흉내 내며 낄낄거린다. 친구는 고개를 푹 숙이고 있다.',
+ choices:[
+  {t:'선생님께 알리고, 117 학교폭력 신고센터도 알려 준다',fn:()=>{fx({civic:5,happy:1});lg('학교폭력을 목격하고 신고');return{t:'용기를 내 선생님께 알렸다. 학교는 사안을 조사했고, 친구는 나중에 조용히 “고마워”라고 말했다. 학교폭력은 117(문자 #0117)로도 신고할 수 있다.',chain:[qz('rights','기본권')]}}},
+  {t:'직접 끼어들어 말린다',req:()=>S.st.health>=40||S.st.social>=45,rq:'체력 40 또는 사교 45 이상',fn:()=>{fx({civic:3,social:3});if(ch(.3)){fx({health:-3});return{t:'“그만해!” 소리치며 막아섰다. 몸싸움이 조금 있었지만, 그날 이후 그 아이들은 친구를 건드리지 않았다.',chain:[qz('rights','기본권')]}}return{t:'“그만해!” 한마디에 분위기가 싸해지더니 아이들이 흩어졌다. 친구와는 그 뒤로 단짝이 되었다.',chain:[qz('rights','기본권')]}}},
+  {t:'못 본 척 지나간다',fn:()=>{fx({happy:-4,civic:-2});return{t:'못 본 척 지나쳤다. 그런데 그날 밤, 그 친구의 표정이 계속 떠올랐다.',chain:[qz('rights','기본권')]}}},
+ ]},
+/* --- 15세 중3 --- */
+{id:'prehs',when:()=>S.age===15,icon:'📚',tag:'중학교 3학년',title:'고입 대비 사회 모의고사',
+ text:'고등학교 원서를 쓰기 전, 학교에서 사회 모의고사를 본다. 문제를 맞힐수록 지능과 시민의식이 오르고, 과학고나 외고에 도전할 때 도움이 된다.',
+ choices:[{t:'열심히 풀어 본다',fn:()=>({t:'시험지를 받았다. 모두 세 문제다.',chain:[qz('sep','고입 모의고사 1번'),qz('social','고입 모의고사 2번'),qz('local','고입 모의고사 3번')]})},
+  {t:'긴장된다… 그래도 해 본다',fn:()=>({t:'심호흡을 하고 시험지를 넘겼다.',chain:[qz('sep','고입 모의고사 1번'),qz('social','고입 모의고사 2번'),qz('local','고입 모의고사 3번')]})}]},
+{id:'hs',when:()=>S.age===15,icon:'🏫',tag:'중학교 3학년',title:'고등학교 원서 쓰기',
+ text:'중학교 3학년 2학기. 담임 선생님과 진로 상담을 했다. 어느 고등학교에 원서를 낼까?',
+ choices:[
+  {t:'🔭 과학고·영재고에 도전한다',req:()=>S.st.intel>=62,rq:'지능 62 이상',fn:()=>hsTry('science',.45+(S.st.intel-62)/40)},
+  {t:'🌐 외국어고·국제고에 도전한다',req:()=>S.st.intel>=56,rq:'지능 56 이상',fn:()=>hsTry('foreign',.5+(S.st.intel-56)/40)},
+  {t:'🏫 집 근처 일반고에 진학한다',fn:()=>{S.flags.hs='general';fx({happy:2});lg('일반고 진학');return{t:'친구들 대부분과 같은 일반고에 진학했다. 고교학점제로 듣고 싶은 과목을 골라 들을 수 있다.',chain:[qz('sep','삼권분립')]}}},
+  {t:'🔧 마이스터고·특성화고에 진학한다',fn:()=>{S.flags.hs='voc';fx({health:2,happy:2});lg('마이스터고 진학',1);return{t:'일찍 기술을 배워 사회에 나가기로 했다. 졸업과 동시에 취업할 수 있는 길이 열렸다.',chain:[qz('sep','삼권분립')]}}},
+  {t:'🎨 예술고·체육고에 도전한다',req:()=>S.st.health>=52||S.st.social>=52,rq:'체력 또는 사교 52 이상',fn:()=>hsTry('arts',.45+Math.max(S.st.health,S.st.social)/200)},
+ ]},
+/* --- 16세 고1 --- */
+{id:'club',when:()=>S.age===16,icon:'🎒',tag:'고등학교 1학년',title:'동아리 선택',text:'고등학교의 꽃, 동아리! 어디에 들어갈까?',choices:[
+  {t:'⚖️ 모의국회·토론 동아리',fn:()=>{fx({civic:4,intel:2});S.flags.debate=true;lg('모의국회 동아리 활동');return'법안을 직접 만들어 발의하고 표결하는 모의국회에 참여했다. 상대 의견을 듣고 설득하는 법을 배웠다.'}},
+  {t:'🔬 과학탐구 동아리',fn:()=>{fx({intel:5});return'실험 보고서를 쓰며 밤을 새웠다. 탐구 대회에서 장려상을 받았다.'}},
+  {t:'🎸 밴드·댄스 동아리',fn:()=>{fx({social:4,happy:4});return'축제 무대에 섰다. 환호성이 아직도 귀에 남아 있다.'}},
+  {t:'🤲 봉사 동아리',fn:()=>{fx({civic:3,social:2,network:2});return'지역아동센터에서 아이들의 공부를 도왔다. 함께 사는 사회의 의미를 생각하게 되었다.'}},
+  {t:'🏀 운동부',fn:()=>{fx({health:5,social:1});return'땀 흘리며 팀워크를 배웠다.'}},
+ ]},
+{id:'stu',when:()=>S.age===16,icon:'🏫',tag:'학생 자치',title:'전교 학생회장 선거',text:'2학기 전교 학생회장 선거 공고가 붙었다. 학생회는 학생들의 의견을 모아 학교에 전달하는 <b>학생 자치 기구</b>다.',choices:[
+  {t:'학생회장 후보로 출마한다',req:()=>S.st.social>=40||S.flags.classPres,rq:'사교 40 이상 또는 반장 경험 필요',fn:()=>({t:'부회장 후보도 함께 정했다. 이제 선거운동 방식을 정할 차례다.',chain:[E.stuCamp,qz('secret','비밀선거')]})},
+  {t:'친구 후보의 선거 캠프에 합류한다',fn:()=>{fx({social:3,network:3,civic:1});return{t:'공약 아이디어를 내고 포스터를 붙였다. 함께 뛰는 동안 친구가 많이 생겼다.',chain:[qz('secret','비밀선거')]}}},
+  {t:'공약을 비교해 보고 투표만 한다',fn:()=>{fx({civic:2});return{t:'후보들의 공약집을 꼼꼼히 읽고 한 표를 행사했다.',chain:[qz('secret','비밀선거')]}}},
+ ]},
+/* --- 17세 고2 --- */
+{id:'pet',when:()=>S.age===17,icon:'🚦',tag:'고등학교 2학년',title:'위험한 통학로',text:'학교 앞 횡단보도에서 또 사고가 날 뻔했다. 신호등도, 과속 단속 카메라도 없다. 친구들은 “어차피 안 바뀌어”라고 말한다.',choices:[
+  {t:'구청에 민원을 넣고 학생들 서명을 모은다',fn:()=>{fx({civic:5,fame:3,network:2});if(ch(.6)){lg('통학로 신호등 설치를 이끌어 냄',1);return{t:'서명 800명을 모아 구청에 냈다. 6개월 뒤, 학교 앞에 신호등이 생겼다. 내 목소리로 세상이 바뀌었다!',chain:[qz('petition','청원권')]}}return{t:'서명을 모아 냈지만 예산 문제로 내년으로 미뤄졌다. 그래도 지역 신문에 기사가 실렸다.',chain:[qz('petition','청원권')]}}},
+  {t:'청소년참여위원회에 안건으로 올린다',req:()=>S.st.civic>=45,rq:'시민의식 45 이상',fn:()=>{fx({civic:4,network:4,fame:2});lg('청소년참여위원회 활동');return{t:'구청 공무원과 청소년 위원들이 함께 현장을 둘러봤다. 청소년도 정책을 만드는 데 참여할 수 있다는 걸 알았다.',chain:[qz('petition','청원권')]}}},
+  {t:'SNS에 불만 글만 올린다',fn:()=>{fx({social:1});return{t:'‘좋아요’는 많이 받았지만 바뀌는 건 없었다.',chain:[qz('petition','청원권')]}}},
+ ]},
+/* --- 18세 고3 --- */
+{id:'vote',when:()=>S.age===18,icon:'🗳️',tag:'고등학교 3학년',title:'생애 첫 투표',text:()=>`생일이 지나 만 18세가 되었다. 마침 올해는 선거가 있다. 집으로 후보자들의 선거공보가 도착했다. 고3 교실에도 투표권을 가진 친구들이 꽤 있다.`,choices:[
+  {t:'후보들의 공약과 토론을 꼼꼼히 비교하고 투표한다',fn:()=>{fx({civic:5,intel:1});lg('생애 첫 투표',1);return{t:'선거공보와 TV 토론을 비교해 보고 신중하게 한 표를 찍었다. 기표소를 나서는데 어른이 된 기분이었다.',chain:[qz('voteage','선거권')]}}},
+  {t:'부모님이 찍는 후보를 따라 찍는다',fn:()=>{fx({civic:1});lg('생애 첫 투표');return{t:'투표는 했지만, 왜 그 후보인지 설명하기는 어려웠다.',chain:[qz('voteage','선거권')]}}},
+  {t:'인상이 제일 좋은 후보에게 찍는다',fn:()=>{fx({happy:1});lg('생애 첫 투표');return{t:'솔직히 공약은 잘 몰랐다. 다음엔 좀 더 알아보고 찍어야겠다.',chain:[qz('voteage','선거권')]}}},
+  {t:'어차피 안 바뀐다. 투표하지 않는다',fn:()=>{fx({civic:-4});return{t:'투표하지 않았다. 결과를 보고 나서야 조금 후회가 됐다. 투표하지 않은 사람의 목소리는 결과에 반영되지 않는다.',chain:[qz('voteage','선거권')]}}},
+ ]},
+{id:'sn',rep:true,when:()=>(S.age===18&&!S.flags.snDone)||(S.age===19&&S.flags.retake),icon:'📝',tag:'대학수학능력시험',title:()=>S.flags.retake?'두 번째 수능':'수능 날',
+ pre:()=>{S.flags.luck=Math.round((Math.random()+Math.random()-1)*100)/10;S.flags.score=Math.round((S.st.intel+S.flags.luck+(S.flags.retake?2:0)-(S.flags.hs==='voc'?3:0))*10)/10},
+ text:()=>{const s=S.flags.score,p=topPct(s);const g=p<=0.7?'전국 최상위권':p<=7.5?'최상위권':p<=16.4?'상위권':p<=50?'중위권':'기대에 못 미치는';
+   return`11월의 목요일. 비행기도 멈춘다는 그날, ${N('은')} 수험표를 쥐고 시험장에 들어갔다.<br><br>성적표가 나왔다. <b>${g}</b> 성적, <b>전국 상위 약 ${p<1?p.toFixed(1):Math.round(p)}%</b>다.<br><span style="font-size:14px;color:var(--muted)">지능 ${Math.round(S.st.intel)} ${S.flags.luck>=0?'+':'−'} 시험 당일 컨디션 ${Math.abs(S.flags.luck)}${S.flags.retake?' + 재수 효과 2':''}${S.flags.hs==='voc'?' − 직업계고 교육과정 3':''} = 수능 점수 ${s}</span>
+   <span class="note">📊 진학 기준은 실제 정원 비율로 정했어요. 2026학년도 고3은 45만 3,812명이고, 그중 의대 모집인원 3,016명은 상위 0.7%, 주요 10개 대학과 의약학 계열 모집인원 3만 3,886명은 상위 7.5%, 서울 소재 4년제 대학 입학정원 약 7만 4천 명은 상위 16.4%에 해당해요. 대학 취학률은 76.3%(2025)예요.</span>`},
+ choices:()=>{const s=S.flags.score;return[
+  {t:'🩺 의과대학에 진학한다',req:()=>s>=UNI_CUT.med,rq:`전국 상위 0.7% 이내 (수능 점수 ${UNI_CUT.med} 이상)`,fn:()=>uni('med')},
+  {t:'🎓 명문대(주요 10개 대학)에 진학한다',req:()=>s>=UNI_CUT.top,rq:`전국 상위 7.5% 이내 (수능 점수 ${UNI_CUT.top} 이상)`,fn:()=>uni('top')},
+  {t:'🏙️ 서울 소재 대학에 진학한다',req:()=>s>=UNI_CUT.mid,rq:`전국 상위 16.4% 이내 (수능 점수 ${UNI_CUT.mid} 이상)`,fn:()=>uni('mid')},
+  {t:'🏞️ 지역 대학에 진학한다',fn:()=>uni('local')},
+  {t:'💼 대학 대신 바로 취업한다',fn:()=>{S.flags.snDone=true;S.flags.retake=false;S.edu='hs';
+    if(S.flags.hs==='voc'){S.job={track:'tech',lv:1};S.xp=3;S.flags.firstJobAge=S.age;fx({money:300,happy:3});lg('마이스터고 졸업 후 기술직 취업',1);return'마이스터고에서 쌓은 실력으로 반도체 공장 설비 기술직에 바로 취업했다. 또래보다 몇 년 먼저 사회에 나섰다.'}
+    S.job={track:'sme',lv:0};S.xp=0;S.flags.firstJobAge=S.age;fx({money:200});lg('고교 졸업 후 중소기업 취업',1);return'대학 대신 일을 선택했다. 지역의 한 중소기업에 입사했다.'}},
+  {t:'🌟 꿈을 좇는다: 오디션·프로 입단 도전',req:()=>S.flags.hs==='arts'||S.st.health>=62||S.st.social>=62,rq:'예술·체육고 출신 또는 체력·사교 62 이상',fn:()=>{S.flags.snDone=true;S.flags.retake=false;
+    if(ch(.3+Math.max(S.st.health,S.st.social)/250+(S.flags.hs==='arts'?.15:0))){S.job={track:'star',lv:0};S.xp=0;S.edu='hs';fx({fame:5,happy:8});lg('오디션 합격, 연습생·유망주 생활 시작',1);return'수천 대 1의 경쟁을 뚫고 합격했다! 화려한 무대를 향한 고된 연습이 시작됐다.'}
+    S.edu='local';fx({happy:-6});lg('오디션 낙방 후 지역 대학 진학');return'최종 심사에서 떨어졌다. 눈물을 닦고 지역 대학에 진학했다. 꿈은 다른 모습으로 이어질 수도 있다.'}},
+  {t:'🔁 1년 더! 재수를 한다',req:()=>!S.flags.retake&&S.age===18,rq:'재수는 한 번만 할 수 있다',fn:()=>{S.flags.snDone=true;S.flags.retake=true;fx({happy:-6,intel:3});lg('재수 결정');return'기숙 학원에 들어갔다. 1년 뒤 다시 수능을 본다.'}},
+ ]}},
+/* --- 19세 --- */
+{id:'fresh',when:()=>S.age===19&&['med','top','mid','local'].includes(S.edu)&&!S.flags.retake,icon:'🌸',tag:'대학 새내기',title:'캠퍼스의 봄',text:'새내기 배움터, 동아리 박람회, 첫 수강 신청. 모든 것이 새롭다. 대학 생활의 방향을 정해 보자.',choices:[
+  {t:'학생회와 시사 토론 동아리에 들어간다',fn:()=>{fx({civic:3,network:3});return'학과 학생회에서 신입생 대표를 맡았다. 대학에도 작은 민주주의가 있다.'}},
+  {t:'장학금을 목표로 학점 관리에 집중한다',fn:()=>{fx({intel:4,money:200});return'과 수석으로 장학금을 받았다.'}},
+  {t:'동아리, 미팅, 축제를 즐긴다',fn:()=>{fx({social:4,happy:4});return'평생 갈 친구들을 만났다.'}},
+  {t:'등록금을 벌기 위해 아르바이트를 한다',fn:()=>{fx({money:400,happy:-2});return'주말마다 일하며 등록금을 보탰다. 소득에 따라 받을 수 있는 국가장학금도 신청했다.'}},
+ ]},
+{id:'worker1',when:()=>S.age===19&&S.edu==='hs'&&S.job&&S.job.track!=='star',icon:'👷',tag:'사회 초년생',title:'첫 월급날',text:'통장에 첫 월급이 찍혔다. 세금과 4대 보험료가 빠져나간 금액이다. 앞으로를 어떻게 준비할까?',choices:[
+  {t:'일하면서 야간 대학(학위 과정)을 다닌다',fn:()=>{fx({intel:4,health:-2});S.edu='local';lg('일과 학업 병행, 야간 대학 진학');return'퇴근 후 강의실로 향했다. 피곤하지만 꿈에 한 걸음 가까워졌다.'}},
+  {t:'월급의 절반을 꼬박꼬박 저축한다',fn:()=>{fx({money:600,happy:-1});return'적금 통장이 든든하게 쌓여 간다.'}},
+  {t:'부모님께 선물을 하고, 나를 위해서도 쓴다',fn:()=>{fx({happy:6,money:-100});return'부모님이 선물을 받고 눈시울을 붉히셨다.'}},
+ ]},
+{id:'trainee',when:()=>S.age===19&&S.job&&S.job.track==='star',icon:'🌟',tag:'유망주',title:'혹독한 훈련의 나날',text:'새벽부터 밤까지 이어지는 연습. 언제 데뷔할 수 있을지는 아무도 모른다.',choices:[
+  {t:'남들보다 두 배로 연습한다',fn:()=>{fx({health:4,happy:-3});S.xp+=2;return'몸은 힘들지만 실력이 눈에 띄게 늘었다.'}},
+  {t:'SNS로 팬들과 먼저 소통한다',fn:()=>{fx({social:3,fame:4});S.xp+=1;return'연습 영상이 입소문을 탔다.'}},
+  {t:'학업도 놓지 않는다 (사이버대학 진학)',fn:()=>{fx({intel:3});S.edu='local';return'만약을 대비해 공부도 이어 가기로 했다.'}},
+ ]},
+/* --- 20~21세 --- */
+{id:'abroad',when:()=>S.age===20&&S.gender==='f',icon:'✈️',tag:'스무 살',title:'더 넓은 세상으로',text:'교양 수업에서 헌법과 국민의 권리·의무를 배웠다. 그리고 학과 게시판에 교환학생과 해외 봉사단 모집 공고가 붙었다.',choices:[
+  {t:'교환학생으로 1년 떠난다',req:()=>S.money>=300||S.family===0,rq:'자산 300만원 이상',fn:()=>{fx({intel:3,social:3,money:-300,happy:4});lg('해외 교환학생',1);return{t:'낯선 나라에서 1년을 보냈다. 다양한 문화를 만나며 시야가 넓어졌다.',chain:[qz('duty','국민의 의무')]}}},
+  {t:'해외 봉사단에 참여한다',fn:()=>{fx({civic:4,social:2,network:2});lg('해외 봉사단 활동');return{t:'학교를 짓는 현장에서 땀을 흘렸다.',chain:[qz('duty','국민의 의무')]}}},
+  {t:'국내에 남아 자격증과 아르바이트에 집중한다',fn:()=>{fx({money:500,intel:2});return{t:'통장 잔고와 이력서가 함께 두꺼워졌다.',chain:[qz('duty','국민의 의무')]}}},
+ ]},
+{id:'unipres',when:()=>S.age===21&&!S.flags.military&&['med','top','mid','local'].includes(S.edu),icon:'🏛️',tag:'대학 자치',title:'총학생회장 선거',text:'총학생회장 선거철이 돌아왔다. 등록금, 학식 가격, 기숙사 문제까지 학생들의 목소리를 대변할 사람이 필요하다.',choices:[
+  {t:'총학생회장 선거에 출마한다',req:()=>S.st.civic>=50||S.flags.stuPres,rq:'시민의식 50 이상 또는 학생회장 경험',fn:()=>{if(ch(.3+S.st.social/250+S.network/250+(S.flags.stuPres?.1:0))){S.flags.uniPres=true;fx({fame:6,network:6,civic:2,happy:4});lg('대학 총학생회장 당선',1);return'당선! 대학 본부와 등록금 심의위원회에서 학생 대표로 협상했다.'}fx({happy:-3,network:3});lg('총학생회장 선거 낙선');return'낙선했지만 캠퍼스에서 이름을 알렸다.'}},
+  {t:'공약을 꼼꼼히 비교해 투표한다',fn:()=>{fx({civic:2});return'투표율이 50%를 넘어야 선거가 성립한다고 한다. 친구들에게도 투표를 권했다.'}},
+  {t:'관심 없다',fn:()=>{fx({happy:1});return'그 시간에 낮잠을 잤다.'}},
+ ]},
+{id:'union',when:()=>S.age===21&&S.job&&['tech','sme'].includes(S.job.track),icon:'🪧',tag:'직장 생활',title:'노동조합 결성',text:'회사에 노동조합을 만들자는 움직임이 있다. 헌법은 근로자의 <b>단결권, 단체교섭권, 단체행동권</b>(노동 3권)을 보장한다.',choices:[
+  {t:'노조 결성에 앞장선다',fn:()=>{fx({civic:5,network:3,fame:2});lg('노동조합 결성에 참여',1);return'동료들과 함께 노조를 만들었다. 회사와 교섭해 안전 설비가 개선되었다.'}},
+  {t:'조합원으로 가입한다',fn:()=>{fx({civic:2,social:2});return'함께 목소리를 내니 든든했다.'}},
+  {t:'중립을 지킨다',fn:()=>{fx({happy:1});return'조용히 내 일에 집중했다.'}},
+ ]},
+/* --- 22세 --- */
+{id:'parttime',when:()=>S.age===22&&!S.job,icon:'🏪',tag:'아르바이트',title:'편의점 아르바이트',text:'편의점 사장님이 말했다. “시급은 9천 원, 근로계약서는 바빠서 나중에 쓰자. 다들 그렇게 해.”',choices:[
+  {t:'최저임금과 근로계약서를 정중히 요구한다',fn:()=>{fx({civic:3,money:350});lg('근로계약서 작성과 최저임금을 당당히 요구');return{t:'법을 근거로 차분히 이야기하자 사장님도 수긍했다. 제대로 계약서를 쓰고 최저임금을 받았다.',chain:[qz('minwage','최저임금'),qz('contract','근로계약서')]}}},
+  {t:'고용노동부에 신고한다',req:()=>S.st.civic>=50,rq:'시민의식 50 이상',fn:()=>{fx({civic:5,money:450,social:-1});lg('임금 체불 신고');return{t:'고용노동부에 진정을 냈다. 근로감독 결과 덜 받은 임금을 모두 돌려받았다.',chain:[qz('minwage','최저임금'),qz('contract','근로계약서')]}}},
+  {t:'그냥 참고 일한다',fn:()=>{fx({money:250,happy:-3});return{t:'참고 일했지만 억울한 마음이 들었다.',chain:[qz('minwage','최저임금'),qz('contract','근로계약서')]}}},
+ ]},
+{id:'overtime',when:()=>S.age===22&&S.job&&S.pol===0,icon:'🌙',tag:'직장 생활',title:'공짜 야근',text:'몇 달째 밤 10시 퇴근. 그런데 월급 명세서에 연장근로 수당이 없다. 근로기준법은 연장근로에 통상임금의 50% 이상을 더해 주도록 정하고 있다.',choices:[
+  {t:'회사 인사팀에 정식으로 문제를 제기한다',fn:()=>{fx({civic:3,money:300});return{t:'수당 지급 기준이 바뀌었다. 동료들이 고마워했다.',chain:[qz('contract','근로계약서')]}}},
+  {t:'이직을 준비한다',fn:()=>{fx({intel:2,happy:1});S.xp+=1;return{t:'퇴근 후 틈틈이 이력서를 다듬었다.',chain:[qz('contract','근로계약서')]}}},
+  {t:'다들 참으니 나도 참는다',fn:()=>{fx({happy:-4,health:-2});return{t:'몸도 마음도 지쳐 간다.',chain:[qz('contract','근로계약서')]}}},
+ ]},
+/* --- 23세 --- */
+{id:'intern',when:()=>S.age===23&&!S.job,icon:'🗂️',tag:'대외활동',title:'인턴 기회',text:'졸업을 앞두고 경험을 쌓을 기회가 왔다. 어디에 지원할까?',choices:[
+  {t:'국회 인턴',fn:()=>{S.flags.intern='assembly';fx({civic:3,network:4});lg('국회 인턴 활동');return'의원실에서 법안 자료를 조사했다. 법이 만들어지는 과정을 가까이서 봤다.'}},
+  {t:'대기업 인턴',fn:()=>{S.flags.intern='corp';fx({intel:2,social:2,money:300});lg('대기업 인턴');return'체계적인 회사 생활을 경험했다.'}},
+  {t:'스타트업 인턴',fn:()=>{S.flags.intern='startup';fx({social:2,intel:2});return'작은 팀에서 이것저것 해 보며 창업의 꿈이 생겼다.'}},
+  {t:'시민단체 자원활동',fn:()=>{S.flags.intern='ngo';fx({civic:4,network:2});lg('시민단체 자원활동');return'시민의 목소리를 정책으로 만드는 일을 도왔다.'}},
+ ]},
+/* --- 24세~ 진로 --- */
+{id:'career',rep:true,when:()=>S.age>=24&&!S.job&&S.pol===0&&!S.flags.military,icon:'🧳',tag:'진로 결정',title:()=>S.flags.careerTried?'다시, 진로 도전':'어떤 일을 하며 살까?',
+ text:()=>`${S.edu&&S.edu!=='hs'?EDU[S.edu]+' 졸업을 앞두고':'이제'} 사회에 나갈 시간이다. ${N('은')} 어떤 길을 선택할까?<span class="note">💡 합격 확률은 능력치와 그동안의 경험에 따라 달라져요.</span>`,
+ pre:()=>{S.flags.careerTried=(S.flags.careerTried||0)+1},
+ choices:()=>[
+  {t:'🏢 대기업 공채에 도전한다',req:()=>S.edu&&S.edu!=='hs',rq:'대학 졸업 필요',fn:()=>tryJob('corp',.15+S.st.intel/250+S.st.social/400+(S.edu==='top'?.15:0)+(S.flags.intern==='corp'?.1:0))},
+  {t:'🏛️ 공무원 시험을 본다',fn:()=>tryJob('public',.2+S.st.intel/250+S.st.civic/500)},
+  {t:'⚖️ 로스쿨에 진학한다',req:()=>['top','mid'].includes(S.edu)&&S.st.intel>=55,rq:'서울 소재 이상 대학 졸업, 지능 55 이상',fn:()=>tryJob('law',.35+(S.st.intel-55)/80)},
+  {t:'🎙️ 국회의원 보좌진으로 정치에 입문한다',req:()=>S.st.civic>=50,rq:'시민의식 50 이상',fn:()=>tryJob('politics',.25+S.st.civic/300+S.network/300+(S.flags.intern==='assembly'?.2:0)+(S.flags.uniPres?.15:0))},
+  {t:'✊ 시민단체 활동가가 된다',req:()=>S.st.civic>=45,rq:'시민의식 45 이상',fn:()=>tryJob('ngo',.85)},
+  {t:'🚀 창업에 도전한다',fn:()=>tryJob('startup',1)},
+  {t:'🍎 교원 임용시험을 본다 (교사)',req:()=>S.edu&&S.edu!=='hs'&&S.st.intel>=45,rq:'대학 졸업, 지능 45 이상',fn:()=>tryJob('teacher',.2+S.st.intel/250+S.st.social/400)},
+  {t:'🎬 크리에이터·작가에 도전한다',fn:()=>tryJob('creator',.85)},
+  {t:'🏭 중소기업에 취업한다',fn:()=>tryJob('sme',.9)},
+ ]},
+/* --- 26세 --- */
+/* --- 정치 관문 --- */
+{id:'recruit',rep:true,p:()=>.3,when:()=>S.age>=32&&S.age<=55&&S.pol===0&&!S.polOpen&&S.job&&!['politics','ngo'].includes(S.job.track)&&(S.fame>=40||S.job.lv>=3)&&S.st.civic>=40&&(S.flags.recNo===undefined||S.age-S.flags.recNo>=6),
+ icon:'🤝',tag:'정치권의 부름',title:'인재 영입 제안',text:()=>`어느 날, 한 정당의 대표가 직접 찾아왔다. “${JOBS[S.job.track].titles[S.job.lv]}로서 보여 준 능력과 신뢰를 정치에서 펼쳐 주십시오. 다음 국회의원 선거에 영입 인재로 모시고 싶습니다.”`,
+ choices:[
+  {t:'제안을 받아들여 정치에 뛰어든다',fn:()=>{S.polOpen=true;S.flags.party=S.flags.party||pick(PARTIES);S.prevJob=S.job;S.job={track:'politics',lv:2};S.xp=7;fx({fame:5,network:5});lg('정당 인재 영입으로 정치 입문',1);return'기자회견을 열어 정치 입문을 선언했다. 이제 다음 총선을 준비한다.'}},
+  {t:'지금 하는 일에 집중하겠다며 정중히 거절한다',fn:()=>{S.flags.recNo=S.age;fx({happy:2});return'“제 자리에서 사회에 기여하겠습니다.” 정중히 거절했다.'}},
+ ]},
+{id:'minister',p:()=>.3,when:()=>S.pol===2&&!S.minister&&S.age>=40&&S.fame>=50,icon:'🏢',tag:'국무위원',title:'장관 후보자 지명',text:'대통령실에서 연락이 왔다. 장관 후보자로 지명하고 싶다는 것이다. 장관이 되려면 먼저 국회 <b>인사청문회</b>를 거쳐야 한다.',choices:()=>[
+  {t:'지명을 수락하고 인사청문회에 선다',fn:()=>{if(S.scandal>0&&ch(.7)){fx({fame:-15,happy:-10});lg('장관 후보자 낙마',1);return{t:'청문회에서 과거 선거 비리 의혹이 집중 추궁됐다. 결국 후보자에서 스스로 물러났다.',chain:[qz('hearing','인사청문회')]}}
+    S.minister=true;fx({fame:10,network:6,intel:2});lg('장관 임명',1);return{t:'날카로운 질문에도 성실하게 답했다. 청문회를 통과해 장관으로 임명되었다. 이제 한 부처를 책임진다.',chain:[qz('hearing','인사청문회')]}}},
+  {t:S.flags.exMP||S.pol!==2?'지금은 때가 아니라며 정중히 고사한다':'국회에 남겠다며 고사한다',fn:()=>({t:S.flags.exMP||S.pol!==2?'다음 선거를 준비하며 지역 활동에 집중하기로 했다.':'의정 활동에 집중하기로 했다.',chain:[qz('hearing','인사청문회')]})},
+ ]},
+
+/* --- 직업별 인생의 갈림길 --- */
+{id:'c_corp',p:()=>.35,when:()=>S.pol===0&&S.job&&S.job.track==='corp'&&S.job.lv>=1&&S.age>=28&&S.age<=50,icon:'🌏',tag:'직장 생활',title:'해외 주재원 제안',text:'회사에서 해외 지사 근무를 제안했다. 3년 동안 외국에서 일하게 된다.',choices:[
+  {t:'해외로 떠난다',fn:()=>{S.xp+=2;fx({intel:3,social:3,money:2000,happy:2,network:2});lg('해외 주재원 근무',1);return'낯선 나라에서 현지 직원들과 함께 일하며 시야가 넓어졌다.'}},
+  {t:'다른 회사의 스카우트 제의를 받아들인다',fn:()=>{S.xp+=3;fx({money:1500,happy:-2});lg('경쟁사로 이직',1);return'더 큰 역할을 맡았다. 대신 새 조직에 적응하느라 고생했다.'}},
+  {t:'가족과 지금 자리를 지킨다',fn:()=>{fx({happy:3});return'익숙한 곳에서 차근차근 쌓아 가기로 했다.'}}]},
+{id:'c_public',p:()=>.35,when:()=>S.pol===0&&S.job&&S.job.track==='public'&&S.job.lv>=1&&S.age>=27,icon:'📋',tag:'공직 생활',title:'꽉 막힌 민원',text:'규정에 딱 맞지 않아 몇 년째 해결되지 못한 주민 민원이 내 책상에 올라왔다.',choices:[
+  {t:'법령을 꼼꼼히 찾아 적극 행정으로 해결한다',fn:()=>{S.xp+=1;fx({civic:4,fame:2,intel:1});lg('적극 행정으로 민원 해결, 표창',1);return'관련 법령을 다시 해석해 해결책을 찾았다. 주민들이 감사 편지를 보냈다.'}},
+  {t:'규정대로 처리한다',fn:()=>{fx({happy:-1});return'원칙대로 처리했다. 마음 한편이 개운하지 않았다.'}},
+  {t:'정책 연수를 받고 제도 개선안을 낸다',fn:()=>{S.xp+=2;fx({intel:3});return'연수에서 배운 내용을 바탕으로 낸 제도 개선안이 채택됐다.'}}]},
+{id:'c_law',p:()=>.35,when:()=>S.pol===0&&S.job&&S.job.track==='law'&&S.job.lv>=1,icon:'⚖️',tag:'법조인의 길',title:'두 개의 사건',text:'억울한 노동자의 공익 소송과, 큰 수임료를 주는 대기업 사건이 동시에 들어왔다.',choices:[
+  {t:'공익 소송을 맡는다',fn:()=>{fx({civic:5,fame:4,money:-500});lg('공익 소송 승소',1);return'긴 재판 끝에 승소했다. 판결이 신문에 크게 실렸다.'}},
+  {t:'대기업 사건을 맡는다',fn:()=>{S.xp+=2;fx({money:3000,happy:-2});return'큰 수임료를 받았다. 경력에도 도움이 됐다.'}}]},
+{id:'c_med',p:()=>.35,when:()=>S.pol===0&&S.job&&S.job.track==='med'&&S.job.lv>=2,icon:'🩺',tag:'의사의 길',title:'의사로서의 선택',text:'전문의가 되고 몇 년이 흘렀다. 앞으로 어떤 의사로 살아갈까?',choices:[
+  {t:'동네에 병원을 연다',fn:()=>{fx({money:4000,happy:2,network:2});lg('동네 병원 개원',1);return'동네 주민들의 주치의가 되었다.'}},
+  {t:'대학병원에 남아 연구한다',fn:()=>{S.xp+=2;fx({intel:4});return'밤새 논문을 쓰며 새로운 치료법을 연구했다.'}},
+  {t:'해외 의료봉사를 떠난다',fn:()=>{fx({civic:6,fame:3,happy:4,money:-500});lg('해외 의료봉사',1);return'의료진이 없는 마을에서 수백 명의 환자를 돌봤다.'}}]},
+{id:'c_startup',p:()=>.45,when:()=>S.pol===0&&S.job&&S.job.track==='startup'&&S.job.lv>=2,icon:'🤝',tag:'창업가의 길',title:'인수 제안',text:'대기업이 우리 회사를 사고 싶다고 연락해 왔다.',choices:[
+  {t:'회사를 매각한다',fn:()=>{const g=S.job.lv*15000;fx({money:g,happy:8,fame:4});lg(`회사 매각 (${won(g)})`,1);S.job={track:'startup',lv:Math.min(4,S.job.lv+1)};return`평생의 노력이 ${won(g)}의 가치로 인정받았다. 이제 후배 창업가들에게 투자한다.`}},
+  {t:'끝까지 직접 키운다',fn:()=>{S.xp+=3;fx({happy:2});return'“우리가 만든 회사는 우리가 키운다.” 직원들이 환호했다.'}}]},
+{id:'c_star',p:()=>.4,when:()=>S.pol===0&&S.job&&S.job.track==='star'&&S.job.lv>=2,icon:'🌟',tag:'스타의 길',title:'전성기의 고민',text:'인기의 정점에 섰다. 하지만 언젠가는 내려와야 한다.',choices:[
+  {t:'해외 무대에 도전한다',fn:()=>{if(ch(.5)){fx({fame:10,money:3000});lg('해외 진출 성공',1);return'해외 팬들이 생겼다!'}fx({happy:-4});return'쉽지 않았다. 그래도 값진 경험이었다.'}},
+  {t:'은퇴 후 해설가·지도자를 준비한다',fn:()=>{fx({intel:4,social:2});lg('지도자 자격증 취득');return'후배들을 가르칠 자격증을 땄다. 두 번째 무대를 준비한다.'}},
+  {t:'이름을 건 사회공헌 재단을 만든다',fn:()=>{fx({civic:6,fame:4,money:-1000});lg('사회공헌 재단 설립',1);return'꿈을 꾸는 아이들을 돕는 재단을 세웠다.'}}]},
+{id:'c_tech',p:()=>.4,when:()=>S.pol===0&&S.job&&S.job.track==='tech'&&S.job.lv>=1&&S.age<=45,icon:'🏆',tag:'기술인의 길',title:'기능경기대회',text:'회사 대표로 기능경기대회에 나가 보라는 권유를 받았다.',choices:[
+  {t:'출전한다',fn:()=>{if(ch(.35+S.st.health/300)){S.xp+=4;fx({fame:4,happy:5});lg('기능경기대회 금메달',1);return'금메달! 손끝의 기술을 인정받았다.'}S.xp+=1;fx({intel:2});return'메달은 놓쳤지만 실력이 늘었다.'}},
+  {t:'기술로 창업한다',fn:()=>{S.job={track:'startup',lv:1};S.xp=3;fx({money:-1000,happy:3});lg('기술 창업',1);return'내 기술로 작은 회사를 차렸다.'}},
+  {t:'후배들을 가르친다',fn:()=>{fx({social:3,civic:2});return'후배들이 “선배님 덕분에 배웠어요” 하고 웃었다.'}}]},
+{id:'c_sme',p:()=>.35,when:()=>S.pol===0&&S.job&&S.job.track==='sme'&&S.job.lv>=2&&S.age>=38,icon:'🏭',tag:'직장 생활',title:'사장님의 제안',text:'은퇴를 앞둔 사장님이 회사를 맡아 줄 수 있겠냐고 물었다.',choices:[
+  {t:'회사를 인수한다',req:()=>S.money>=3000,rq:'현금 3,000만원 필요',fn:()=>{S.money-=3000;S.job.lv=Math.max(S.job.lv,3);S.xp=Math.max(S.xp,12);fx({happy:4,network:3});lg('다니던 회사 인수',1);return'직원들과 함께 회사의 새 출발을 선언했다.'}},
+  {t:'정중히 거절한다',fn:()=>'지금 자리에서 최선을 다하기로 했다.'}]},
+{id:'c_ngo',p:()=>.4,when:()=>S.pol===0&&S.job&&S.job.track==='ngo'&&S.job.lv>=1,icon:'📜',tag:'시민운동',title:'시민 입법 캠페인',text:'우리 단체가 준비한 법 개정안을 국회에 제출하자는 의견이 모였다.<span class="note">💡 국회 국민동의청원은 30일 안에 5만 명이 동의하면 국회 위원회에서 심사해요.</span>',choices:[
+  {t:'국민동의청원 캠페인을 이끈다',fn:()=>{S.xp+=2;fx({civic:5,fame:5,network:3});if(ch(.5)){lg('시민 입법 캠페인 성공, 법 개정',1);return'5만 명의 동의를 얻었고, 몇 달 뒤 법이 바뀌었다!'}lg('국민동의청원 캠페인');return'동의는 모였지만 법 개정은 다음 국회로 미뤄졌다.'}},
+  {t:'현장 지원 활동에 집중한다',fn:()=>{fx({civic:3,happy:2});return'법보다 먼저 사람을 만나기로 했다.'}}]},
+{id:'c_teacher',p:()=>.45,when:()=>S.pol===0&&S.job&&S.job.track==='teacher'&&S.age>=28,icon:'🍎',tag:'선생님의 길',title:'잊지 못할 제자',text:'수업 시간마다 엎드려 있던 학생이 있다. 집안 사정이 어렵다는 이야기를 들었다.',choices:[
+  {t:'방과 후에 따로 상담하고 진로를 함께 찾는다',fn:()=>{fx({happy:5,social:2,civic:2});lg('제자의 꿈을 함께 찾아 주다',1);return'10년 뒤, 그 학생이 교사가 되어 찾아왔다. “선생님 덕분이에요.”'}},
+  {t:'교육청 정책 연구에 참여한다',fn:()=>{S.xp+=2;fx({intel:3});return'더 많은 학생을 돕는 제도를 만들기로 했다.'}}]},
+{id:'c_creator',p:()=>.45,when:()=>S.pol===0&&S.job&&S.job.track==='creator'&&S.job.lv>=1,icon:'📹',tag:'크리에이터의 길',title:'협찬 제안',text:'한 업체가 영상에 제품을 소개해 주면 큰돈을 주겠다고 한다. 단, 광고라는 걸 밝히지 말아 달란다.<span class="note">💡 대가를 받고도 광고임을 밝히지 않는 ‘뒷광고’는 표시광고법 위반이 될 수 있어요.</span>',choices:[
+  {t:'“유료 광고 포함”을 표시하고 협찬을 받는다',fn:()=>{S.xp+=1;fx({money:1000,fame:2});return'솔직하게 밝혔더니 오히려 구독자들의 신뢰가 올라갔다.'}},
+  {t:'몰래 광고한다',fn:()=>{if(ch(.6)){fx({fame:-10,happy:-6});lg('뒷광고 적발');return'뒷광고가 들통났다. 사과 영상을 올려야 했다.'}fx({money:1500});return'돈은 벌었지만 마음 한구석이 찜찜하다.'}},
+  {t:'거절하고 내 콘텐츠에 집중한다',fn:()=>{S.xp+=1;fx({happy:2});return'좋아하는 이야기를 꾸준히 만들었다.'}}]},
+{id:'c_farmer',p:()=>.5,when:()=>S.pol===0&&S.job&&S.job.track==='farmer',icon:'🌾',tag:'농부의 길',title:'농촌에서 맞은 첫 고비',text:'태풍이 지나가며 비닐하우스 일부가 무너졌다. 마을 사람들이 함께 대책을 이야기한다.<span class="note">💡 농작물재해보험에 가입하면 자연재해로 입은 피해를 보상받을 수 있어요.</span>',choices:[
+  {t:'스마트팜 지원 사업을 신청해 다시 짓는다',fn:()=>{S.xp+=3;fx({intel:2,money:-500});lg('스마트팜 전환',1);return'센서와 자동화 장비를 갖춘 스마트팜으로 다시 일어섰다.'}},
+  {t:'마을 사람들과 협동조합을 만든다',fn:()=>{S.xp+=2;fx({social:3,civic:3,network:3});lg('마을 협동조합 설립',1);return'함께 기르고 함께 팔기로 했다. 마을에 활기가 돌았다.'}}]},
+{id:'midlife',p:()=>.3,when:()=>S.pol===0&&S.job&&S.age>=34&&S.age<=50&&!['politics'].includes(S.job.track),icon:'🧭',tag:'인생 2막',title:'이대로 괜찮을까?',text:()=>`${JOBS[S.job.track].titles[S.job.lv]}로 일한 지 꽤 되었다. 문득 다른 삶을 살아 보고 싶다는 생각이 든다.`,choices:[
+  {t:'지금의 길을 끝까지 걸어간다',fn:()=>{S.xp+=2;fx({happy:1});return'익숙한 길이지만, 더 깊이 걸어 보기로 했다.'}},
+  {t:'귀농해서 스마트팜을 시작한다',req:()=>S.money>=2000,rq:'현금 2,000만원 필요',fn:()=>{S.job={track:'farmer',lv:0};S.xp=0;fx({money:-2000,happy:6,health:3});lg('귀농, 인생 2막 시작',1);return'정부의 귀농 교육을 받고 시골로 내려갔다. 아침 공기가 달랐다.'}},
+  {t:'크리에이터·작가에 도전한다',fn:()=>{S.job={track:'creator',lv:0};S.xp=0;fx({happy:5,fame:3});lg('크리에이터로 인생 2막',1);return'그동안의 경험을 이야기로 풀어내기 시작했다.'}},
+  {t:'교사가 되기 위해 다시 공부한다',req:()=>S.edu&&S.edu!=='hs'&&S.st.intel>=50,rq:'대학 졸업, 지능 50 이상',fn:()=>{if(ch(.45)){S.job={track:'teacher',lv:0};S.xp=0;fx({happy:6,money:-800});lg('늦깎이 교사가 되다',1);return'교육대학원을 마치고 임용시험에 합격했다. 늦깎이 선생님의 첫 수업.'}fx({intel:3,happy:-3,money:-800});return'임용시험에 떨어졌다. 그래도 배운 것은 남았다.'}},
+  {t:'대학원에 진학해 전문성을 키운다',fn:()=>{S.xp+=2;fx({intel:5,money:-1500});lg('대학원 졸업',1);return'퇴근 후 강의실로 향한 2년. 석사 학위를 받았다.'}}]},
+/* --- 동네에서 권해지는 자리 --- */
+{id:'o_tong',p:()=>.35,when:()=>S.pol===0&&S.age>=28&&(S.network>=28||S.fame>=15)&&!S.flags.localRole,icon:'🏘️',tag:'동네의 일',title:'통장을 맡아 주세요',text:'동 행정복지센터에서 연락이 왔다. 우리 통의 통장을 맡아 달라는 것이다. 통장은 주민과 행정을 잇는 우리 동네의 대표다.<span class="note">💡 동장(행정복지센터장)은 공무원이 맡는 자리예요. 주민들은 통장이나 주민자치회 위원 같은 자리로 동네 일에 참여해요.</span>',choices:[
+  {t:'맡는다',fn:()=>{S.flags.localRole='통장';fx({civic:3,fame:3,network:3,happy:-1});lg('우리 동네 통장',1);return'집집마다 안내문을 돌리고 어르신들 안부를 살폈다. 동네 사정을 누구보다 잘 알게 됐다.'}},
+  {t:'바빠서 사양한다',fn:()=>'다음에 기회가 되면 돕겠다고 했다.'}]},
+{id:'o_jachi',p:()=>.35,when:()=>S.pol===0&&S.age>=32&&S.network>=38&&(S.flags.localRole==='통장'||S.fame>=25)&&S.flags.localRole!=='주민자치회장',icon:'🏛️',tag:'동네의 일',title:'주민자치회장 추천',text:'주민들이 나를 주민자치회장으로 추천했다. 주민자치회는 동네 예산 쓰임새를 주민이 직접 정하는 모임이다.',choices:[
+  {t:'맡는다',fn:()=>{S.flags.localRole='주민자치회장';fx({civic:4,fame:5,network:4});lg('주민자치회장 선출',1);return'주민총회를 열어 놀이터 개선과 어르신 쉼터 사업을 직접 정했다. 작은 민주주의가 우리 동네에서 움직였다.'}},
+  {t:'사양한다',fn:()=>'더 적합한 분을 추천했다.'}]},
+{id:'o_school',p:()=>.4,when:()=>S.pol===0&&S.kids>0&&S.marAge&&S.age>=S.marAge+8&&S.network>=25,icon:'🏫',tag:'동네의 일',title:'학교운영위원 제안',text:'아이 학교에서 학부모 대표로 학교운영위원회에 참여해 달라고 한다.',choices:[
+  {t:'참여한다',fn:()=>{fx({civic:3,network:2,fame:2});lg('학교운영위원 활동',1);return'급식, 안전, 방과 후 수업까지, 학교가 움직이는 방식을 처음 알았다.'}},
+  {t:'사양한다',fn:()=>'아이 곁에서 응원하기로 했다.'}]},
+{id:'o_advisor',p:()=>.3,when:()=>S.pol===0&&S.age>=35&&S.fame>=32&&S.st.intel>=50&&!S.flags.advisor,icon:'🗂️',tag:'동네의 일',title:'시 정책자문위원 위촉',text:'시청에서 정책자문위원으로 위촉하고 싶다는 연락이 왔다. 전문가로서 시의 정책에 의견을 내는 자리다.',choices:[
+  {t:'위촉을 받아들인다',fn:()=>{S.flags.advisor=true;fx({fame:4,intel:2,network:3});lg('시 정책자문위원 위촉',1);return'회의에서 낸 의견이 실제 시 정책에 반영되었다.'}},
+  {t:'사양한다',fn:()=>'본업에 집중하기로 했다.'}]},
+{id:'o_nominate',rep:true,p:()=>.4,when:()=>S.pol===0&&S.age>=28&&S.age<=55&&S.fame>=30&&S.network>=40&&!S.flags.nominated&&(S.flags.localRole||S.flags.advisor)&&!(S.job&&S.job.track==='politics')&&(S.flags.nomNo===undefined||S.age-S.flags.nomNo>=6),icon:'📣',tag:'정치권의 부름',title:'시의원 공천 제안',text:()=>`${S.flags.party||'한 정당'}의 지역 위원장이 찾아왔다. “동네에서 쌓은 신뢰라면 시의원이 될 수 있습니다. 공천을 드리겠습니다.” ${nextElec('local')===0?'마침 올해가 지방선거다.':`다음 지방선거는 ${nextElec('local')}년 뒤다.`}`,choices:[
+  {t:'공천을 받아들인다',fn:()=>{S.flags.nominated=true;S.flags.party=S.flags.party||pick(PARTIES);fx({fame:3,network:2});lg('시의원 공천 확정',1);
+    if(nextElec('local')===0)return{t:'공천장을 받았다. 이제 출마 여부만 정하면 된다.',chain:[elecDecide('local')]};return`공천을 약속받았다. ${nextElec('local')}년 뒤 지방선거를 준비하기로 했다.`}},
+  {t:'정치는 하지 않겠다고 사양한다',fn:()=>{S.flags.nomNo=S.age;return'“저는 지금 자리에서 동네를 돕겠습니다.”'}}]},
+
+/* --- 아르바이트 선택 --- */
+{id:'pt_teen',when:()=>S.age===16,icon:'🧾',tag:'고등학생',title:'아르바이트를 할까?',
+ text:()=>`${['용돈은 넉넉한 편이라 꼭 일할 필요는 없다. 그래도 사회 경험을 해 보고 싶은 마음이 든다.','용돈이 빠듯하다. 친구들과 놀러 갈 때마다 지갑 사정이 신경 쓰인다.','집안 형편이 어렵다. 부모님께 손 벌리기가 미안해서 생활비라도 보태고 싶다.'][S.family]}<span class="note">💡 만 15세부터 아르바이트를 할 수 있어요. 18세 미만은 친권자 동의서와 가족관계증명서가 필요하고, 하루 7시간·일주일 35시간까지만 일할 수 있으며, 밤 10시부터 아침 6시까지의 야간 근로는 원칙적으로 금지돼요.</span>`,
+ choices:[
+  {t:'주말 아르바이트를 한다',fn:()=>{S.pt='weekend';fx({social:2});lg('주말 아르바이트 시작',1);return'주말마다 동네 카페에서 일하기로 했다. 돈은 모이지만 공부 시간은 조금 줄어든다.'}},
+  {t:'방학에만 짧게 일한다',fn:()=>{S.pt='vacation';fx({social:1});lg('방학 아르바이트 시작');return'방학 동안만 일하기로 했다. 학기 중에는 학교생활에 집중한다.'}},
+  {t:'지금은 학교생활에 집중한다',fn:()=>{S.pt=null;fx({intel:1});return'아르바이트는 나중으로 미루고 지금 할 일에 집중하기로 했다.'}}]},
+{id:'pt_uni',when:()=>S.age===19&&isStudent(),icon:'🧾',tag:'대학생',title:'대학 생활과 아르바이트',
+ text:()=>`대학생이 되니 돈 쓸 곳이 많아졌다. ${['부모님이 넉넉하게 용돈을 보내 주신다.','부모님이 보내 주시는 용돈으로 아껴 쓰면 생활할 수 있다.','부모님이 보내 주시는 용돈이 적어 생활비가 모자란다. 일을 하지 않으면 생활비 대출을 받아야 한다.'][S.family]} 아르바이트를 할까?<span class="note">📊 2025년 조사에서 대학생의 한 달 평균 용돈은 69만원이었어요. 생활비가 모자라면 한국장학재단의 생활비 대출(학기당 200만원까지)을 받을 수도 있어요.</span>`,
+ choices:[
+  {t:'주말 아르바이트를 한다',fn:()=>{S.pt='weekend';fx({social:2});lg('대학생 주말 아르바이트');return'주말마다 일하며 생활비를 번다. 대신 공부와 동아리에 쓸 시간은 줄었다.'}},
+  {t:'방학에만 일한다',fn:()=>{S.pt='vacation';return'학기 중에는 공부, 방학에는 아르바이트로 균형을 잡았다.'}},
+  {t:'하지 않고 학업과 활동에 집중한다',req:()=>S.family<2||S.money>=600,rq:'생활비가 모자라 일을 해야 한다',fn:()=>{S.pt=null;fx({intel:1});return'시간을 오롯이 공부와 대외활동에 쓰기로 했다.'}}]},
+
+/* --- 국회의원 재선·3선 --- */
+{id:'reelect',rep:true,when:()=>S.pol===2&&!S.flags.exMP&&!S.flags.presWin&&nextElec('assembly')===0&&S.lastElec.assembly!==S.age&&S.age<=72,icon:'🔁',tag:'국회의원 선거',
+ title:()=>`${(S.terms||1)+1===2?'재선':((S.terms||1)+1)+'선'}에 도전할까?`,
+ text:()=>`${termName()}국회의원으로 4년을 보냈다. 다시 총선이 다가온다. 유권자들은 그동안의 의정 활동을 평가할 것이다.<span class="note">💡 국회의원은 연임 제한이 없어요. 여러 번 당선된 ‘다선 의원’은 국회의장이나 당 대표를 맡기도 해요.</span>`,
+ choices:[
+  {t:'지역구에서 다시 출마한다',fn:()=>reelect(0,'지역구 재도전')},
+  {t:'당의 요청으로 어려운 지역(험지)에 출마한다',fn:()=>reelect(-.15,'험지 출마',{fame:6})},
+  {t:'불출마를 선언하고 후배에게 길을 연다',fn:()=>{S.lastElec.assembly=S.age;S.flags.exMP=true;fx({civic:4,fame:3});lg('총선 불출마 선언',1);return'“정치는 물러날 때를 아는 것도 중요합니다.” 불출마 선언에 박수가 쏟아졌다.'}}]},
+/* --- 정치인의 시련과 유혹 --- */
+{id:'p_fake',p:()=>.25,when:()=>S.pol>=1&&!S.flags.exMP&&!S.flags.presWin,icon:'📲',tag:'정치적 공격',title:'가짜뉴스가 퍼졌다',
+ text:'“○○ 의원, 해외 원정 골프 접대” 사실이 아닌 글이 SNS와 유튜브를 타고 빠르게 퍼지고 있다. 지지자들의 항의 전화가 빗발친다.<span class="note">💡 허위 보도로 피해를 입으면 언론중재위원회에 정정보도를 청구할 수 있고, 거짓 사실로 명예를 훼손하면 형사 처벌을 받을 수 있어요.</span>',
+ choices:[
+  {t:'증거 자료를 공개하고 정정보도를 청구한다',fn:()=>{fx({civic:3,fame:3});lg('가짜뉴스에 정정보도로 대응',1);return'항공권과 일정표를 공개하자 오해가 풀렸다. 언론사들이 정정보도를 냈다.'}},
+  {t:'명예훼손으로 고소한다',fn:()=>{if(ch(.6)){fx({fame:2});return'최초 유포자가 처벌받았다. 다만 “정치인이 국민을 고소한다”는 비판도 들었다.'}fx({fame:-3,happy:-2});return'수사는 길어지고, 그사이 소문은 더 퍼졌다.'}},
+  {t:'대응하지 않고 무시한다',fn:()=>{if(ch(.5)){fx({fame:-6});return'침묵을 인정으로 받아들이는 사람이 늘었다.'}return'다행히 금세 잠잠해졌다.'}}]},
+{id:'p_gaffe',p:()=>.2,when:()=>S.pol>=1&&!S.flags.exMP&&!S.flags.presWin,icon:'🎤',tag:'정치적 위기',title:'말실수 논란',
+ text:'방송 토론 중 상대 후보를 비꼬려다 특정 지역을 비하하는 듯한 말을 했다. 영상이 퍼지며 사과 요구가 이어진다.',
+ choices:[
+  {t:'즉시 진심으로 사과한다',fn:()=>{fx({fame:-2,civic:2});return'변명 없이 고개를 숙였다. 논란은 빠르게 가라앉았다.'}},
+  {t:'“발언이 왜곡됐다”고 해명한다',fn:()=>{if(ch(.4)){fx({fame:-1});return'전체 영상이 공개되며 해명이 받아들여졌다.'}fx({fame:-7});return'해명이 오히려 불을 붙였다. 사과 시기를 놓쳤다.'}},
+  {t:'끝까지 버틴다',fn:()=>{fx({fame:-9,social:-2});lg('말실수 논란',1);return'지지율이 크게 떨어졌다. 당 안에서도 비판이 나왔다.'}}]},
+{id:'p_lobby',p:()=>.25,when:()=>S.pol>=1&&!S.flags.exMP&&!S.flags.presWin,icon:'💼',tag:'유혹',title:'수상한 후원 제안',
+ text:'한 기업인이 찾아왔다. “직원 50명 이름으로 나눠서 후원금을 넣겠습니다. 저희 회사 관련 법안만 잘 부탁드립니다.”<span class="note">💡 정치자금법에서 한 사람이 한 후원회에 낼 수 있는 돈은 1년에 500만원까지예요. 남의 이름을 빌려 나눠 내는 ‘쪼개기 후원’과 대가를 바라는 후원은 불법이에요.</span>',
+ choices:[
+  {t:'단호히 거절하고 선관위에 알린다',fn:()=>{fx({civic:5,fame:3});lg('불법 후원 제안을 거절하고 신고',1);return'선거관리위원회가 조사에 나섰다. 청렴한 정치인이라는 평가가 따라붙었다.'}},
+  {t:'정중히 거절만 한다',fn:()=>{fx({civic:2});return'더 이상 연락하지 말라고 했다.'}},
+  {t:'모른 척 받는다',fn:()=>{S.scandal++;fx({money:3000,civic:-6});return'통장에 후원금이 쌓였다. 아무도 모를 것 같았다… 지금은.'}}]},
+{id:'p_land',p:()=>.2,when:()=>S.pol>=1&&!S.flags.exMP&&!S.flags.presWin&&S.money>=3000,icon:'🗺️',tag:'유혹',title:'개발 계획의 비밀',
+ text:'상임위 회의에서 아직 발표되지 않은 신도시 개발 예정지를 알게 됐다. 지인이 “지금 땅을 사 두면 몇 배가 된다”고 귀띔한다.<span class="note">💡 이해충돌방지법에 따라 공직자가 직무상 알게 된 비밀을 이용해 재산상 이익을 얻으면 처벌받아요.</span>',
+ choices:[
+  {t:'관심 두지 않는다',fn:()=>{fx({civic:3});return'공직자는 정보로 돈을 벌면 안 된다. 원칙을 지켰다.'}},
+  {t:'가족 이름으로 땅을 산다',fn:()=>{S.scandal++;S.money-=3000;S.flags.landX=true;fx({civic:-8});return'가족 명의로 땅을 샀다. 등기부에 내 이름은 없다.'}}]},
+{id:'p_family',p:()=>.2,when:()=>S.pol===2&&!S.flags.exMP&&!S.flags.presWin&&S.kids>0&&S.age-(S.kidAge||S.age)>=1,icon:'🎓',tag:'정치적 공격',title:'자녀 특혜 의혹',
+ text:()=>{const k=S.age-(S.kidAge||S.age);return k<7?'야당이 내 아이가 대기 순번을 건너뛰고 국공립 어린이집(유치원)에 들어갔다며 특혜 의혹을 제기했다.':k<19?'야당이 내 아이가 다니는 학교에서 상을 받고 교내 대회에 뽑히는 과정에 특혜가 있었다고 의혹을 제기했다.':'야당이 내 자녀의 대학 입시와 인턴 경력에 특혜가 있었다고 의혹을 제기했다.'},
+ choices:[
+  {t:'모든 자료를 투명하게 공개한다',fn:()=>{if(ch(.75)){fx({fame:3,civic:2});return'자료를 검증한 언론이 “특혜는 없었다”고 보도했다.'}fx({fame:-6,happy:-4});return'작은 실수가 드러나 사과해야 했다.'}},
+  {t:'정치 공세라며 대응하지 않는다',fn:()=>{fx({fame:-4});return'의혹은 풀리지 않은 채 꼬리표로 남았다.'}}]},
+{id:'p_party',p:()=>.25,when:()=>S.pol===2&&!S.flags.exMP&&!S.flags.presWin,icon:'⚔️',tag:'당내 갈등',title:'공천을 둘러싼 계파 싸움',
+ text:'당이 두 편으로 갈라졌다. 당 지도부는 내게 한쪽 편에 서라고 압박한다.',
+ choices:[
+  {t:'당 지도부 편에 선다',fn:()=>{fx({network:5,civic:-2});return'지도부의 신임을 얻었다. 대신 “줏대 없다”는 말도 들었다.'}},
+  {t:'소신대로 중재에 나선다',fn:()=>{if(ch(.5)){fx({fame:5,network:3});lg('당내 갈등 중재',1);return'양쪽을 설득해 갈등을 봉합했다. 차세대 리더로 주목받았다.'}fx({network:-4});return'양쪽 모두에게 미움을 샀다.'}},
+  {t:'탈당해 새 정당을 만든다',fn:()=>{const old=S.flags.party;S.flags.party='새길개혁당';S.flags.partyRole=true;fx({fame:6,network:-6});lg(`${old||'정당'} 탈당, 새길개혁당 창당`,1);return'뜻을 같이하는 의원들과 새 정당을 세웠다. 험한 길이 시작됐다.'}}]},
+{id:'p_audit',p:()=>.3,when:()=>S.pol===2&&!S.flags.exMP&&!S.flags.presWin,icon:'🔍',tag:'의정 활동',title:'국정감사 시즌',
+ text:'1년에 한 번, 국회가 정부의 일을 꼼꼼히 따지는 국정감사가 열렸다. 어디에 힘을 쏟을까?',
+ choices:[
+  {t:'밤새 자료를 분석해 예산 낭비를 파헤친다',fn:()=>{fx({fame:5,intel:2,health:-2});lg('국정감사 우수 의원 선정',1);return'수백억 원의 예산 낭비를 밝혀냈다. ‘국감 스타’라는 별명이 붙었다.'}},
+  {t:'민생 법안 처리에 집중한다',fn:()=>{fx({civic:3,fame:2});lg('대표 발의 법안 통과',1);return'내가 대표 발의한 생활 법안이 본회의를 통과했다.'}},
+  {t:'방송에 자주 나가 이름을 알린다',fn:()=>{fx({fame:4,civic:-1});return'인지도는 올랐지만 “보여 주기식”이라는 비판도 받았다.'}}]},
+{id:'p_staff',p:()=>.2,when:()=>S.pol>=1&&!S.flags.exMP&&!S.flags.presWin&&S.st.social<55,icon:'📢',tag:'정치적 위기',title:'보좌진의 폭로',
+ text:'전직 보좌진이 “의원이 사적인 심부름을 시키고 폭언을 했다”고 폭로했다.',
+ choices:[
+  {t:'사과하고 근무 환경 개선책을 발표한다',fn:()=>{fx({fame:-3,social:3,civic:2});return'잘못을 인정하자 오히려 신뢰를 일부 되찾았다.'}},
+  {t:'사실이 아니라고 부인한다',fn:()=>{if(ch(.4)){fx({fame:-1});return'다른 보좌진들이 반박 증언을 해 줬다.'}fx({fame:-8});lg('보좌진 갑질 논란',1);return'녹취 파일이 공개됐다. 거짓말까지 더해져 비판이 커졌다.'}}]},
+{id:'p_probe',rep:true,p:()=>.35,when:()=>S.scandal>0&&S.pol>=1&&!S.flags.presWin,icon:'⚖️',tag:'검찰 수사',title:'검찰이 문을 두드렸다',
+ text:()=>`${S.flags.landX?'가족 명의 땅 투기 의혹':'불법 정치자금 의혹'}으로 검찰이 의원실을 압수수색했다. 언론의 카메라가 사무실 앞을 가득 메웠다.`,
+ choices:[
+  {t:'모든 것을 인정하고 책임진다',fn:()=>{S.scandal=0;S.flags.criminal=true;S.pol=0;S.flags.exMP=false;fx({fame:-25,civic:4,happy:-10});lg('비리 인정, 의원직 상실',1);return'유죄가 확정되어 의원직을 잃었다. 진실 앞에 고개를 숙였다.'}},
+  {t:'끝까지 무죄를 주장한다',fn:()=>{if(ch(.45)){S.scandal=0;fx({fame:-10});return'증거 불충분으로 무혐의 처분을 받았다. 하지만 의혹은 꼬리표로 남았다.'}S.scandal=0;S.flags.criminal=true;S.pol=0;S.flags.exMP=false;fx({fame:-35,happy:-15});lg('비리 유죄 판결, 의원직 상실',1);return'재판에서 유죄가 선고됐다. 의원직을 잃었다.'}}]},
+
+/* --- 대선 낙선 이후 --- */
+{id:'pl_after',when:()=>S.flags.presLost!==undefined&&!S.flags.presWin,icon:'🌧️',tag:'낙선 그 후',title:'대선 패배 이후',text:'대선에서 졌다. 캠프 사무실을 정리하며 많은 생각이 스친다. 이제 무엇을 할까?',choices:[
+  {t:'정책 연구소(싱크탱크)를 세운다',req:()=>S.money>=1000,rq:'현금 1,000만원 필요',fn:()=>{S.money-=1000;fx({intel:4,network:4,fame:2});lg('정책 연구소 설립',1);return'젊은 연구자들과 함께 나라의 미래 정책을 연구하기 시작했다.'}},
+  {t:'대학 초빙교수로 강단에 선다',fn:()=>{fx({intel:3,civic:2,happy:3});lg('대학 초빙교수',1);return'학생들에게 정치와 민주주의를 가르쳤다. 강의실은 늘 꽉 찼다.'}},
+  {t:'전국 민생 투어를 떠난다',fn:()=>{fx({fame:5,social:3,health:-3});lg('전국 민생 투어',1);return'전국의 시장과 공장, 농촌을 돌며 사람들의 이야기를 들었다.'}},
+  {t:'정계 은퇴를 선언한다',fn:()=>{S.flags.polRetired=true;fx({happy:8});lg('정계 은퇴 선언',1);return'“이제 한 사람의 시민으로 돌아가겠습니다.” 홀가분했다.'}}]},
+{id:'pl_leader',p:()=>.45,when:()=>S.flags.presLost!==undefined&&!S.flags.polRetired&&!!S.flags.party&&S.fame>=40&&!S.flags.partyLeader&&S.age<=70,icon:'🎌',tag:'당내 선거',title:'당 대표 선거',text:()=>`${S.flags.party}의 새 대표를 뽑는 전당대회가 열린다. 당원들 사이에서 내 이름이 오르내린다.`,choices:[
+  {t:'당 대표에 출마한다',fn:()=>{if(ch(.35+S.fame/250)){S.flags.partyLeader=true;fx({fame:8,network:6});lg(`${S.flags.party} 대표 선출`,1);return'당 대표로 선출됐다! 다음 대선을 향한 발판이 마련됐다.'}fx({fame:-2,happy:-4});lg('당 대표 선거 낙선');return'아쉽게 2위에 그쳤다.'}},
+  {t:'출마하지 않고 새 지도부를 돕는다',fn:()=>{fx({network:3});return'당의 화합을 위해 한발 물러났다.'}}]},
+{id:'pl_gov',p:()=>.6,when:()=>S.flags.presLost!==undefined&&!S.flags.polRetired&&S.pol<3&&nextElec('local')===0&&S.lastElec.gov!==S.age&&S.age<=70,icon:'🗺️',tag:'지방선거',title:'시·도지사 출마 권유',text:'당에서 이번 지방선거에 시·도지사로 나서 달라고 요청했다. 지역에서 성과를 쌓으면 다음 대선에도 힘이 될 것이다.',choices:[
+  {t:'출마를 검토한다',fn:()=>({t:'후보 등록 서류를 꺼내 들었다.',chain:[elecDecide('gov')]})},
+  {t:'사양한다',fn:()=>{S.lastElec.gov=S.age;return'지금은 때가 아니라고 판단했다.'}}]},
+{id:'pl_cabinet',p:()=>.3,when:()=>S.flags.presLost!==undefined&&!S.flags.polRetired&&!S.minister&&S.age<=70,icon:'🤝',tag:'협치',title:'통합 내각 제안',text:'대선에서 맞붙었던 상대 진영의 대통령이 “통합 내각”을 만들겠다며 장관직을 제안했다.',choices:[
+  {t:'국민 통합을 위해 수락한다',fn:()=>{S.minister=true;fx({fame:6,civic:2,network:-5});lg('통합 내각 장관 입각',1);return{t:'협치의 상징이 되었다. 하지만 같은 당 일부에서는 “배신”이라는 말도 나왔다.',chain:[qz('hearing','인사청문회')]}}},
+  {t:'정중히 거절한다',fn:()=>{fx({network:2});return'당과 지지자들 곁에 남기로 했다.'}}]},
+{id:'pl_memoir',p:()=>.4,when:()=>S.flags.presLost!==undefined&&S.age-S.flags.presLost>=1,icon:'📖',tag:'낙선 그 후',title:'회고록 제안',text:'출판사에서 대선 도전기를 책으로 내자고 제안했다.',choices:[
+  {t:'솔직한 회고록을 쓴다',fn:()=>{fx({fame:4,money:600,intel:1});lg('대선 회고록 출간',1);return'패배의 이유까지 솔직하게 담은 책이 베스트셀러가 됐다.'}},
+  {t:'아직은 쓰지 않는다',fn:()=>'지나간 일보다 앞으로의 일에 집중하기로 했다.'}]},
+{id:'pl_poll',rep:true,p:()=>.6,when:()=>S.flags.presLost!==undefined&&!S.flags.polRetired&&!S.flags.presWin&&nextElec('pres')===1&&S.age<=74&&(S.flags.pollAt===undefined||S.age-S.flags.pollAt>=5),icon:'📊',tag:'여론조사',title:'다음 대선까지 1년',text:()=>`다음 대선을 1년 앞두고 차기 주자 여론조사에 내 이름이 다시 올랐다.`,choices:[
+  {t:'다시 도전할 준비를 시작한다',fn:()=>{S.flags.pollAt=S.age;fx({fame:3,network:3,health:-1});return'캠프를 다시 꾸리고 정책을 다듬기 시작했다.'}},
+  {t:'이번에는 킹메이커로 다른 후보를 돕는다',fn:()=>{S.flags.pollAt=S.age;S.lastElec.pres=S.age+1;fx({network:5,civic:2});lg('대선 킹메이커 역할',1);return'내가 돕는 후보의 선거대책위원장을 맡기로 했다.'}},
+  {t:'정계 은퇴를 선언한다',fn:()=>{S.flags.polRetired=true;fx({happy:6});lg('정계 은퇴 선언',1);return'긴 정치 여정을 마무리했다.'}}]},
+/* --- 결혼·가족·집 --- */
+{id:'debt',rep:true,when:()=>(S.loan||0)-(S.house||0)*.6>Math.max(3000,income()*1.5)&&(S.flags.debtAt===undefined||S.age-S.flags.debtAt>=5),icon:'🏦',tag:'돈 문제',title:'불어나는 빚',
+ text:()=>`대출이 ${won(S.loan)}까지 불어났다. 이자만 해도 한 해에 ${won(Math.round(S.loan*.04))}이다. 이대로는 감당하기 어렵다.<span class="note">💡 빚을 감당하기 어려울 때는 신용회복위원회의 채무조정이나 법원의 개인회생 같은 제도를 이용할 수 있어요. 대학생은 한국장학재단의 학자금 대출을 이용할 수 있어요.</span>`,
+ choices:[
+  {t:'부모님께 도움을 청한다',req:()=>S.family<2&&S.age<55,rq:'부모님께 여유가 없다',fn:()=>{S.flags.debtAt=S.age;const g=Math.round(S.loan*(S.family===0?.8:.4));S.loan-=g;fx({happy:-2});lg('부모님의 도움으로 빚을 갚음');return`부모님이 ${won(g)}을 보태 주셨다. 고마움과 죄송함이 함께 밀려왔다.`}},
+  {t:'허리띠를 졸라매고 일을 늘린다',fn:()=>{S.flags.debtAt=S.age;const g=Math.round(S.loan*.2);S.loan-=g;fx({happy:-4,health:-3});return`외식을 끊고 주말에도 일했다. 2년 동안 ${won(g)}을 갚았다.`}},
+  {t:'채무조정·개인회생을 신청한다',fn:()=>{S.flags.debtAt=S.age;S.loan=Math.round(S.loan*.4);fx({happy:-6,network:-3});lg('개인회생 신청',1);return'법원의 개인회생 결정으로 몇 년 동안 소득의 일부로 빚을 갚으면 나머지를 면책받게 됐다. 대신 한동안 새 대출과 신용카드를 쓸 수 없다.'}},
+ ]},
+
+{id:'army',when:()=>S.age===20&&S.gender==='m',icon:'🪖',tag:'국방의 의무',title:'입영 통지서',text:'집으로 입영 통지서가 날아왔다. 대한민국 남성은 헌법과 병역법에 따라 병역의 의무를 진다. 어디에서 복무할까?<span class="note">💡 복무 기간은 육군·해병대 18개월, 해군 20개월, 공군 21개월이에요.</span>',choices:[
+  {t:'육군 현역으로 입대한다 (18개월)',fn:()=>{enlist('육군',1.5);fx({civic:2});return{t:'훈련소 연병장에서 가족에게 마지막으로 손을 흔들었다. 이제 1년 6개월의 군 생활이 시작된다.',chain:[qz('duty','국민의 의무')]}}},
+  {t:'해군에 지원한다 (20개월)',fn:()=>{enlist('해군',20/12);fx({civic:2,health:1});return{t:'함정 근무를 지원했다. 바다 위에서 20개월을 보낸다.',chain:[qz('duty','국민의 의무')]}}},
+  {t:'공군에 지원한다 (21개월)',fn:()=>{enlist('공군',21/12);fx({civic:2,intel:1});return{t:'공군 기술병으로 선발됐다. 복무는 조금 길지만 전문 기술을 배울 수 있다.',chain:[qz('duty','국민의 의무')]}}},
+  {t:'카투사(주한미군 배속 한국군)에 지원한다',req:()=>S.st.intel>=55,rq:'지능 55 이상(어학 성적)',fn:()=>{if(ch(.3)){enlist('카투사',1.5);fx({social:2,intel:2});return{t:'추첨에 뽑혔다! 영어와 다른 문화를 배우며 복무하게 됐다.',chain:[qz('duty','국민의 의무')]}}
+    enlist('육군',1.5);return{t:'추첨에서 떨어져 육군 현역으로 입대했다.',chain:[qz('duty','국민의 의무')]}}},
+ ]},
+{id:'cancer',p:()=>.012+(S.st.health<40?.012:0),when:()=>S.age>=45&&S.age<60&&!S.flags.cancer,icon:'🏥',tag:'건강',title:'뜻밖의 진단',
+ text:()=>`병원에서 암 진단을 받았다. ${S.flags.checkup!==undefined&&S.age-S.flags.checkup<=2?'다행히 정기 건강검진 덕분에 <b>초기에</b> 발견되었다.':'몸에 이상을 느끼고 병원을 찾았을 때는 이미 꽤 진행된 상태였다.'}<span class="note">📊 2024년 생명표에 따르면 한국인이 암으로 사망할 확률은 19.5%로 사망 원인 1위예요. 암이 없다면 기대수명이 3.3년 늘어나요.</span>`,
+ choices:[
+  {t:'수술과 치료에 전념한다',fn:()=>{const early=S.flags.checkup!==undefined&&S.age-S.flags.checkup<=2;S.flags.cancer=early?1:2;fx({health:early?-8:-15,happy:-6,money:-1500});lg('암 진단, 치료 시작',1);
+    return early?'초기에 발견해 수술이 잘 끝났다. 정기 검진이 생명을 구했다.':'긴 항암 치료가 이어졌다. 가족의 손을 잡고 버텼다.'}},
+  {t:'일을 줄이고 가족 곁에서 치료한다',fn:()=>{const early=S.flags.checkup!==undefined&&S.age-S.flags.checkup<=2;S.flags.cancer=early?1:2;fx({health:-10,happy:2,money:-1000});S.xp=Math.max(0,S.xp-3);lg('암 진단, 치료 시작',1);
+    return'일보다 소중한 것이 무엇인지 다시 생각하게 됐다.'}},
+ ]},
+{id:'layoff',p:()=>.16,when:()=>S.age>=47&&S.age<=58&&S.pol===0&&S.job&&['corp','sme','tech'].includes(S.job.track)&&S.job.lv<4,icon:'📦',tag:'중년의 고비',title:'희망퇴직 권고',
+ text:'회사가 구조조정을 발표했다. 인사팀에서 면담을 요청한다. 법정 정년은 60세지만…<span class="note">📊 우리나라 사람들은 평균 52.9세에 가장 오래 다닌 일자리를 떠나요. 사업 부진과 휴폐업이 가장 큰 이유예요 (2025 고령층 부가조사).</span>',
+ choices:[
+  {t:'퇴직금을 받고 회사를 나온다',fn:()=>{const b=R(4000,9000);S.job=null;S.flags.retireAge=S.age;fx({money:b,happy:-8});lg('희망퇴직으로 주된 일자리를 떠남',1);return`희망퇴직금 ${won(b)}을 받고 회사를 나왔다. 이제 두 번째 일을 찾아야 한다.`}},
+  {t:'끝까지 버틴다',fn:()=>{if(ch(.5)){fx({happy:-5});return'버텨 냈다. 자리는 지켰지만 마음은 무겁다.'}S.job=null;S.flags.retireAge=S.age;fx({happy:-12,money:2000});lg('구조조정으로 퇴직',1);return'결국 자리를 잃었다. 준비 없이 맞은 퇴직은 더 아팠다.'}},
+  {t:'이 기회에 창업한다',fn:()=>{S.flags.retireAge=S.age;S.job={track:'startup',lv:0};S.xp=0;fx({money:3000,happy:2});lg('퇴직 후 창업',1);return'퇴직금으로 작은 가게를 열었다. 인생 2막의 시작이다.'}},
+ ]},
+{id:'divorce',p:()=>.008+(S.st.happy<35?.04:0),when:()=>S.married&&S.age>=35&&S.age<=60,icon:'💔',tag:'가족',title:'흔들리는 결혼 생활',
+ text:'요즘 배우자와 대화가 거의 없다. 사소한 일로 다투는 날이 늘었다.<span class="note">📊 2025년 이혼은 8만 8천 건이고, 평균 이혼 연령은 남자 51.0세, 여자 47.7세예요.</span>',
+ choices:[
+  {t:'부부 상담을 받으며 다시 노력한다',fn:()=>{fx({happy:4,money:-100});return'상담을 받으며 서로의 마음을 다시 알게 됐다.'}},
+  {t:'서로를 위해 헤어지기로 한다',fn:()=>{S.married=false;S.flags.divorced=S.age;if(S.money>0)S.money=Math.round(S.money*.6);if(S.house)S.house=Math.round(S.house/2);if(S.loan)S.loan=Math.round(S.loan/2);fx({happy:-10});lg('이혼',1);
+    return'이혼 숙려기간(자녀가 있으면 3개월, 없으면 1개월)을 거쳐 각자의 길을 걷기로 했다. 재산은 나누었다.'}},
+ ]},
+
+{id:'mar',rep:true,p:()=>.05+S.st.social/700+(S.flags.dating!==undefined?.1:0),when:()=>S.age>=28&&S.age<=42&&!S.married&&!S.flags.single,icon:'💍',tag:'인연',title:'평생을 함께할 사람',
+ text:()=>`${pick(['오랜 친구의 소개로 만난 연인','회사 동호회에서 만난 연인','대학 시절 동아리에서 다시 만난 연인','우연히 다시 마주친 첫사랑'])}. 만난 지 ${R(2,4)}년째 되는 날, 조심스럽게 결혼 이야기가 나왔다.<span class="note">📊 대한민국 평균 초혼 연령: 남성 33.9세, 여성 31.6세 (2025)</span>`,
+ choices:[
+  {t:'결혼한다',fn:()=>{S.married=true;S.marAge=S.age;fx({happy:12,money:-1500,social:2});lg(`${S.age}세에 결혼`,1);return'가족과 친구들의 축복 속에 결혼식을 올렸다. 이제 둘이 함께 걷는다.'}},
+  {t:'조금 더 지켜보기로 한다',fn:()=>{fx({happy:-1});return'서두르지 않기로 했다.'}},
+  {t:'결혼하지 않고 나답게 살기로 한다',fn:()=>{S.flags.single=true;fx({happy:3});lg('비혼을 선택');return'결혼하지 않는 삶도 하나의 선택이다. 대신 친구들과 함께하는 시간을 더 소중히 하기로 했다.'}},
+ ]},
+{id:'kid',when:()=>S.married&&S.age<=44&&S.age>S.marAge,icon:'👶',tag:'가족',title:'아이를 가질까?',text:'배우자와 아이에 대해 이야기를 나눴다. 육아휴직, 집, 돈, 일… 고민할 것이 많다.<span class="note">📊 대한민국 합계출산율은 0.80명(2025)으로 2년 연속 올랐지만 여전히 세계에서 가장 낮은 수준이에요.</span>',choices:[
+  {t:'한 명을 낳아 정성껏 키운다',fn:()=>{S.kids=1;S.kidAge=S.age;fx({happy:8,health:-1});lg('첫 아이 출산',1);return'작은 손이 내 손가락을 꼭 쥐었다. 세상이 다르게 보이기 시작했다.'}},
+  {t:'둘을 낳아 북적북적 키운다',fn:()=>{S.kids=2;S.kidAge=S.age;fx({happy:10,health:-3,money:-500});lg('두 아이의 부모가 됨',1);return'두 배로 힘들고, 두 배로 행복하다.'}},
+  {t:'아이 없이 둘만의 삶을 산다',fn:()=>{fx({happy:3});lg('딩크(아이 없는 부부)를 선택');return'둘이서 함께하는 삶을 선택했다.'}},
+ ]},
+/* --- 중년 --- */
+{id:'care',p:()=>.6,when:()=>S.age>=45&&S.age<=57,icon:'👵',tag:'중년',title:'부모님의 노후',text:'부모님의 건강이 많이 약해지셨다. 혼자 생활하시기 어려워 보인다.<span class="note">💡 노인장기요양보험을 이용하면 요양 서비스 비용의 상당 부분을 지원받을 수 있어요.</span>',choices:[
+  {t:'직접 모시며 돌본다',fn:()=>{fx({happy:-3,health:-3,money:-1000,civic:2});lg('부모님을 직접 모심');return'힘들지만 부모님과 함께하는 시간이 소중하다.'}},
+  {t:'장기요양 서비스를 신청하고 자주 찾아뵌다',fn:()=>{fx({money:-600,happy:1,intel:1});return'전문 요양보호사의 도움을 받으며 주말마다 찾아뵈었다.'}},
+  {t:'형제자매와 돌아가며 돌본다',fn:()=>{fx({social:2,happy:-1,money:-400});return'가족회의 끝에 역할을 나눴다.'}},
+ ]},
+{id:'pen',when:()=>S.age>=53&&S.age<=59,icon:'🧓',tag:'노후 준비',title:'은퇴 준비',text:'은퇴가 가까워졌다. 노후를 어떻게 준비할까?',choices:[
+  {t:'국민연금과 개인연금을 꼼꼼히 정리한다',fn:()=>{fx({intel:2,happy:2,money:500});return{t:'예상 연금액을 확인하고 노후 계획을 세웠다.',chain:[qz('pension','사회보장제도')]}}},
+  {t:'은퇴 후 할 일을 미리 배운다',fn:()=>{fx({intel:3,happy:3});return{t:'자격증을 따며 제2의 인생을 준비했다.',chain:[qz('pension','사회보장제도')]}}},
+  {t:'아직은 일에만 집중한다',fn:()=>{fx({money:800,health:-2});return{t:'일이 곧 노후 대비라고 생각했다.',chain:[qz('pension','사회보장제도')]}}},
+ ]},
+];
+
+{const m=SCRIPT.find(e=>e.id==='mar');const w=m.when;m.when=()=>w()&&S.age!==28&&S.age!==33;
+ SCRIPT.unshift(Object.assign({},m,{id:'mar28',rep:false,p:undefined,when:()=>S.age===28&&!S.married&&!S.flags.single}),
+   Object.assign({},m,{id:'mar33',rep:false,p:undefined,when:()=>S.age===33&&!S.married&&!S.flags.single}));}
+{const m=SCRIPT.find(e=>e.id==='mar');m.when=(w=>()=>w()&&S.age>=29)(m.when);}
+function intr(id,t,o){S.flags.interest=id;fx(o);lg('자유학기 진로 체험: '+({law:'정치·법',sci:'의학·과학',biz:'경영·경제',arts:'예술·체육',tech:'기술·공학'})[id]);return t}
+function hsTry(k,p){if(ch(Math.min(.9,p))){S.flags.hs=k;fx({happy:5,network:2});lg(HS[k]+' 합격',1);return{t:`${HS[k]} 합격! 쟁쟁한 친구들과 함께 공부하게 되었다.`,chain:[qz('sep','삼권분립')]}}
+  S.flags.hs='general';fx({happy:-4});lg(HS[k]+' 불합격, 일반고 진학');return{t:`아쉽게 ${HS[k]}에는 떨어져 일반고에 진학했다. 하지만 인생은 이제 시작이다.`,chain:[qz('sep','삼권분립')]}}
+
+/* ================= 무작위 이벤트 ================= */
+const RT=[
+  {id:'pc',icon:'🕹️',tag:'학교생활',title:'시험 전날의 유혹',text:'내일이 시험인데 친구들이 PC방에 가자고 한다.',choices:[
+    {t:'단호하게 거절하고 공부한다',fn:()=>{fx({intel:3,social:-1});return'시험을 잘 봤다. 친구들은 조금 서운해했다.'}},
+    {t:'같이 간다',fn:()=>{fx({social:3,happy:3,intel:-2});return'신나게 놀았다. 시험은… 다음에 잘 보자.'}},
+    {t:'딱 한 시간만 놀고 들어온다',fn:()=>{fx({social:1,intel:1,happy:1});return'적당히 균형을 잡았다.'}}]},
+  {id:'crush',icon:'💌',tag:'학교생활',title:'두근두근 짝사랑',text:'요즘 자꾸 한 친구가 눈에 들어온다.',choices:[
+    {t:'용기 내어 고백한다',fn:()=>{if(ch(.3+S.st.social/200)){fx({happy:8,social:2});S.flags.firstLove=S.age;lg('첫 연애',1);return'“나도 너 좋아해.” 세상이 분홍빛이다.'}fx({happy:-4,social:1});return'정중하게 거절당했다. 그래도 용기 낸 내가 자랑스럽다.'}},
+    {t:'손편지를 써서 건넨다',fn:()=>{fx({happy:3});return'답장은 없었지만 마음은 전했다.'}},
+    {t:'마음속에만 간직한다',fn:()=>{fx({intel:1});return'좋은 추억으로 남겨 두기로 했다.'}}]},
+  {id:'sns',icon:'💬',tag:'학교생활',title:'단체 대화방의 악플',text:'누군가 단체 대화방에 나에 대한 헛소문과 욕설을 올렸다.',choices:[
+    {t:'캡처해서 학교와 사이버수사대에 신고한다',fn:()=>{fx({civic:3,happy:2});return'사이버 명예훼손과 모욕은 처벌받을 수 있는 범죄다. 가해 학생이 사과했다.'}},
+    {t:'무시한다',fn:()=>{fx({happy:-2});return'신경 쓰지 않으려 했지만 마음이 쓰렸다.'}},
+    {t:'똑같이 욕으로 맞대응한다',fn:()=>{fx({social:-3,civic:-3});return'싸움이 커졌고, 나까지 가해자가 될 뻔했다.'}}]},
+  {id:'money',icon:'🧧',tag:'용돈',title:'설날 세뱃돈 30만원',text:'친척 어른들께 받은 세뱃돈이 30만원이나 된다!',choices:[
+    {t:'통장에 저축한다',fn:()=>{fx({money:30});return'통장 잔고를 보니 뿌듯하다.'}},
+    {t:'게임 아이템과 굿즈를 산다',fn:()=>{fx({happy:4});return'갖고 싶던 걸 샀다.'}},
+    {t:'경제 책을 사고 모의투자를 해 본다',fn:()=>{fx({intel:2,money:R(-10,40)});return'돈이 어떻게 굴러가는지 조금 알게 되었다.'}}]},
+  {id:'parent',icon:'🏠',tag:'가족',title:'부모님의 한숨',text:'요즘 부모님 가게 장사가 잘 안되는 것 같다. 밤늦게 한숨 소리가 들린다.',choices:[
+    {t:'주말마다 가게 일을 돕는다',fn:()=>{fx({social:2,happy:-1,civic:1});return'손님을 맞으며 장사의 고단함을 알았다.'}},
+    {t:'공부로 보답하겠다고 다짐한다',fn:()=>{fx({intel:3});return'책상 앞에 앉는 시간이 늘었다.'}},
+    {t:'부모님과 솔직하게 대화한다',fn:()=>{fx({happy:3,social:1});return'“걱정하지 마. 우리 가족은 괜찮아.” 부모님이 웃으셨다.'}}]},
+  {id:'sports',icon:'🏃',tag:'학교생활',title:'체육대회 계주 대표',text:'반 대표 계주 주자로 뽑혔다!',choices:[
+    {t:'최선을 다해 달린다',fn:()=>{if(S.st.health>=45||ch(.4)){fx({social:3,happy:4,fame:1});return'역전승! 반 친구들이 나를 헹가래 쳤다.'}fx({happy:-2,health:1});return'바통을 놓쳤다… 그래도 친구들이 다독여 줬다.'}},
+    {t:'응원단장을 맡겠다고 한다',fn:()=>{fx({social:4});return'목이 쉬도록 응원했다.'}}]},
+  {id:'dream',icon:'🌙',tag:'고민',title:'나는 뭘 좋아하지?',text:'친구들은 다 꿈이 있는 것 같은데, 나만 모르겠다.',choices:[
+    {t:'담임 선생님과 진로 상담을 한다',fn:()=>{fx({intel:1,civic:1,happy:2});return'“지금 모르는 게 당연해.” 선생님의 말씀이 위로가 됐다.'}},
+    {t:'이것저것 다 해 본다',fn:()=>{fx({social:2,health:1,happy:1});return'코딩, 그림, 요리… 의외로 재미있는 게 많다.'}}]},
+];
+const RY=[
+  {id:'coin',icon:'🪙',tag:'재테크',title:'코인 열풍',text:'친구가 코인으로 두 달 만에 두 배를 벌었다며 같이 하자고 한다.',choices:[
+    {t:'영끌해서 크게 투자한다',fn:()=>{if(ch(.35)){const g=R(800,3000);fx({money:g,happy:5});lg('코인 투자로 큰돈을 벌다');return`대박! ${won(g)}을 벌었다.`}const l=R(500,2000);fx({money:-l,happy:-8});lg('코인 투자 실패');return`폭락… ${won(l)}을 잃었다. 투자는 감당할 수 있는 만큼만.`}},
+    {t:'소액만 경험 삼아 해 본다',fn:()=>{fx({money:R(-100,150),intel:1});return'큰 이익도 큰 손실도 없었다.'}},
+    {t:'잘 모르는 곳엔 투자하지 않는다',fn:()=>{fx({intel:1});return'원칙을 지켰다.'}}]},
+  {id:'guar',icon:'✍️',tag:'인간관계',title:'친구의 보증 부탁',text:'오랜 친구가 사업 대출에 보증을 서 달라고 부탁한다.',choices:[
+    {t:'의리로 보증을 서 준다',fn:()=>{if(ch(.5)){fx({social:3,network:2});return'친구의 사업이 자리를 잡았다. 평생 고마워한다.'}fx({money:-1500,happy:-8});lg('보증을 섰다가 빚을 떠안음');return'친구의 사업이 망했다. 빚을 대신 갚아야 했다.'}},
+    {t:'정중히 거절한다',fn:()=>{fx({social:-2});return'잠시 서운해했지만, 우정은 지켜졌다.'}},
+    {t:'대신 갚지 않아도 될 만큼만 빌려준다',fn:()=>{fx({money:-200,social:2});return'현명한 선택이었다.'}}]},
+  {id:'burn',icon:'🔥',tag:'마음 건강',title:'번아웃',text:'아침에 눈을 뜨는 게 너무 힘들다. 모든 게 의미 없게 느껴진다.',choices:[
+    {t:'잠시 쉬어 간다 (휴직·휴학)',fn:()=>{fx({happy:8,money:-300});return'쉬는 동안 다시 숨을 쉬는 법을 배웠다.'}},
+    {t:'상담을 받는다',fn:()=>{fx({happy:6,intel:1});return'청년 마음건강 지원 사업으로 상담을 받았다. 마음이 한결 가벼워졌다.'}},
+    {t:'이를 악물고 버틴다',fn:()=>{fx({health:-4,happy:-5});S.xp+=1;return'버텼지만 몸이 먼저 신호를 보냈다.'}}]},
+  {id:'blood',icon:'🩸',tag:'일상',title:'헌혈 버스',text:'길을 가다 헌혈 버스를 만났다. “혈액이 부족합니다.”',choices:[
+    {t:'헌혈한다',fn:()=>{fx({civic:2,happy:2});return'누군가의 생명을 살릴 수 있다는 생각에 뿌듯했다.'}},
+    {t:'그냥 지나간다',fn:()=>'다음엔 꼭 해야지.'}]},
+  {id:'reunion',icon:'🍻',tag:'인간관계',title:'동창회 소식',text:'고등학교 동창회 연락이 왔다.',choices:[
+    {t:'참석한다',fn:()=>{fx({network:3,social:2});return'오랜만에 만난 친구들이 반가웠다. 다들 다양한 분야에서 일하고 있었다.'}},
+    {t:'바빠서 불참한다',fn:()=>{fx({intel:1});return'혼자만의 시간을 보냈다.'}}]},
+  {id:'travel',icon:'🎒',tag:'여행',title:'배낭여행',text:'한 달 동안 배낭여행을 떠날 기회가 생겼다.',choices:[
+    {t:'떠난다',fn:()=>{fx({money:-300,happy:6,social:2});return'세상은 넓고 사람들은 다양했다.'}},
+    {t:'그 돈을 모은다',fn:()=>{fx({money:300});return'통장 잔고는 늘었다.'}}]},
+  {id:'phish',icon:'📱',tag:'일상',title:'수상한 문자',text:'“엄마 폰 고장 나서 친구 폰으로 연락해. 급하게 돈 좀 보내 줘.”',choices:[
+    {t:'엄마에게 직접 전화해 확인한다',fn:()=>{fx({intel:1,civic:1});return'보이스피싱이었다! 경찰청 112에 신고했다.'}},
+    {t:'급해 보이니 일단 송금한다',fn:()=>{const l=R(100,500);fx({money:-l,happy:-5});return`보이스피싱이었다. ${won(l)}을 잃었다.`}}]},
+];
+const RA=[
+  {id:'offer',when:()=>S.job&&S.pol===0&&['corp','sme','tech','public'].includes(S.job.track),icon:'📞',tag:'직장',title:'이직 제안',text:'경쟁사에서 더 좋은 조건으로 오라는 제안이 왔다.',choices:[
+    {t:'이직한다',fn:()=>{S.xp+=2;fx({money:800,happy:-1,network:2});return'새로운 환경에서 더 큰 역할을 맡았다.'}},
+    {t:'지금 회사에 남는다',fn:()=>{fx({network:1,happy:2});return'익숙한 동료들과 계속 일하기로 했다.'}}]},
+  {id:'check',when:()=>S.st.health<50,icon:'🏥',tag:'건강',title:'건강검진 결과',text:'건강검진에서 “재검사 필요” 소견이 나왔다.',choices:[
+    {t:'재검사를 받고 생활 습관을 바꾼다',fn:()=>{fx({health:6,happy:-1});return'다행히 초기에 발견했다. 매일 걷기 시작했다.'}},
+    {t:'바빠서 미룬다',fn:()=>{fx({health:-6});return'몸이 점점 무거워진다.'}}]},
+  {id:'noise',icon:'🔊',tag:'이웃',title:'층간소음',text:'윗집 소음 때문에 몇 주째 잠을 설쳤다.',choices:[
+    {t:'직접 찾아가 정중히 대화한다',fn:()=>{fx({social:2,happy:2});return'윗집에도 사정이 있었다. 서로 조심하기로 했다.'}},
+    {t:'관리사무소와 층간소음 이웃사이센터에 도움을 요청한다',fn:()=>{fx({civic:2,happy:1});return'공적인 조정 절차를 통해 갈등을 풀었다.'}},
+    {t:'보복 소음을 낸다',fn:()=>{fx({happy:-3,civic:-3});return'갈등이 더 커졌다.'}}]},
+  {id:'juminvote',icon:'🗳️',tag:'지역사회',title:'우리 동네 주민투표',text:'동네에 대형 쓰레기 소각장을 지을지 주민투표가 열린다. 지역의 중요한 일을 주민이 직접 결정하는 제도다.',choices:[
+    {t:'설명회에 참석하고 투표한다',fn:()=>{fx({civic:3,network:1});return'찬반 양쪽 이야기를 듣고 신중하게 투표했다.'}},
+    {t:'반대 주민 모임을 이끈다',fn:()=>{fx({civic:2,fame:3,network:3,happy:-1});return'지역 뉴스에 얼굴이 나왔다.'}},
+    {t:'관심 없다',fn:()=>{fx({civic:-2});return'투표율이 낮아 결과가 확정되지 못했다.'}}]},
+  {id:'stock',icon:'📉',tag:'재테크',title:'주식 시장 폭락',text:'주가가 하루 만에 크게 떨어졌다. 모아 둔 투자금이 반 토막 날 위기다.',choices:[
+    {t:'장기 투자를 믿고 버틴다',fn:()=>{const g=R(-200,1500);fx({money:g});return g>0?'몇 년 뒤 주가는 회복했고, 오히려 이익을 봤다.':'회복은 더뎠다.'}},
+    {t:'손절한다',fn:()=>{fx({money:-R(200,800),happy:-3});return'손실을 확정했다. 마음은 편해졌다.'}},
+    {t:'오히려 더 산다',fn:()=>{if(ch(.5)){fx({money:R(1000,3000)});return'과감한 결정이 큰 수익으로 돌아왔다.'}fx({money:-R(800,2000),happy:-4});return'바닥 밑에 지하실이 있었다.'}}]},
+  {id:'teen',when:()=>S.kids>0&&S.age>=42,icon:'🧒',tag:'가족',title:'사춘기 자녀',text:'중학생이 된 아이가 방문을 꼭 닫고 말을 하지 않는다.',choices:[
+    {t:'아이의 이야기를 끝까지 들어 준다',fn:()=>{fx({happy:4,social:1});return'아이가 조금씩 마음을 열었다. 내 중학교 시절이 떠올랐다.'}},
+    {t:'학원을 더 보낸다',fn:()=>{fx({money:-800,happy:-2});return'성적은 올랐지만 대화는 줄었다.'}}]},
+  {id:'vol',icon:'🙋',tag:'지역사회',title:'지역 봉사단장 제안',text:'동네 주민자치회에서 봉사단장을 맡아 달라고 한다.',choices:[
+    {t:'수락한다',fn:()=>{fx({civic:4,fame:3,network:3,happy:-1});lg('지역 봉사단장 활동');return'바쁘지만 동네가 조금씩 바뀌는 걸 보는 기쁨이 컸다.'}},
+    {t:'거절한다',fn:()=>{fx({happy:1});return'지금은 여유가 없다.'}}]},
+  {id:'tv',when:()=>S.fame>=35,icon:'📺',tag:'방송',title:'방송 출연 제의',text:'인기 시사 예능 프로그램에서 출연 제의가 왔다.',choices:[
+    {t:'출연한다',fn:()=>{fx({fame:6,social:2});return'방송 이후 알아보는 사람이 늘었다.'}},
+    {t:'거절한다',fn:()=>'조용히 내 일에 집중했다.'}]},
+  {id:'scandal',when:()=>S.scandal>0&&S.pol>=1&&S.pol<4,icon:'📰',tag:'속보',title:'과거의 그림자',text:'한 언론이 과거 선거 때 금품을 뿌렸다는 의혹을 보도했다. 검찰이 수사에 착수했다.',choices:[
+    {t:'모든 것을 인정하고 사과한다',fn:()=>{S.scandal=0;S.flags.criminal=true;S.pol=0;fx({fame:-25,civic:3,happy:-10});lg('선거법 위반 인정, 의원직 상실',1);return'벌금형이 확정되어 당선이 무효가 되었다. 진실 앞에 고개를 숙였다.'}},
+    {t:'끝까지 부인한다',fn:()=>{if(ch(.5)){S.scandal=0;S.flags.criminal=true;S.pol=0;fx({fame:-35,happy:-15});lg('선거법 위반 유죄 판결, 의원직 상실',1);return'증거가 나왔다. 유죄 판결로 의원직을 잃었다.'}fx({fame:-10});return'증거 불충분으로 수사가 끝났다. 하지만 의혹은 꼬리표처럼 따라다닌다.'}}]},
+];
+
+/* ================= 게임 흐름 (관찰자 모드) ================= */
+const KSTAT={life:83.7,lifeM:80.8,lifeF:86.6,healthy:65.5,marM:33.9,marF:31.6,tfr:.80,uni:76.3,firstJob:11.3,retire:52.9,asset:56678,cancer:19.5};
+ELEC.gov={name:'지방선거',seat:'시·도지사',dep:5000,diff:58,pol:3,cool:4,q:'local',cycle:4};ELEC.local.cycle=4;ELEC.assembly.cycle=4;ELEC.pres.cycle=5;
+ELEC.local.diff=32;ELEC.assembly.diff=52;ELEC.pres.diff=91;
+function elecNotice(){const map={pres:'runPres',assembly:'runAsm',local:'runLocal'};
+  for(const k of ['pres','assembly','local']){const a=ACTS.find(x=>x.id===map[k]);if(a.show&&!a.show())continue;if(!actState(a).ok)continue;
+    const keen=k==='pres'||S.flags.nominated||S.flags.party||S.pol>0||S.polOpen||(S.job&&['politics','ngo'].includes(S.job.track))||S.st.civic>=55;if(!keen)continue;
+    return Object.assign(elecDecide(k),{when:()=>S.lastElec[k]!==S.age&&nextElec(k)===0})}return null}
+function termName(){const t=S.terms||1;return t===1?'초선 ':t===2?'재선 ':t+'선 '}
+function reelect(adj,label,extra){S.lastElec.assembly=S.age;const p=Math.max(.15,Math.min(.88,.5+(power()-ELEC.assembly.diff)/32+.1+adj-S.scandal*.1));
+  const win=ch(p),my=win?50+R(1,10):50-R(1,12),html=voteBars(my,100-my-R(1,3));
+  if(win){S.terms=(S.terms||1)+1;fx(Object.assign({fame:5,network:4,happy:6},extra||{}));lg(`${label}, ${S.terms===2?'재선':S.terms+'선'} 성공 (득표율 ${my}%)`,1);
+    return{t:`<b>당선!</b> ${S.terms===2?'재선':S.terms+'선'} 국회의원이 되었다. 다선 의원으로서 당과 국회에서 목소리가 커졌다.`,html}}
+  S.flags.exMP=true;fx({fame:-4,happy:-8});lg(`${label} 낙선 (득표율 ${my}%)`,1);return{t:'아쉽게 낙선했다. 이제 ‘전 국회의원’이다. 다음 총선에서 다시 도전할 수 있다.',html}}
+function partyBonus(k){if(k==='pres')return(S.minister?.04:0)+(S.pol===3?.03:0)+(S.flags.partyLeader?.04:0)+Math.min(.06,((S.terms||1)-1)*.02);return(S.flags.party?(S.flags.partyRole?.06:.03):-.06)+(k==='local'&&S.flags.nominated?.06:0)+(k==='local'&&S.flags.localRole?.03:0)}
+function newState(name,gender,talent){const fam=Math.random()<.2?0:Math.random()<.75?1:2;
+  S={name,gender,talent,family:fam,region:pick(['서울','부산','대구','인천','광주','대전','울산','경기','강원','충북','충남','전북','전남','경북','경남','제주']),
+    age:13,yf:0,focus:[],epi:false,cd:{},loan:0,path:[],mil:null,elOff:{local:R(0,3),assembly:R(0,3),pres:R(0,4)},
+    st:{intel:R(32,46),health:R(32,46),social:R(32,46),civic:R(30,44),happy:R(48,60)},money:30,fame:0,network:5,
+    qc:0,qt:0,log:[],flags:{},done:{},used:{},usedQ:{},fh:{},job:null,edu:null,pol:0,polOpen:false,minister:false,married:false,kids:0,house:0,lastElec:{},scandal:0,xp:0,approval:null};
+  if(talent)S.st[talent]+=12;
+  {const ks=['intel','health','social','civic'].sort(()=>Math.random()-.5);S.apt={intel:1,health:1,social:1,civic:1,happy:1};
+   [1.45,1.15,.9,.8].forEach((m,i)=>S.apt[ks[i]]=m);S.gift=ks[0];S.gift2=ks[1];}
+  const f=[{intel:3,happy:4},{happy:3},{civic:4,happy:-3}][fam];for(const k in f)S.st[k]=cl(S.st[k]+f[k]);
+  if(fam===0)S.money=150;
+  lg(`${S.region}에서 ${['넉넉한','평범한','형편이 어려운'][fam]} 가정의 ${gender==='m'?'아들':'딸'}로 태어남`);
+  lg('중학교 입학',1);}
+function save(){sSet(SAVE,JSON.stringify(S))}
+function toTop(){window.scrollTo({top:0,behavior:'smooth'})}
+function now(){return S.age+S.yf}
+function milRank(){const r=(now()-S.mil.start)/S.mil.D;return r<.111?'이병':r<.444?'일병':r<.778?'상병':'병장'}
+function stage(){
+  if(S.flags.presWin)return'대한민국 대통령 당선인';
+  if(S.pol===3)return'시·도지사';
+  if(S.pol===2)return S.flags.exMP?'전 국회의원':`${termName()}국회의원${S.minister?' 겸 장관':''}`;
+  if(S.pol===1)return'시의원';
+  if(S.epi)return S.age<70?'은퇴 후 두 번째 인생':'황혼의 나날';
+  if(S.age<=15)return`중학교 ${S.age-12}학년`;
+  if(S.age<=18)return`${HS[S.flags.hs]||'고등학교'} ${S.age-15}학년`;
+  if(S.flags.military&&S.mil)return`${S.mil.br} ${milRank()}`;
+  if(S.job)return JOBS[S.job.track].titles[S.job.lv];
+  if(S.flags.retake)return'재수생';
+  if(isStudent())return S.job?JOBS[S.job.track].titles[0]:'대학생';
+  if(S.flags.retireAge)return'재취업 준비 중';
+  return'취업 준비생'}
+
+const YEAR_MS=7500,OLD_MS=2000;
+let CH=[],SCHED=[],PAUSED=false,MODAL=false,SPEED=1,LAST=0,HUDT=0,ACTT=0,FLAVT=0,RAF=null,ENDING=false,ACTCAT='money',ACTSIG='';
+
+/* --- 집중 목록 --- */
+const prepRate=u=>{S.flags.prep=(S.flags.prep||0)+u;return{intel:.5,happy:-1}};
+const FU=[
+  {id:'ustudy',g:'intel',name:'전공 공부',icon:'📚',desc:'지능이 오른다',rate:()=>({intel:3,happy:-1})},
+  {id:'usport',g:'health',name:'운동',icon:'🏃',desc:'체력이 오른다',rate:()=>({health:3})},
+  {id:'uclub',g:'social',name:'동아리·친구',icon:'🎸',desc:'사교와 인맥이 오른다',rate:()=>({social:2.5,network:1,happy:1})},
+  {id:'ucivic',g:'civic',name:'봉사·대외활동',icon:'⚖️',desc:'시민의식과 명성이 오른다',rate:()=>({civic:2.5,fame:.5,network:.5})},
+  {id:'urest',g:'happy',name:'휴식·취미',icon:'🎮',desc:'행복이 오른다',rate:()=>({happy:4})},
+  {id:'ujob',g:'money',name:'아르바이트',icon:'💰',desc:'자산이 늘지만 조금 지친다',rate:()=>({money:150,happy:-1})},
+  {id:'uprep',g:'career',name:'취업 준비',icon:'📝',desc:'졸업 후 취업 합격 확률이 오른다',rq:'22세부터 가능',req:()=>S.age>=22,rate:prepRate},
+];
+const FN=[
+  {id:'study',g:'intel',name:'자기계발',icon:'📖',desc:'지능이 오른다',rate:()=>({intel:2})},
+  {id:'health',g:'health',name:'건강관리',icon:'🏃',desc:'체력이 오른다',rate:()=>({health:3})},
+  {id:'people',g:'social',name:'인간관계',icon:'🥂',desc:'사교와 인맥이 오른다',rate:()=>({social:2,network:1.5})},
+  {id:'civic',g:'civic',name:'사회참여',icon:'📢',desc:'시민의식과 명성이 오른다',rate:()=>({civic:1.5,fame:1.5,network:.5})},
+  {id:'family',g:'happy',name:'휴식·가족',icon:'🏡',desc:'행복이 오른다',rate:()=>({happy:4,health:.5})},
+  {id:'njob',g:'money',name:'아르바이트',icon:'💰',desc:'자산이 늘지만 조금 지친다',rate:()=>({money:200,happy:-1})},
+  {id:'nprep',g:'career',name:'구직 활동',icon:'📝',desc:'취업 합격 확률이 오른다',rate:prepRate},
+];
+const FM=[
+  {id:'mdrill',g:'health',name:'체력 단련',icon:'🪖',desc:'체력이 오른다',rate:()=>({health:4})},
+  {id:'mread',g:'intel',name:'독서·자격증',icon:'📖',desc:'지능이 오른다',rate:()=>({intel:2.5})},
+  {id:'mbuddy',g:'social',name:'전우애',icon:'🤝',desc:'사교와 인맥이 오른다',rate:()=>({social:2.5,network:1})},
+  {id:'mduty',g:'civic',name:'성실 복무',icon:'🎖️',desc:'시민의식이 오른다',rate:()=>({civic:3})},
+  {id:'mrest',g:'happy',name:'휴식·편지',icon:'✉️',desc:'행복이 오른다',rate:()=>({happy:4})},
+];
+const ALLF=[...FT,...FU,...FN,...FM,...FA];
+function isStudent(){if(S.pol>0)return false;if(S.job)return S.job.lv===0&&['med','law'].includes(S.job.track);return!!(S.edu&&S.edu!=='hs'&&S.age<=24&&!S.flags.graduated)}
+function focusList(){if(S.age<19||S.flags.retake)return FT;if(S.flags.military)return FM;if(isStudent())return FU;if(S.job||S.pol>0)return FA;return FN}
+function syncFocus(){const L=focusList(),alt={money:'career',career:'money'},out=[];
+  for(const id of S.focus){let f=L.find(x=>x.id===id);if(!f){const g=(ALLF.find(x=>x.id===id)||{}).g;f=L.find(x=>x.g===g)||L.find(x=>x.g===alt[g])}if(f&&!out.includes(f.id))out.push(f.id)}
+  const changed=out.join()!==S.focus.join();S.focus=out.slice(0,2);return changed}
+
+const FLAV={
+  study:['수학 문제집 한 권을 끝까지 풀었다.','밤늦게까지 도서관에 남아 공부했다.','쪽지 시험에서 만점을 받았다.','어려운 개념을 친구에게 설명해 주며 더 확실히 이해했다.','새로운 분야의 책을 읽기 시작했다.','온라인 강의를 들으며 자격증 공부를 했다.'],
+  sport:['아침 일찍 운동장을 열 바퀴 돌았다.','농구 시합에서 결승골을 넣었다.','줄넘기 2단 뛰기 기록을 경신했다.','체육 시간에 땀을 흠뻑 흘렸다.'],
+  friend:['친구들과 떡볶이를 먹으며 수다를 떨었다.','단짝과 주말에 영화를 보러 갔다.','새로 전학 온 친구에게 먼저 말을 걸었다.','친구의 고민을 밤늦게까지 들어 주었다.'],
+  civic:['지역아동센터에서 동생들의 숙제를 도왔다.','회의에서 용기 내어 의견을 냈다.','동네 하천 정화 활동에 참여했다.','신문의 사회면을 꼼꼼히 읽었다.','지역 공청회에 참석해 질문을 했다.'],
+  rest:['좋아하는 웹툰을 정주행했다.','늦잠을 푹 자고 개운하게 일어났다.','새로운 취미로 그림을 그리기 시작했다.','게임에서 원하던 등급을 달성했다.'],
+  job:['편의점에서 주말 근무를 마쳤다.','아르바이트비가 통장에 들어왔다.','손님에게 친절하다는 칭찬을 받았다.'],
+  career:['중요한 프로젝트를 무사히 마쳤다.','회의에서 낸 아이디어가 채택됐다.','야근을 마치고 막차를 탔다.','새로운 업무를 맡아 배우는 중이다.','업계 사람들 사이에서 이름이 조금씩 알려진다.'],
+  health:['매일 만 보 걷기를 이어 가고 있다.','헬스장에서 개인 기록을 깼다.','주말마다 등산을 다닌다.','건강한 식단을 챙겨 먹었다.'],
+  people:['오랜 친구들과 저녁을 먹었다.','모임에서 새로운 사람들을 만났다.','동료의 결혼식에서 축사를 했다.','명함첩이 두툼해졌다.'],
+  family:['가족과 함께 캠핑을 다녀왔다.','부모님께 안부 전화를 드렸다.','소파에 누워 여유로운 주말을 보냈다.','오랜만에 긴 휴가를 떠났다.'],
+  ustudy:['전공 과제를 밤새 끝냈다.','도서관 열람실에서 하루를 보냈다.','전공 시험에서 A+를 받았다.','교수님 연구실에 질문하러 찾아갔다.'],
+  usport:['학교 운동장에서 저녁마다 달렸다.','교내 체육대회에서 우승했다.'],
+  uclub:['동아리 공연을 무사히 마쳤다.','과 친구들과 MT를 다녀왔다.','선배에게 진로 이야기를 들었다.'],
+  ucivic:['대학생 봉사단으로 농촌 일손을 도왔다.','공모전 팀 프로젝트를 제출했다.','청년 정책 토론회에 참석했다.'],
+  urest:['방학 동안 푹 쉬었다.','좋아하는 밴드의 공연을 보러 갔다.'],
+  ujob:['카페 아르바이트를 마쳤다.','중학생 과외 수업을 했다.','주말 물류센터 아르바이트를 다녀왔다.'],
+  uprep:['자기소개서를 다시 고쳐 썼다.','모의 면접을 봤다.','어학 점수가 올랐다.','취업 박람회를 둘러봤다.'],
+  njob:['단기 아르바이트를 마쳤다.','배달 아르바이트로 하루를 보냈다.'],
+  nprep:['이력서를 열 군데에 냈다.','면접 연락이 왔다.','고용센터에서 직업 상담을 받았다.','국민내일배움카드로 직업 훈련을 들었다.'],
+  mdrill:['완전군장으로 행군을 마쳤다.','아침 점호 뒤 구보로 하루를 열었다.','체력검정에서 특급을 받았다.'],
+  mread:['생활관에서 자격증 문제집을 풀었다.','진중문고에서 빌린 책을 다 읽었다.'],
+  mbuddy:['동기와 PX에서 간식을 나눠 먹었다.','후임의 고민을 들어 주었다.','전우들과 족구 시합을 했다.'],
+  mduty:['야간 경계 근무를 무사히 마쳤다.','맡은 작업을 꼼꼼하게 해냈다.'],
+  mrest:['가족에게서 온 편지를 몇 번이고 읽었다.','개인 정비 시간에 푹 쉬었다.','휴대전화로 친구들과 연락했다.'],
+};
+const FLAV_POL=['지역구 주민 간담회에 참석했다.','상임위원회에서 날카로운 질의를 했다.','법안 하나를 대표 발의했다.','시장 골목을 돌며 민원을 들었다.','정책 토론회에서 기조 발언을 했다.'];
+const FLAV_OLD=['평온한 한 해를 보냈다.','오랜 친구에게서 반가운 편지가 왔다.','동네 공원을 산책하는 것이 일과가 되었다.','젊은 시절 사진첩을 꺼내 보았다.','손수 담근 김치를 이웃과 나눴다.'];
+function dimm(b){return b<45?1:Math.max(.2,1-(b-45)/62)}
+function applyRate(o,u){for(const k in o){let v=o[k]*u;if(!v)continue;if(v>0&&S.apt&&S.apt[k])v*=S.apt[k];
+  if(k==='money')S.money+=v;
+  else if(k==='fame'||k==='network')S[k]=Math.max(0,Math.min(100,S[k]+(v>0?v*dimm(S[k]):v)));
+  else S.st[k]=Math.max(0,Math.min(100,S.st[k]+(v>0?v*dimm(S.st[k]):v)))}}
+function ptOn(){return S.pt&&!S.flags.military&&!S.job&&(S.age<19||isStudent())}
+function ptTick(dy){if(!ptOn())return;const uni=S.age>=19,wk=S.pt==='weekend';applyRate({money:wk?(uni?600:280):(uni?250:120),happy:wk?-1:-.4,health:wk?-.5:-.2},dy)}
+function applyFocus(dy){const L=focusList(),tot=(S.age<19?3:2)*(ptOn()&&S.pt==='weekend'?.85:1);const sel=S.focus.map(id=>L.find(f=>f.id===id)).filter(f=>f&&(!f.req||f.req()));if(!sel.length)return;
+  const u=tot/sel.length*dy;for(const f of sel){applyRate(f.rate(u),u);S.fh[f.g]=(S.fh[f.g]||0)+u}}
+function decay(dy){for(const k of STATS){const v=S.st[k];if(k==='happy'){S.st.happy=v+(55-v)*.12*dy;continue}
+    if(k===S.gift){if(!S.epi)S.st[k]=Math.min(100,v+1.6*dy*dimm(v));if(v>55)S.st[k]=S.st[k]-(v-55)*.03*dy;continue}
+    const fl=k===S.gift2?40:30,m=k===S.gift2?.6:1;if(v>fl)S.st[k]=v-(v-fl)*.05*m*dy}
+  if(S.fame>5)S.fame-=(S.fame-5)*.04*dy;if(S.network>5)S.network-=(S.network-5)*.03*dy}
+function flavor(){let pool;if(S.epi)pool=FLAV_OLD;else if(S.pol>0&&ch(.6))pool=FLAV_POL;
+  else{const L=focusList();const ids=S.focus.filter(id=>FLAV[id]&&L.find(f=>f.id===id));if(!ids.length)return;pool=FLAV[pick(ids)]}
+  lg(pick(pool),0,'f')}
+
+
+/* --- 인생의 순간 (자동 기록) --- */
+function lifeEv(icon,title,fn){return{auto:true,icon,tag:'인생의 순간',title,choices:[{t:'',fn}]}}
+const LIFE=[
+  {id:'l_love',p:()=>.3+S.st.social/250,when:()=>S.age>=14&&S.age<=26&&!S.flags.firstLove,ev:()=>lifeEv('💕','첫 연애',()=>{S.flags.firstLove=S.age;fx({happy:6,social:2});lg('첫 연애',1);
+    return pick(['같은 반 친구에게 고백을 받았다. 처음 손을 잡던 날, 심장이 터질 것 같았다.','동아리에서 만난 친구와 사귀게 됐다. 매일 밤 늦게까지 메시지를 주고받았다.','오래 짝사랑하던 친구와 마음이 통했다. 세상이 분홍빛으로 보였다.'])})},
+  {id:'l_break',p:()=>.4,when:()=>S.flags.firstLove&&S.age-S.flags.firstLove>=1&&S.age<=30&&!S.married,ev:()=>lifeEv('💧','첫 이별',()=>{fx({happy:-5,intel:1});lg('첫 이별');return'첫사랑과 헤어졌다. 많이 울었고, 조금 자랐다.'})},
+  {id:'l_book',p:()=>.3,when:()=>S.age>=13&&S.age<=30,ev:()=>lifeEv('📕','인생 책을 만나다',()=>{fx({intel:3,civic:2});lg('인생 책을 만나다',1);return'도서관에서 우연히 집어 든 책 한 권이 밤새 손에서 떨어지지 않았다. 처음으로 “이런 사람이 되고 싶다”는 생각이 들었다.'})},
+  {id:'l_book2',p:()=>.2,when:()=>S.age>=31&&S.age<=59,ev:()=>lifeEv('📗','다시 펼친 책',()=>{fx({intel:2,happy:2});return'서점에서 산 책 한 권이 오래된 고민에 답을 주었다. 오랜만에 밑줄을 그으며 읽었다.'})},
+  {id:'l_mentor',p:()=>.3,when:()=>S.age>=13&&S.age<=18,ev:()=>lifeEv('🍎','인생의 은사',()=>{fx({civic:2,happy:3,social:1});lg('인생의 은사를 만나다',1);return'담임 선생님이 조용히 불러 말씀하셨다. “너는 사람들 앞에 서면 빛나는 아이야.” 그 말이 오래도록 마음에 남았다.'})},
+  {id:'l_bestie',p:()=>.3,when:()=>S.age>=13&&S.age<=22,ev:()=>lifeEv('🫂','평생 친구',()=>{fx({social:3,happy:2,network:1});return'전학 온 친구와 금세 단짝이 되었다. 평생 갈 우정의 시작이었다.'})},
+  {id:'l_pet',p:()=>.12,when:()=>S.age>=15&&S.age<=50,ev:()=>lifeEv('🐶','새 가족',()=>{fx({happy:5,health:1});lg('반려견 입양',1);return'유기견 보호소에서 강아지 한 마리를 입양했다. 집에 웃음이 늘었다.'})},
+  {id:'l_license',p:()=>.4,when:()=>S.age>=19&&S.age<=26&&!S.flags.military,ev:()=>lifeEv('🚙','운전면허 합격',()=>{fx({happy:2});return'운전면허 시험에 한 번에 합격했다. 처음 혼자 운전대를 잡던 날, 손에 땀이 흥건했다.'})},
+  {id:'l_marathon',p:()=>.2,when:()=>S.age>=25&&S.age<=50&&S.st.health>=45,ev:()=>lifeEv('🏅','첫 마라톤 완주',()=>{fx({health:3,happy:3});return'10km 마라톤을 완주했다. 결승선에서 두 팔을 번쩍 들었다.'})},
+  {id:'l_reunite',p:()=>.2,when:()=>S.age>=30&&S.age<=55,ev:()=>lifeEv('📞','반가운 연락',()=>{fx({social:2,happy:3,network:1});return'연락이 끊겼던 중학교 친구에게서 전화가 왔다. 밤새 옛날이야기를 나눴다.'})},
+  {id:'l_newlove',p:()=>.25,when:()=>!S.married&&!S.flags.single&&S.age>=25&&S.age<=45&&S.flags.dating===undefined,ev:()=>lifeEv('🌷','새로운 설렘',()=>{S.flags.dating=S.age;fx({happy:4});return'소개팅에서 만난 사람과 대화가 잘 통했다. 다시 설레는 마음이 생겼다.'})},
+  {id:'l_kidschool',p:()=>.6,when:()=>S.kids>0&&S.marAge&&S.age>=S.marAge+8,ev:()=>lifeEv('🎒','아이의 입학식',()=>{fx({happy:4});lg('아이의 초등학교 입학',1);return'아이가 초등학교에 입학했다. 커다란 가방을 멘 뒷모습에 괜히 눈물이 났다.'})},
+  {id:'l_back',p:()=>.3,when:()=>S.age>=35&&S.age<=59&&S.st.health<45,ev:()=>lifeEv('🩹','몸이 보내는 신호',()=>{fx({health:-4,happy:-2});return'허리 디스크로 한동안 고생했다. 몸이 보내는 신호를 무시하지 말자고 다짐했다.'})},
+  {id:'l_parent',p:()=>.12,when:()=>S.age>=50&&S.age<=59,ev:()=>lifeEv('🕊️','부모님과의 이별',()=>{fx({happy:-8,civic:1});lg('부모님과의 이별',1);return'부모님께서 세상을 떠나셨다. 장례를 치르며 부모님의 손때 묻은 물건들을 오래 바라보았다.'})},
+  {id:'l_move',p:()=>.15,when:()=>S.age>=20&&S.age<=45&&!S.flags.military,ev:()=>lifeEv('📦','새 동네로 이사',()=>{fx({happy:2});return'새 동네로 이사를 했다. 낯선 골목을 걸으며 새 출발을 다짐했다.'})},
+];
+function buildQueue(){Q=[];const pr=promoEvent();if(pr){if((typeof pr.choices==='function'?pr.choices():pr.choices).length===1)pr.auto=true;Q.push(pr)}let n=0;
+  for(const e of SCRIPT){if(e.rep&&n>=3)continue;if(!e.rep&&S.done[e.id])continue;if(!e.when())continue;if(e.p&&!ch(e.p()))continue;
+    if(!e.rep)S.done[e.id]=1;n++;Q.push(e.make?Object.assign(e.make(),{when:e.when}):e)}
+  const pool=S.age<19?RT:S.age<31?RY:RA;const c=pool.filter(e=>!S.used[e.id]&&(!e.when||e.when()));
+  if(!S.flags.military&&c.length&&ch(n>=2?.35:.55)){const e=pick(c);S.used[e.id]=1;Q.push(Object.assign({},e,{when:()=>!S.flags.military&&(!e.when||e.when())}))}
+  const en=elecNotice();if(en)Q.push(en);
+  if(!S.flags.military){const lc=LIFE.filter(x=>!S.used[x.id]&&x.when()&&ch(x.p()));if(lc.length&&ch(.6)){const x=pick(lc);S.used[x.id]=1;Q.push(Object.assign(x.ev(),{when:()=>!S.flags.military&&x.when()}))}}
+  if(S.age>=27){const queued=Q.filter(e=>e.qk).map(e=>e.qk);const ks=Object.keys(NEWS).filter(k=>!S.usedQ[k]&&!queued.includes(k));if(ks.length&&ch(.2)){const k=pick(ks);Q.push(qz(k,NEWS[k]))}}}
+
+/* 연령별 임금 곡선: 2024 임금근로일자리 소득(월평균 20대 271, 30대 397, 40대 469, 50대 445, 60대 293만원)의 비율을 반영 */
+const WAGE_PTS=[[19,.62],[25,.72],[30,.9],[35,1],[40,1.12],[45,1.18],[50,1.15],[55,1.08],[60,.78],[70,.55]];
+const WAGE_BIG=['corp','med','law','public'];
+function wageCurve(a){if(a<=WAGE_PTS[0][0])return WAGE_PTS[0][1];for(let i=1;i<WAGE_PTS.length;i++){const[x1,y1]=WAGE_PTS[i-1],[x2,y2]=WAGE_PTS[i];if(a<=x2)return y1+(y2-y1)*(a-x1)/(x2-x1)}return WAGE_PTS[WAGE_PTS.length-1][1]}
+function income(){if(S.epi){const pol=S.age<66?(S.pol===2?(S.minister?16000:15500):S.pol===1?6000:0):0;return pol||(pension()+(S.flags.retire==='work'&&S.age<70?1500:0))}
+  if(S.pol===3)return 14000;if(S.pol===2&&!S.flags.exMP)return S.minister?16000:15500;if(S.pol===1)return 6000;
+  if(S.flags.military)return 1000;
+  if(isStudent())return[900,828,600][S.family];
+  if(!S.job)return S.flags.retireAge?1200:0;
+  const j=JOBS[S.job.track];let p=j.pay[S.job.lv];
+  if(p>0&&!['star','startup','creator'].includes(S.job.track)){let c=wageCurve(S.age)/1.0;if(!WAGE_BIG.includes(S.job.track)&&S.age>45)c=Math.min(c,1.08);
+    const yrs=Math.min(15,S.age-(S.flags.jobStart||S.age));p=p*(.75+.25*c)*(1+.012*yrs)}
+  if(S.job.track==='star')p=Math.round(p*(.5+S.fame/100));
+  if((S.job.track==='startup'||S.job.track==='creator')&&S.job.lv>0)p=Math.round(p*(S.bizLuck||1));return Math.round(p)}
+function pension(){const yrs=Math.max(0,Math.min(40,(S.flags.workYears||0)));return S.age>=65?Math.round(400+yrs*35):0}
+/* 가구원 수별 월평균 소비지출(1인 142.6, 2인 207.4, 3인 298.1, 4인 371.8, 5인 이상 407.4만원)을 연 단위로 */
+const SPEND=[1711,2489,3577,4462,4889];
+function kidsHome(){if(!S.kids)return 0;const k=S.age-(S.kidAge||S.age);return k<25?S.kids:0}
+function household(){return Math.min(5,1+(S.married?1:0)+kidsHome())}
+function living(){if(S.age<19||S.flags.military)return 0;
+  if(isStudent())return 828;
+  if(!S.job&&!S.pol&&!S.epi&&S.age<30&&!S.married)return 1000;
+  const base=SPEND[household()-1],inc=income()*.8;
+  let c=base*(.85+.25*Math.min(3,inc/base));
+  if(S.kids){const k=S.age-(S.kidAge||S.age);c+=S.kids*(k<7?400:k<13?600:k<19?1000:k<=22?800:0)}
+  if(S.age>=60)c*=1+(S.age-60)*.012;
+  return Math.round(c)}
+
+function careerLabel(){if(S.flags.presWin)return'대통령 당선인';if(S.pol===3)return'시·도지사';if(S.pol===2)return S.minister?'국회의원·장관':'국회의원';if(S.pol===1)return'시의원';
+  if(S.age<19)return null;if(S.flags.military)return S.mil?S.mil.br+' 복무':null;if(S.job)return JOBS[S.job.track].titles[S.job.lv];if(isStudent())return EDU[S.edu]+' 재학';return null}
+function trackPath(){S.path=S.path||[];const tk=S.job?S.job.track:'';if(tk!==S.flags.jobTrack){S.flags.jobTrack=tk;S.flags.jobStart=S.age}const l=careerLabel();if(l&&l!==S.lastPath){S.path.push({a:S.age,t:l});S.lastPath=l}}
+function yearStart(resume){S.bizLuck=.4+Math.random()*1.2;trackPath();if(!resume){const inc=income(),cost=living();lg(`${S.age}세, ${stage()}${S.age>=19&&(inc||cost)?` <span class="yfin">${S.epi?'연금 등 소득':isStudent()?'용돈':'연봉'} ${won(inc)} · 세금·4대보험 ${won(S.flags.military||isStudent()?0:(S.epi?Math.round(inc*.03):taxOf(inc)))} · 생활비 ${won(cost)} (${household()}인 가구)</span>`:''}`,0,'y')}S.yf=resume&&S.yf?S.yf:0;FLAVT=0;save();SCHED=[];
+  if(S.epi){if(S.pol>=2&&!S.flags.polRetired&&!S.flags.presWin&&S.age<=75){const en=elecNotice();if(en)SCHED.push({at:.25,e:en})}if(S.age===61)SCHED.push({at:.4,e:E.retire});if(S.age===75&&S.deathAge>76)SCHED.push({at:.4,e:E.old});if(S.age>=S.deathAge)SCHED.push({at:.5,e:E.last})}
+  else{buildQueue();const ats=Q.map(()=>.12+Math.random()*.76).sort((a,b)=>a-b);SCHED=Q.map((e,i)=>({at:ats[i],e}));Q=[]}
+  syncFocus();renderFocus();ACTSIG='';renderActs()}
+function taxOf(g){if(g<=0)return 0;for(const[x,r]of[[1200,.09],[3000,.12],[5000,.15],[8000,.19],[15000,.24],[30000,.3],[1e12,.36]])if(g<=x)return Math.round(g*r)}
+function yearEnd(){{const inc=income(),cost=living(),tax=S.flags.military||isStudent()?0:(S.epi?Math.round(inc*.03):taxOf(inc));S.money+=inc-tax-cost;S.lastFin={inc,cost,tax};if(S.job&&!isStudent())S.flags.workYears=(S.flags.workYears||0)+1;
+    S.loan=S.loan||0;if(S.loan>0){S.loan=Math.round(S.loan*1.04);const pay=Math.min(S.loan,Math.max(0,Math.round(S.money*.3)));S.money-=pay;S.loan-=pay;S.lastFin.pay=pay}
+    if(S.money<0){const d=-S.money;S.money=0;S.loan+=d;S.lastFin.borrow=d}
+    S.money=Math.round(S.money*1.02);if(S.loan>Math.max(3000,inc*1.5)+(S.house||0)*.6)S.st.happy=Math.max(0,S.st.happy-2);
+    if(S.house)S.house=Math.round(S.house*1.03);}
+  if(!S.epi){
+    if(S.job&&S.job.lv===0&&['med','law'].includes(S.job.track))S.xp+=1;
+    if(S.age>=40)S.st.health=Math.max(0,S.st.health-(S.age>=50?1.5:.8));
+    if(S.married)S.st.happy=Math.min(100,S.st.happy+1);
+    if(S.edu&&S.edu!=='hs'&&S.age>=24&&!S.flags.graduated){S.flags.graduated=true;lg(EDU[S.edu]+' 졸업',0,'f')}}
+  else S.st.health=Math.max(0,S.st.health-2);
+  S.age+=1;
+  if(S.age>=60&&!S.epi){S.epi=true;const base=S.gender==='m'?KSTAT.lifeM:KSTAT.lifeF;
+    S.deathAge=Math.max(64,Math.min(103,Math.round(base+(S.st.health-50)*.2+(S.st.happy-50)*.08-(S.flags.cancer===2?6:S.flags.cancer===1?1:0)+R(-6,6))));lg('60세, 인생의 황혼에 접어들다',1)}
+  yearStart()}
+
+function fire(e){if(e.when&&!e.when())return;if(e.auto)autoEv(e);else openModal(e)}
+function strip(t){return String(t).replace(/<span class="note">[\s\S]*?<\/span>/g,'').replace(/<br\s*\/?>/g,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim()}
+function deltaHtml(list,cls){return list.map(([k,v])=>`<span class="${cls} ${v>0?'up':'dn'}">${LBL[k]} ${v>0?'+':''}${k==='money'?won(v):v}</span>`).join('')}
+function autoEv(e){if(e.pre)e.pre();const title=typeof e.title==='function'?e.title():e.title;
+  const chs=(typeof e.choices==='function'?e.choices():e.choices).filter(c=>!c.req||c.req());if(!chs.length)return;
+  PEND=[];let r=pick(chs).fn();if(typeof r==='string')r={t:r};const ds=deltaHtml(PEND,'ld');PEND=[];
+  lg(`<b>${e.icon||''} ${title}</b> ${strip(r.t)} ${ds}`,0,'a');
+  if(r.chain&&r.chain.length){CH.push(...r.chain);while(CH.length){const n=CH.shift();if(!n.when||n.when()){openModal(n);break}}}}
+
+/* --- 군 복무 타임라인 --- */
+function milEv(icon,title,fn){return{auto:true,icon,tag:'군 복무',title,choices:[{t:'',fn}]}}
+E.leave={icon:'🏖️',tag:'군 복무',title:'첫 휴가',text:'드디어 첫 정기휴가! 위병소를 나서는 발걸음이 가볍다. 며칠 동안 무엇을 할까?',choices:[
+  {t:'🍚 집에서 엄마 밥 먹고 푹 쉰다',fn:()=>{fx({happy:7});return'가족과 둘러앉아 먹은 저녁이 세상에서 제일 맛있었다.'}},
+  {t:'🎒 친구들과 짧은 여행을 간다',fn:()=>{fx({social:3,happy:4,money:-50});return'친구들과 바다를 보러 갔다. “전역하면 또 오자!”'}},
+  {t:'📝 미뤄 둔 자격증 시험을 본다',fn:()=>{fx({intel:3,happy:1});lg('군 복무 중 자격증 취득',1);return'휴가 중에 본 자격증 시험에 합격했다. 군 복무 중 취득한 자격증은 전역 후에도 쓸모가 있다.'}},
+]};
+E.milBully={icon:'⚠️',tag:'군 복무',title:'생활관의 부조리',text:'한 선임이 후임에게 심부름을 시키고 폭언을 일삼는다. 후임은 밤마다 혼자 운다.<span class="note">💡 군 안에서의 괴롭힘은 국방헬프콜(1303)로 24시간 신고·상담할 수 있어요. 군인도 헌법이 보장하는 기본권을 가진 국민이에요.</span>',choices:[
+  {t:'국방헬프콜(1303)이나 마음의 편지로 신고한다',fn:()=>{fx({civic:5});lg('군 부조리를 신고',1);return'조사가 이루어졌고 선임은 징계를 받았다. 후임이 조용히 고맙다고 했다.'}},
+  {t:'선임에게 직접 그만하라고 말한다',fn:()=>{if(S.st.social>=50||ch(.4)){fx({social:3,civic:3});return'의외로 선임이 사과했다. 생활관 분위기가 달라졌다.'}fx({happy:-4,civic:2});return'선임과 사이가 틀어졌다. 그래도 후임 편에 선 것은 후회하지 않는다.'}},
+  {t:'모른 척한다',fn:()=>{fx({happy:-3,civic:-3});return'눈을 감았지만 마음은 계속 무거웠다.'}},
+]};
+E.discharge={icon:'🎖️',tag:'전역',title:'전역하는 날',text:()=>`${S.mil?S.mil.br:'군'} 복무를 마치고 위병소를 나서는 순간, 하늘이 유난히 파랬다. 그동안 모은 월급과 적금이 통장에 있다. 무엇부터 할까?`,choices:[
+  {t:'곧바로 복학과 공부를 준비한다',fn:()=>milEnd({intel:3},'군 생활의 규칙적인 습관 덕분에 공부가 잘 됐다.')},
+  {t:'모은 돈으로 여행을 떠난다',fn:()=>milEnd({happy:6,money:-200},'전국 일주를 하며 자유를 만끽했다.')},
+  {t:'전우들과 계속 연락하며 지낸다',fn:()=>milEnd({network:3,social:2},'평생 갈 인연이 생겼다.')},
+]};
+function milEnd(o,t){S.flags.military=false;S.mil=null;S.flags.served=true;fx(Object.assign({money:800},o));lg('만기 전역',1);syncFocus();return t}
+const RMIL=[
+  {id:'m_ugyuk',icon:'🧗',tag:'군 복무',title:'유격 훈련',choices:[{t:'',fn:()=>{fx({health:3,happy:-1});return'“올빼미!” 산을 오르내리며 온몸이 쑤셨지만 해냈다.'}}]},
+  {id:'m_cold',icon:'❄️',tag:'군 복무',title:'혹한기 훈련',choices:[{t:'',fn:()=>{fx({health:2,civic:1});return'영하 20도의 텐트에서 전우들과 체온을 나눴다.'}}]},
+  {id:'m_shoot',icon:'🎯',tag:'군 복무',title:'사격 측정',choices:[{t:'',fn:()=>{if(ch(.4)){fx({happy:5});return'20발 중 20발 명중! 포상휴가를 받았다.'}fx({intel:1});return'합격선은 넘겼다. 다음엔 만발을 노려야지.'}}]},
+  {id:'m_flood',icon:'🌧️',tag:'군 복무',title:'대민 지원',choices:[{t:'',fn:()=>{fx({civic:4,health:-1});lg('수해 복구 대민 지원',1);return'집중호우로 피해를 입은 마을에서 수해 복구를 도왔다. 할머니가 손을 꼭 잡아 주셨다.'}}]},
+  {id:'m_soccer',icon:'⚽',tag:'군 복무',title:'중대 축구 대회',choices:[{t:'',fn:()=>{fx({social:3,happy:3});return'우리 소대가 우승했다! 그날 저녁 치킨이 나왔다.'}}]},
+  {id:'m_letter',icon:'✉️',tag:'군 복무',title:'위문 편지',choices:[{t:'',fn:()=>{fx({happy:3});return'초등학생이 보낸 위문 편지를 받았다. “군인 아저씨 고맙습니다!” 괜히 뭉클했다.'}}]},
+];
+const MILT=[
+  [.06,milEv('🪖','신병 교육 수료',()=>{fx({health:2,civic:1});return'5주간의 신병 교육을 마치고 이등병 계급장을 달았다.'})],
+  [.1,milEv('🚚','자대 배치',()=>`${pick(['강원도 철원의 보병 부대','경기도 연천의 포병 부대','동해안 경계 부대','충청도의 공병 부대','경상도의 군수 지원 부대'])}에 배치되었다. 낯선 생활관, 낯선 사람들.`)],
+  [.111,milEv('🎖️','일병 진급',()=>{fx({happy:2});return'계급장에 작대기 두 개. 군 생활이 조금 익숙해졌다.'})],
+  [.3,E.leave],[.4,'R'],
+  [.444,milEv('🎖️','상병 진급',()=>{fx({happy:2,social:1});return'상병이 되었다. 후임들에게 일을 가르치기 시작했다.'})],
+  [.55,E.milBully],[.68,'R'],
+  [.778,milEv('🎖️','병장 진급',()=>{fx({happy:3});return'병장! 이제 전역이 눈앞이다.'})],
+  [.86,milEv('🧭','분대장 임무',()=>{fx({social:2,civic:2});return'분대장으로 후임들을 이끌었다. 리더의 무게를 처음 알았다.'})],
+  [1,E.discharge],
+];
+function milTick(){if(!S.mil)return;const el=now()-S.mil.start;
+  while(!MODAL&&S.mil&&S.mil.i<MILT.length&&MILT[S.mil.i][0]*S.mil.D<=el){const it=MILT[S.mil.i];S.mil.i++;let e=it[1];
+    if(e==='R'){const c=RMIL.filter(x=>!S.used[x.id]);if(!c.length)continue;e=pick(c);S.used[e.id]=1;e=Object.assign({},e,{auto:true})}fire(e)}}
+function enlist(br,D){S.flags.military=true;S.mil={start:now(),D,i:0,br};syncFocus();renderFocus();lg(`${br} 입대 (복무 ${Math.round(D*12)}개월)`,1)}
+
+/* --- 팝업 --- */
+function openModal(e){MODAL=true;const m=$('#modal');m.classList.remove('hide');m.classList.add('show');renderModalEvent(e)}
+function renderModalEvent(e){if(e.pre)e.pre();updHUD();
+  const title=typeof e.title==='function'?e.title():e.title,txt=typeof e.text==='function'?e.text():e.text;
+  const chs=typeof e.choices==='function'?e.choices():e.choices;CUR={e,chs,title};
+  $('#mcard').innerHTML=`<div class="swap"><div class="mage">${S.age}세 ${Math.min(11,Math.floor(S.yf*12))}개월, ${stage()}</div><div class="head"><div class="ic">${e.icon||'📌'}</div><div><span class="tag">${e.tag||''}</span><h2 id="mt">${title}</h2></div></div>
+    <div class="tx">${txt}</div><div class="choices">${chs.map((c,i)=>{const lock=c.req&&!c.req();return`<button class="cbtn ${lock?'lock':''}" data-i="${i}" ${lock?'aria-disabled="true"':''}>${c.t}${lock?`<span class="rq">🔒 ${c.rq||'조건 부족'}</span>`:''}</button>`}).join('')}</div></div>`;
+  $('#mcard').scrollTop=0;
+  document.querySelectorAll('#mcard .cbtn').forEach(b=>b.onclick=()=>{if(b.classList.contains('lock')||CUR.busy)return;CUR.busy=true;b.classList.add('stamp');
+    const c=CUR.chs[+b.dataset.i];setTimeout(()=>{PEND=[];let r=c.fn();if(typeof r==='string')r={t:r};if(r.chain)CH.unshift(...r.chain);renderModalResult(r)},300)});
+  const f=document.querySelector('#mcard .cbtn:not(.lock)');if(f)f.focus({preventScroll:true})}
+function renderModalResult(r){updHUD();const ds=deltaHtml(PEND,'d');PEND=[];const h=CUR;
+  $('#mcard').innerHTML=`<div class="swap"><div class="mage">${S.age}세 ${Math.min(11,Math.floor(S.yf*12))}개월, ${stage()}</div><div class="head"><div class="ic">${h.e.icon||'📌'}</div><div><span class="tag">${h.e.tag||''}</span><h2 id="mt">${h.title}</h2></div></div>
+    <div class="tx">${r.t}</div>${r.html||''}${ds?`<div class="deltas">${ds}</div>`:''}<div class="next"><button class="btn" id="nx">계속 지켜보기</button></div></div>`;
+  $('#mcard').scrollTop=0;$('#nx').onclick=onNext;$('#nx').focus({preventScroll:true})}
+function onNext(){const nb=$('#nx');if(nb){if(nb.disabled)return;nb.disabled=true}
+  if(S.flags.presWin||CUR.e===E.last){closeModal();startEnding();return}
+  while(CH.length){const e=CH.shift();if(e.when&&!e.when())continue;renderModalEvent(e);return}
+  closeModal()}
+function closeModal(){const m=$('#modal');if(m.classList.contains('hide'))return;m.classList.add('hide');
+  setTimeout(()=>{m.classList.remove('show','hide');$('#mcard').innerHTML='';MODAL=false;LAST=0;if(S&&!ENDING){trackPath();syncFocus();renderFocus();ACTSIG='';renderActs()}},300)}
+
+/* --- 직접 고르는 활동 --- */
+function nextElec(k){const c=ELEC[k].cycle;return(c-((S.age+S.elOff[k==='gov'?'local':k])%c))%c}
+function costMult(){const t=1+.025*Math.max(0,S.age-19),w=1+Math.min(2,Math.max(0,assets())/40000)*.5;return t*w}
+function sc(v){return Math.max(10,Math.round(v*costMult()/10)*10)}
+function hp(v){return Math.round(v*(1+.025*Math.max(0,S.age-28))/100)*100}
+function costOf(a){const c=a.cost?a.cost():0;return a.fixed||c<=1?c:sc(c)}
+function cdLeft(a){const t=S.cd[a.id];if(t===undefined)return 0;return Math.max(0,t+a.cd-now())}
+function pay(a,c){S.money-=c;S.cd[a.id]=now()}
+function nm(a){return typeof a.name==='function'?a.name():a.name}
+const PARTIES=['푸른내일당','새시민연대','한빛미래당'];
+const ACTS=[
+  /* 돈 쓰기 */
+  {id:'academy',cat:'money',mil:1,icon:'📚',name:()=>S.age<19?'학원 등록':'강의·자격증 공부',desc:'지능 +4',cost:()=>S.age<19?100:200,cd:1,run:()=>{fx({intel:4});return S.age<19?'학원에서 부족한 과목을 보충했다.':'퇴근 후 강의를 들으며 자격증을 땄다.'}},
+  {id:'pt',cat:'money',icon:'🏋️',name:'운동 클래스 등록',desc:'체력 +5',cost:()=>150,cd:1,run:()=>{fx({health:5});return'꾸준히 운동하니 몸이 가벼워졌다.'}},
+  {id:'trip',cat:'money',icon:'✈️',name:'여행 떠나기',desc:'행복과 사교가 오른다',cost:()=>150,cd:1,choices:a=>[
+    {t:`🚆 국내 여행 (${won(sc(150))})`,req:()=>S.money>=sc(150),rq:'현금 부족',fn:()=>{pay(a,sc(150));fx({happy:4,social:1});return'바다와 산을 보며 머리를 식혔다.'}},
+    {t:`🌏 해외 여행 (${won(sc(500))})`,req:()=>S.age>=19&&S.money>=sc(500),rq:'만 19세 이상, 현금 부족',fn:()=>{pay(a,sc(500));fx({happy:7,social:2,intel:1});lg('해외 여행',0,'f');return'낯선 나라의 거리를 걸으며 세상이 넓다는 걸 느꼈다.'}},
+    {t:'다음에 할게요',fn:()=>'다음 기회에 떠나기로 했다.'}]},
+  {id:'gift',cat:'money',icon:'🎁',name:'부모님께 용돈·선물',desc:'행복 +3, 사교 +1',show:()=>S.age>=19,cost:()=>100,cd:1,run:()=>{fx({happy:3,social:1});return'부모님이 “다 컸네” 하시며 웃으셨다.'}},
+  {id:'donate',cat:'money',mil:1,fixed:1,icon:'💝',name:'기부하기',desc:'시민의식과 명성이 오른다',cost:()=>Math.max(30,Math.round(Math.max(0,S.money)*.05)),cd:1,run:()=>{fx({civic:3,happy:2,fame:S.fame>=20?2:0});lg('이웃을 위해 기부',0,'f');return'형편이 어려운 이웃을 위해 기부했다.<span class="note">💡 기부금은 연말정산 때 세액공제를 받을 수 있어요.</span>'}},
+  {id:'invest',cat:'money',icon:'📈',name:'주식·펀드 투자',desc:'자산이 늘 수도, 줄 수도 있다',show:()=>S.age>=19,req:()=>S.money>=500,rq:()=>'자산 500만원 이상 필요',cost:()=>0,cd:1,text:()=>'얼마를 투자할까? 투자 수익은 지능(정보 분석력)과 운에 달려 있다.<span class="note">💡 주식과 펀드는 예금과 달리 원금 손실이 날 수 있어요.</span>',choices:a=>[500,2000,10000].map(v=>({t:`${won(v)} 투자`,req:()=>S.money>=v,rq:'자산 부족',fn:()=>{pay(a,0);const r=R(-30,40)/100+(S.st.intel-50)/500;const g=Math.round(v*r);fx({money:g,happy:g>0?2:-3});return g>=0?`1년 뒤 ${Math.round(r*100)}% 수익! ${won(g)}을 벌었다.`:`시장이 출렁였다. ${won(-g)}을 잃었다.`}})).concat([{t:'투자하지 않는다',fn:()=>'신중하게 지켜보기로 했다.'}])},
+  {id:'house',cat:'money',icon:'🏠',name:'내 집 마련',desc:'대출을 끼고 집을 산다',show:()=>S.age>=28&&!S.house,req:()=>S.money>=hp(12000),rq:()=>`현금 ${won(hp(12000))} 이상 필요`,cost:()=>0,cd:2,text:()=>`모은 돈이 ${won(S.money)}. 대출을 받으면 집을 살 수 있다.<span class="note">📊 우리나라 가구 평균 자산은 5억 6,678만원이고, 그중 약 76%가 부동산 같은 실물자산이에요 (2025 가계금융복지조사).</span>`,choices:a=>[
+    {t:`대출을 받아 아파트를 산다 (${won(hp(45000))})`,fn:()=>{pay(a,0);const l=buyHouse(hp(45000));fx({happy:8});lg('대출을 받아 아파트 구입',1);return`드디어 내 집이 생겼다! 모자란 ${won(l)}은 주택담보대출로 마련했다. 해마다 이자(연 4%)와 원금을 갚아 나가야 한다.`}},
+    {t:'주택 청약에 도전한다',fn:()=>{pay(a,0);if(ch(.3)){buyHouse(hp(32000));fx({happy:12});lg('청약 당첨! 내 집 마련',1);return'청약 당첨! 시세보다 싸게 새 아파트를 얻었다.'}fx({happy:-2});return'이번 청약은 떨어졌다. 2년 뒤 다시 도전할 수 있다.'}},
+    {t:'조금 더 모은다',fn:()=>'조금 더 신중하게 기다리기로 했다.'}]},
+  {id:'car',cat:'money',icon:'🚗',name:'자동차 구입',desc:'행복 +4, 사교 +1',show:()=>S.age>=22,cost:()=>3000,cd:8,run:()=>{fx({happy:4,social:1});lg('첫 자동차 구입',0,'f');return'새 차를 몰고 가족과 드라이브를 다녀왔다.'}},
+  {id:'lotto',cat:'money',icon:'🎟️',name:'복권 사기',desc:'1등 당첨 확률 814만분의 1',show:()=>S.age>=19,cost:()=>1,cd:.5,run:()=>{const r=Math.random();
+    if(r<1/8145060){fx({money:200000,happy:20});lg('복권 1등 당첨!',1);return'믿을 수 없다. 1등에 당첨됐다!'}
+    if(r<1/733){fx({money:5,happy:1});return'4등 당첨! 5만원을 받았다.'}
+    if(r<1/45)return'5등, 5천원 당첨. 본전도 못 찾았다.';
+    return'꽝! 로또 6/45의 1등 확률은 약 814만분의 1이에요. 벼락 맞을 확률보다도 낮다고 한다.'}},
+  {id:'ptjob',cat:'money',icon:'🧾',name:()=>S.pt?'아르바이트 그만두기':'아르바이트 시작하기',desc:'공부 시간 대신 용돈을 번다',show:()=>S.age>=15&&(S.age<19||isStudent())&&!S.job,cost:()=>0,cd:.5,
+    text:()=>S.pt?`지금은 ${S.pt==='weekend'?'주말':'방학'} 아르바이트를 하고 있다. 그만둘까?`:'아르바이트를 시작할까? 돈은 벌지만 공부와 휴식 시간은 줄어든다.'+(S.age<18?'<span class="note">💡 만 15세부터 아르바이트를 할 수 있어요. 18세 미만은 친권자 동의서와 가족관계증명서가 필요하고, 하루 7시간·일주일 35시간까지만 일할 수 있으며, 밤 10시부터 아침 6시까지의 야간 근로는 원칙적으로 금지돼요.</span>':''),
+    choices:a=>S.pt?[{t:'그만둔다',fn:()=>{pay(a,0);S.pt=null;lg('아르바이트를 그만둠',0,'f');return'아르바이트를 그만두고 학업에 집중하기로 했다.'}},{t:'계속한다',fn:()=>'조금 더 해 보기로 했다.'}]
+      :[{t:'주말 아르바이트를 한다',fn:()=>{pay(a,0);S.pt='weekend';lg('주말 아르바이트 시작',0,'f');return'주말마다 일하기로 했다.'}},{t:'방학에만 일한다',fn:()=>{pay(a,0);S.pt='vacation';lg('방학 아르바이트 시작',0,'f');return'방학에만 일하기로 했다.'}},{t:'다음에 할게요',fn:()=>'조금 더 생각해 보기로 했다.'}]},
+  /* 정치·사회 */
+  {id:'party',cat:'pol',icon:'🎌',name:'정당 가입',desc:'공천을 받을 수 있고 인맥이 넓어진다',show:()=>!S.flags.party,req:()=>S.age>=16,rq:()=>'만 16세부터 가능',cd:0,text:'어느 정당에 가입할까? 정당 소속으로 선거에 나가면 당의 조직과 공천을 얻을 수 있다.<span class="note">💡 2022년 정당법 개정으로 만 16세부터 정당에 가입할 수 있어요.</span>',choices:a=>PARTIES.map(p=>({t:`${p}에 가입한다`,fn:()=>{S.flags.party=p;fx({network:2,civic:1});lg(`${p} 입당`,1);return`${p}의 당원이 되었다. 지역 당원 모임에 처음 나가 인사를 했다.`}})).concat([{t:'아직은 가입하지 않는다',fn:()=>'조금 더 지켜보기로 했다.'}])},
+  {id:'school',cat:'pol',icon:'🏫',name:'청년 정치학교 수강',desc:'시민의식 +3, 인맥 +2',show:()=>S.age>=18,cost:()=>50,cd:1,run:()=>{fx({civic:3,intel:1,network:2});return'선거 전략, 정책 만들기, 연설법을 배웠다.'}},
+  {id:'meet',cat:'pol',icon:'🥂',name:'사교 모임·동문회',desc:'인맥 +4, 사교 +2',show:()=>S.age>=19,cost:()=>50,cd:.5,run:()=>{fx({network:4,social:2});return pick(['동문회에서 선후배들과 명함을 주고받았다.','지역 상공인 모임에 처음 참석했다.','독서 토론 모임에서 다양한 사람을 만났다.'])}},
+  {id:'vol',cat:'pol',mil:1,icon:'🙋',name:'지역 봉사단 활동',desc:'시민의식 +3, 명성 +1',cost:()=>0,cd:.5,run:()=>{fx({civic:3,fame:1,happy:1,health:-1});return pick(['동네 어르신들께 도시락을 배달했다.','하천 쓰레기 줍기 봉사를 했다.','지역아동센터에서 아이들 공부를 봐 주었다.'])}},
+  {id:'debate',cat:'pol',icon:'🎙️',name:'토론회 패널 참여',desc:'명성 +3, 지능 +1',show:()=>S.age>=25,req:()=>S.st.civic>=45,rq:()=>'시민의식 45 이상',cost:()=>0,cd:1,run:()=>{fx({fame:3,intel:1});return'지역 현안 토론회에서 차분하게 의견을 밝혔다.'}},
+  {id:'column',cat:'pol',icon:'📰',name:'신문 칼럼 기고',desc:'명성이 오른다',show:()=>S.age>=25,req:()=>S.st.intel>=50,rq:()=>'지능 50 이상',cost:()=>0,cd:1,run:()=>{if(ch(.5+S.st.intel/300)){fx({fame:4,civic:1});return'칼럼이 화제가 되어 여러 곳에 공유되었다.'}fx({fame:1,happy:-2});return'반응은 미지근했고 악성 댓글도 달렸다.'}},
+  {id:'tube',cat:'pol',icon:'📹',name:'시사 유튜브 채널 운영',desc:'명성이 크게 오를 수도 있다',show:()=>S.age>=20,cost:()=>100,cd:1,run:()=>{const g=R(0,8);fx({fame:g,social:1});return g>=5?'영상 하나가 조회수 100만을 넘었다!':'구독자가 조금씩 늘고 있다.'}},
+  {id:'polgive',cat:'pol',icon:'💌',name:'정치 후원금 내기',desc:'인맥 +2, 시민의식 +1',show:()=>S.age>=19,cost:()=>10,cd:1,run:()=>{fx({network:2,civic:1});return'지지하는 정치인의 후원회에 10만원을 냈다.<span class="note">💡 10만원까지의 정치후원금은 연말정산 때 거의 전액 세액공제를 받을 수 있어요.</span>'}},
+  {id:'role',cat:'pol',icon:'📣',name:'정당 당직 맡기',desc:'공천에 유리해진다',show:()=>!!S.flags.party&&!S.flags.partyRole,req:()=>S.age>=25&&S.network>=30,rq:()=>'만 25세 이상, 인맥 30 이상',cost:()=>0,cd:0,run:()=>{S.flags.partyRole=true;fx({fame:3,network:4});lg(`${S.flags.party} 청년위원장`,1);return'당의 청년위원장을 맡았다. 당 행사에서 연설할 기회가 늘었다.'}},
+  {id:'aide',cat:'pol',icon:'🧑‍💼',name:'국회 보좌진 지원',desc:'정치의 길로 직업을 바꾼다',show:()=>S.pol===0&&!(S.job&&S.job.track==='politics')&&S.age>=23,req:()=>S.st.civic>=50&&!isStudent(),rq:()=>isStudent()?'졸업 후 가능':'시민의식 50 이상',cost:()=>0,cd:2,run:()=>{const r=tryJob('politics',.25+S.st.civic/300+S.network/300+(S.flags.party?.1:0));return r}},
+  {id:'book',cat:'pol',icon:'📖',name:'출판기념회 열기',desc:'명성 +5, 인맥 +3',show:()=>S.age>=35,req:()=>S.fame>=30,rq:()=>'명성 30 이상',cost:()=>300,cd:4,run:()=>{fx({fame:5,network:3,money:R(200,800)});lg('책 출간과 출판기념회',1);return'살아온 이야기와 정책 구상을 담은 책을 냈다. 출판기념회장이 사람들로 가득 찼다.'}},
+  {id:'runLocal',cat:'pol',icon:'🗳️',name:'시의원 출마',desc:'지방선거에 후보로 나선다',show:()=>S.pol<1,req:()=>S.age>=25&&!isStudent()&&nextElec('local')===0&&S.lastElec.local!==S.age,
+    rq:()=>S.age<25||isStudent()?'법적으로는 만 18세부터 출마할 수 있지만, 사회 경험을 쌓은 뒤(25세 이후) 도전할 수 있어요':S.lastElec.local===S.age?'이번 선거는 이미 결정했어요':`다음 지방선거까지 ${nextElec('local')}년`,open:()=>elecDecide('local')},
+  {id:'runAsm',cat:'pol',icon:'🏛️',name:'국회의원 출마',desc:'총선에 후보로 나선다',show:()=>S.pol<2||S.flags.exMP,req:()=>S.age>=30&&nextElec('assembly')===0&&S.lastElec.assembly!==S.age&&S.fame>=15,
+    rq:()=>S.age<30?'법적으로는 만 18세부터 출마할 수 있지만, 30세 이후 도전할 수 있어요':S.lastElec.assembly===S.age?'이번 선거는 이미 결정했어요':nextElec('assembly')?`다음 총선까지 ${nextElec('assembly')}년`:'명성 15 이상 필요',open:()=>elecDecide('assembly')},
+  {id:'runGov',cat:'pol',icon:'🗺️',name:'시·도지사 출마',desc:'광역자치단체장 선거에 도전한다',show:()=>S.pol>=1&&S.pol<3,req:()=>S.age>=30&&S.fame>=40&&nextElec('local')===0&&S.lastElec.gov!==S.age,
+    rq:()=>S.fame<40?'명성 40 이상 필요':S.lastElec.gov===S.age?'이번 선거는 이미 결정했어요':`다음 지방선거까지 ${nextElec('local')}년`,open:()=>elecDecide('gov')},
+  {id:'runPres',cat:'pol',icon:'🇰🇷',name:'대통령 출마',desc:'대통령 선거에 도전한다',show:()=>S.pol<4,req:()=>S.age>=40&&!!S.flags.party&&(S.pol>=2||(S.pol>=1&&S.fame>=55))&&!S.flags.polRetired&&nextElec('pres')===0&&S.lastElec.pres!==S.age,
+    rq:()=>S.age<40?'만 40세부터 출마할 수 있어요':!S.flags.party?'정당 소속이 필요해요':S.flags.polRetired?'정계에서 은퇴했어요':!(S.pol>=2||(S.pol>=1&&S.fame>=55))?'국회의원 경력 또는 시의원과 명성 55 필요':S.lastElec.pres===S.age?'이번 선거는 이미 결정했어요':`다음 대선까지 ${nextElec('pres')}년`,open:()=>elecDecide('pres')},
+  /* 나를 가꾸기 */
+  {id:'checkup',cat:'self',icon:'🩺',name:'건강검진 받기',desc:'체력 +3, 큰 병을 일찍 발견할 수 있다',show:()=>S.age>=20,cost:()=>30,cd:2,run:()=>{S.flags.checkup=S.age;fx({health:3});return'건강검진을 받았다. 정기 검진은 병을 일찍 발견하는 가장 좋은 방법이다.'}},
+  {id:'counsel',cat:'self',mil:1,icon:'🧘',name:()=>S.age<19?'선생님과 상담하기':'상담·명상',desc:'행복 +5',cost:()=>S.age<19?0:20,cd:.5,run:()=>{fx({happy:5});return S.age<19?'선생님이 고민을 끝까지 들어 주셨다.':'마음속 이야기를 털어놓으니 한결 가벼워졌다.'}},
+  {id:'reading',cat:'self',mil:1,icon:'📖',name:'독서 모임',desc:'지능 +2, 사교 +1',cost:()=>10,cd:.5,run:()=>{fx({intel:2,social:1});return'한 달에 한 권, 함께 읽고 이야기를 나눴다.'}},
+  {id:'gather',cat:'self',icon:'🍲',name:'가족·친구 모임',desc:'행복 +3, 사교 +2',cost:()=>30,cd:.5,run:()=>{fx({happy:3,social:2});return'오랜만에 소중한 사람들과 웃으며 밥을 먹었다.'}},
+  {id:'hobby',cat:'self',icon:'🎨',name:'새로운 취미 배우기',desc:'행복 +4, 지능 +1',cost:()=>50,cd:1,run:()=>{fx({happy:4,intel:1});return pick(['기타를 배우기 시작했다.','주말마다 그림을 그린다.','요리 교실에 등록했다.','수영을 배웠다.'])}},
+];
+function actState(a){if(S.flags.military&&!a.mil)return{ok:false,why:'군 복무 중에는 할 수 없어요'};
+  if(S.epi&&a.cat==='pol'&&!(a.id==='runPres'&&S.pol>=2&&S.age<=75))return{ok:false,why:'은퇴 후에는 쉬어요'};
+  if(a.req&&!a.req())return{ok:false,why:a.rq()};
+  const l=a.cd?cdLeft(a):0;if(l>0)return{ok:false,why:`${l<1?Math.max(1,Math.ceil(l*12))+'개월':Math.ceil(l)+'년'} 뒤 다시 할 수 있어요`};
+  const c=costOf(a);if(c>S.money)return{ok:false,why:`현금이 부족해요 (${won(c)} 필요)`};return{ok:true}}
+function actEvent(a){const c=costOf(a);
+  const chs=a.choices?a.choices(a):[{t:c?`${won(c)}을 쓰고 한다`:'한다',fn:()=>{pay(a,c);return a.run()}},{t:'다음에 할게요',fn:()=>'다음 기회에 하기로 했다.'}];
+  return{icon:a.icon,tag:'직접 고른 활동',title:nm(a),text:(a.text?(typeof a.text==='function'?a.text():a.text):a.desc)+(c?`<span class="note">비용 ${won(c)}, 현재 자산 ${won(S.money)}</span>`:''),choices:chs}}
+function renderActs(){const el=$('#acts');if(!S||ENDING){el.innerHTML='';ACTSIG='';return}
+  const cats=[['money','💸 돈 쓰기'],['pol','🏛️ 정치·사회'],['self','🌿 나를 가꾸기']];
+  const list=ACTS.filter(a=>a.cat===ACTCAT&&(!a.show||a.show())).map(a=>({a,s:actState(a)}));
+  const sig=ACTCAT+'|'+list.map(x=>x.a.id+x.s.ok+(x.s.why||'')+costOf(x.a)).join();if(sig===ACTSIG)return;ACTSIG=sig;
+  el.innerHTML=`<div class="card fcard"><h3>🗂️ 직접 고르는 활동</h3><p class="fhint">언제든 골라서 할 수 있어요. 활동을 고르는 동안 시간은 멈춥니다. 나이가 들고 자산이 늘수록 씀씀이와 비용도 커져요.</p>
+    <div class="atabs" role="tablist">${cats.map(([k,n])=>`<button role="tab" class="atab ${ACTCAT===k?'on':''}" data-c="${k}" aria-selected="${ACTCAT===k}">${n}</button>`).join('')}</div>
+    <div class="agrid">${list.map(({a,s})=>{const c=costOf(a);return`<button class="abtn ${s.ok?'':'lock'}" data-a="${a.id}" ${s.ok?'':'aria-disabled="true"'}><span class="ai">${a.icon}</span><span class="an"><b>${nm(a)}</b><small>${s.ok?a.desc:'🔒 '+s.why}</small></span>${c?`<span class="ac">${won(c)}</span>`:''}</button>`}).join('')}</div></div>`;
+  document.querySelectorAll('.atab').forEach(b=>b.onclick=()=>{ACTCAT=b.dataset.c;ACTSIG='';renderActs()});
+  document.querySelectorAll('.abtn').forEach(b=>b.onclick=()=>{if(MODAL||ENDING||b.classList.contains('lock'))return;const a=ACTS.find(x=>x.id===b.dataset.a);if(!actState(a).ok)return;openModal(a.open?a.open():actEvent(a))})}
+
+/* --- 화면 구성 --- */
+function hideGame(){['#hud','#logbox','#focus','#acts'].forEach(s=>$(s).innerHTML='');ACTSIG=''}
+function renderHUD(){if(!S||ENDING){hideGame();return}updHUD()}
+function buildGameUI(){$('#main').innerHTML='';
+  $('#hud').innerHTML=`<div class="card hudc"><div class="top"><div class="who"><div class="nm">${S.name}</div><div class="sg" id="hsg"></div></div>
+    <div class="agebox"><div class="age"><span id="hage"></span><small>세</small></div><div class="mo" id="hmo"></div></div></div>
+    <div class="lifebar" role="presentation"><i id="hlife"></i></div><div class="chips" id="hchips"></div>
+    <div class="bars">${STATS.map(k=>`<div class="bar"><div class="l"><span>${LBL[k]}</span><b id="hv-${k}"></b></div><div class="t"><div class="f" id="hb-${k}" style="background:${BARC[k]}"></div></div></div>`).join('')}</div></div>`;
+  $('#logbox').innerHTML=`<div class="card logc"><h3>📜 인생 기록 <span class="live" id="live"></span></h3><div class="lgl" id="lgl">${S.log.slice().reverse().map(logHtml).join('')}</div></div>`;
+  renderFocus();renderActs();updHUD()}
+function updHUD(){if(!S||!document.getElementById('hage'))return;
+  $('#hsg').textContent=stage();$('#hage').textContent=S.age;$('#hmo').textContent=`${Math.min(11,Math.floor(S.yf*12))}개월`;
+  $('#hlife').style.width=Math.min(100,(S.age+S.yf-13)/72*100)+'%';
+  $('#hchips').innerHTML=`<span class="chip">💰 순자산 ${won(assets())}</span>${S.loan>0?`<span class="chip">🏦 대출 ${won(S.loan)}</span>`:''}${S.age>=19?`<span class="chip">💼 연 소득 ${won(income())}</span><span class="chip">🧾 생활비 ${won(living())}</span>`:''}<span class="chip">⭐ 명성 ${Math.round(S.fame)}</span><span class="chip">🔗 인맥 ${Math.round(S.network)}</span>${S.flags.party?`<span class="chip">🎌 ${S.flags.party}</span>`:''}${ptOn()?`<span class="chip">🧾 ${S.pt==='weekend'?'주말':'방학'} 알바</span>`:''}${S.flags.localRole&&S.pol===0?`<span class="chip">🏘️ ${S.flags.localRole}</span>`:''}<span class="chip">📝 시민 퀴즈 ${S.qc}/${S.qt}</span>`;
+  STATS.forEach(k=>{const v=Math.round(S.st[k]);$('#hv-'+k).textContent=v;$('#hb-'+k).style.width=v+'%'});
+  const lv=$('#live');if(lv){const ready=S.epi||S.focus.length;lv.textContent=PAUSED?'멈춤':(!ready?'집중을 골라 주세요':`지켜보는 중 ${SPEED}배속`);lv.className='live'+(PAUSED||!ready?' off':'')}}
+function logHtml(e){return`<div class="lg ${e.imp?'imp':''} ${e.c||''}"><span class="a">${e.a}세</span><span class="t">${e.t}</span></div>`}
+function addLog(e){const l=document.getElementById('lgl');if(!l||ENDING)return;l.insertAdjacentHTML('afterbegin',logHtml(e));l.firstElementChild.classList.add('new');
+  while(l.children.length>400)l.lastElementChild.remove()}
+const SPEEDS=[1,2,4];
+function ctrls(){return`<div class="ctrl"><button class="btn ghost sm" id="pp">${PAUSED?'▶ 이어서 지켜보기':'⏸ 잠시 멈춤'}</button>
+  <div class="spd" role="group" aria-label="진행 속도">${SPEEDS.map(s=>`<button class="sbtn ${SPEED===s?'on':''}" data-s="${s}" aria-pressed="${SPEED===s}">${s}배</button>`).join('')}</div></div>`}
+function bindCtrls(){$('#pp').onclick=()=>{PAUSED=!PAUSED;LAST=0;renderFocus();updHUD()};
+  document.querySelectorAll('.sbtn').forEach(b=>b.onclick=()=>{SPEED=+b.dataset.s;renderFocus();updHUD()})}
+function renderFocus(){const el=$('#focus');if(!S||ENDING){el.innerHTML='';return}
+  if(S.epi){el.innerHTML=`<div class="card fcard"><h3>🌅 노년</h3><p class="fhint">이제 ${N('은')} 자기만의 속도로 남은 삶을 살아간다. 조용히 지켜보자.</p>${ctrls()}</div>`;bindCtrls();return}
+  const L=focusList(),sel=S.focus;
+  const head=S.flags.military?'🪖 군 복무 중 집중하는 것':isStudent()?'🎓 대학 생활에서 집중하는 것':'🎯 집중하고 있는 것';
+  const fin=S.lastFin&&S.age>=20?`<div class="fin">지난해 수입 <b class="ok">${won(S.lastFin.inc)}</b>, 생활비 <b class="no">${won(S.lastFin.cost)}</b>${S.lastFin.tax?`, 세금·4대보험 <b class="no">${won(S.lastFin.tax)}</b>`:''}${S.lastFin.pay?`, 대출 상환 ${won(S.lastFin.pay)}`:''}${S.lastFin.borrow?`, <b class="no">부족분 대출 ${won(S.lastFin.borrow)}</b>`:''}</div>`:'';
+  el.innerHTML=`<div class="card fcard"><h3>${head} <small>${sel.length} / 2</small></h3>
+    <p class="fhint">${sel.length?'고른 집중은 바꿀 때까지 계속 이어져요. 집중하지 않는 능력치는 시간이 지나면 조금씩 떨어져요.':'집중할 것을 1~2개 고르면 시간이 흐르기 시작해요.'}</p>
+    <div class="fgrid">${L.map(f=>{const on=sel.includes(f.id),lock=f.req&&!f.req(),full=!on&&sel.length>=2;
+      return`<button class="fchip ${on?'on':''}" data-id="${f.id}" ${lock||full?'disabled':''} aria-pressed="${on}"><span class="fi">${f.icon}</span><span class="fn"><b>${f.name}</b><small>${lock?f.rq:f.desc}</small></span></button>`}).join('')}</div>${fin}${ctrls()}</div>`;
+  document.querySelectorAll('.fchip').forEach(b=>b.onclick=()=>{const id=b.dataset.id;const i=S.focus.indexOf(id);
+    if(i>=0)S.focus.splice(i,1);else if(S.focus.length<2){S.focus.push(id);const f=L.find(x=>x.id===id);lg(`${f.icon} 앞으로 ‘${f.name}’에 집중하기로 했다.`,0,'f')}
+    LAST=0;renderFocus();updHUD()});
+  bindCtrls()}
+
+/* --- 루프 --- */
+function frame(ts){if(!S||ENDING){RAF=null;return}const dt=LAST?Math.min(250,ts-LAST):0;LAST=ts;
+  const ready=S.epi||S.focus.length>0;
+  if(!PAUSED&&!MODAL&&ready&&dt>0){const dy=dt*SPEED/(S.epi?OLD_MS:YEAR_MS);S.yf+=dy;if(!S.epi)applyFocus(dy);decay(dy);
+    ptTick(dy);milTick();
+    while(!MODAL&&!ENDING&&SCHED.length&&S.yf>=SCHED[0].at)fire(SCHED.shift().e);
+    if(!MODAL&&!ENDING&&S.yf>=1&&!(S.mil&&S.mil.i<MILT.length&&MILT[S.mil.i][0]*S.mil.D<=now()-S.mil.start))yearEnd()}
+  if(ts-HUDT>150){HUDT=ts;updHUD()}
+  if(ts-ACTT>700){ACTT=ts;if(!MODAL)renderActs()}
+  RAF=ENDING?null:requestAnimationFrame(frame)}
+function startGame(){ENDING=false;PAUSED=false;MODAL=false;CH=[];buildGameUI();yearStart(true);LAST=0;if(!RAF)RAF=requestAnimationFrame(frame);toTop()}
+function resumeGame(){S.focus=S.focus||[];S.apt=S.apt||{intel:1,health:1,social:1,civic:1,happy:1};S.path=S.path||[];S.loan=S.loan||0;S.cd=S.cd||{};S.elOff=S.elOff||{local:R(0,3),assembly:R(0,3),pres:R(0,4)};if(S.yf===undefined)S.yf=0;startGame()}
+
+/* ================= 노년과 엔딩 ================= */
+E.retire={icon:'🌅',tag:'60대',title:'은퇴, 그리고 두 번째 인생',
+  text:()=>`어느덧 60대. 평생 해 온 일을 내려놓을 시간이 왔다. 만 65세부터는 국민연금을 받을 수 있다. ${N('은')} 남은 시간을 어떻게 보낼까?<span class="note">📊 국민연금 노령연금의 월평균 수령액은 약 68만원(2025년)이에요. 연금만으로는 노후 생활이 빠듯해서, 많은 사람이 은퇴 후에도 일을 이어 가요.</span>`,choices:[
+  {t:'🌏 그동안 못 가 본 곳으로 여행을 다닌다',req:()=>S.money>=2000,rq:'현금 2,000만원 필요',fn:()=>{S.flags.retire='travel';fx({happy:10,money:-2000});lg('은퇴 후 세계 여행',1);return'젊은 시절 꿈꿨던 곳들을 하나씩 찾아갔다.'}},
+  {t:'🙋 재능 기부와 봉사로 사회에 돌려준다',fn:()=>{S.flags.retire='vol';fx({civic:8,fame:3,happy:5});lg('은퇴 후 봉사 활동',1);return'평생 쌓은 경험으로 청소년들의 멘토가 되었다.'}},
+  {t:'✍️ 자서전을 쓰고 강연을 다닌다',req:()=>S.fame>=40,rq:'명성 40 이상',fn:()=>{S.flags.retire='book';fx({fame:5,money:1000,happy:4});lg('자서전 출간',1);return'자서전이 베스트셀러가 되었다. 청년들 앞에서 내 인생 이야기를 들려줬다.'}},
+  {t:'🛠️ 아직 일할 수 있다. 계속 일한다',fn:()=>{S.flags.retire='work';fx({money:3000,health:-3});return'일하는 것이 곧 삶의 활력이다.'}},
+]};
+E.old={icon:'🍂',tag:'70대',title:'황혼의 오후',text:'창가로 오후 햇살이 들어온다. 요즘 가장 소중한 시간은 무엇일까?',choices:()=>[
+  ...(S.kids>0?[{t:'👨‍👩‍👧 손주들과 함께하는 시간',fn:()=>{fx({happy:8});lg('손주들과 행복한 시간',1);return'“옛날이야기 해 주세요!” 손주들에게 중학교 반장 선거 이야기를 해 줬다.'}}]:[]),
+  {t:'☕ 오랜 친구들과의 수다',fn:()=>{fx({happy:6,social:2});return'수십 년 된 친구들과 웃음꽃을 피웠다.'}},
+  {t:'🌱 작은 텃밭 가꾸기',fn:()=>{fx({happy:5,health:3});return'흙을 만지며 평온한 하루하루를 보낸다.'}},
+  {t:'🗳️ 지금도 빠짐없이 투표하러 간다',fn:()=>{fx({civic:3,happy:2});return'지팡이를 짚고 투표소에 갔다. 첫 투표의 설렘이 아직도 남아 있다.'}},
+]};
+E.last={icon:'🕯️',tag:'인생의 마지막 장',title:'돌아보는 길',text:()=>`${S.deathAge}세. ${N('은')} 지난 삶을 천천히 돌아본다. 중학교 교실, 첫 투표, 첫 출근… 마지막으로 남기고 싶은 것은?`,choices:[
+  {t:'재산의 일부를 장학금으로 기부한다',fn:()=>{S.flags.last='give';const g=Math.max(0,Math.round(Math.min(S.money,assets())*.3));S.money-=g;fx({civic:5});lg(`${won(g)}을 장학금으로 기부`,1);return'내 이름을 딴 장학금이 만들어졌다. 어느 중학생이 그 장학금으로 꿈을 키울 것이다.'}},
+  {t:'사랑하는 사람들에게 편지를 남긴다',fn:()=>{S.flags.last='letter';fx({happy:5});return'“고마웠어. 덕분에 좋은 삶이었어.”'}},
+  {t:'미소를 지으며 눈을 감는다',fn:()=>{S.flags.last='smile';return'후회 없는 삶이었다.'}},
+]};
+
+const END={
+  pres:{e:'🇰🇷',t:'태어난 김에 대통령까지',d:'중학교 교실의 반장 선거에서 시작된 꿈이 마침내 대한민국 대통령 당선으로 이어졌다. 개표 방송에서 이름이 불리던 순간, 지나온 모든 선택이 하나의 길로 이어져 있었다는 것을 깨달았다.'},
+  governor:{e:'🗺️',t:'시·도를 이끈 단체장',d:'시·도지사로서 수백만 주민의 살림을 책임졌다. 대통령은 되지 못했지만, 지역에서 만든 변화는 사람들의 일상에 깊이 남았다.'},
+  minister:{e:'🏢',t:'국정을 책임진 장관',d:'국회의원을 거쳐 장관으로 나라의 살림을 맡았다. 정책 하나하나에 국민의 삶이 달려 있다는 것을 알았기에, 늘 신중했다.'},
+  mp:{e:'🏛️',t:'여의도의 사람',d:'국회의원으로서 법을 만들고 정부를 감시했다. 300개의 의석 중 하나에서 국민을 대표했다.'},
+  local:{e:'🏘️',t:'우리 동네 일꾼',d:'시의원으로 지역 주민의 삶을 가까이서 바꿨다. 놀이터 하나, 횡단보도 하나에도 정치가 있다는 것을 보여 줬다.'},
+  criminal:{e:'🥀',t:'꺾여 버린 꿈',d:'원칙을 버린 순간 모든 것을 잃었다. 정당한 방법이 아니면 아무리 높은 자리도 의미가 없다는 것을 늦게 깨달았다.'},
+  party:{e:'🎙️',t:'정당을 이끈 정치인',d:'선거로 직접 뽑히지는 못했지만, 정당의 대표로서 정치의 한복판에서 평생을 보냈다.'},
+  corp:{e:'🏢',t:'대한민국 CEO',d:'신입사원으로 시작해 대기업의 최고경영자가 되었다. 수만 명 직원의 일자리를 책임지는 자리였다.'},
+  med:{e:'🩺',t:'생명을 지킨 사람',d:'의사로서 수많은 생명을 살렸고, 병원을 이끌었다. 환자들의 감사 편지가 가장 큰 재산이었다.'},
+  law:{e:'⚖️',t:'정의의 수호자',d:'법조인으로서 최고의 자리에 올랐다. 법은 약자를 지키기 위해 존재한다는 믿음을 평생 지켰다.'},
+  public:{e:'🏛️',t:'나라의 살림꾼',d:'공무원으로 시작해 고위공무원이 되었다. 화려하지 않아도 나라를 움직이는 진짜 힘이었다.'},
+  startup:{e:'🦄',t:'세상을 바꾼 혁신가',d:'작은 사무실에서 시작한 회사가 수많은 사람의 일상을 바꿨다.'},
+  star:{e:'🌟',t:'국민 레전드',d:'무대와 경기장에서 전 국민에게 웃음과 감동을 줬다. 그 이름은 오래도록 기억될 것이다.'},
+  tech:{e:'🔧',t:'대한민국 명장',d:'한 분야를 평생 파고들어 최고의 기술자, 명장이 되었다. 손끝에서 대한민국 산업이 자랐다.'},
+  sme:{e:'🏭',t:'뚝심의 사장님',d:'작은 회사의 사원으로 시작해 회사를 이끄는 대표가 되었다. 직원들에게 존경받는 사장님이었다.'},
+  ngo:{e:'✊',t:'시민사회의 큰어른',d:'평생 시민의 편에서 목소리를 냈다. 권력이 아닌 시민의 힘으로 세상을 바꿀 수 있다는 것을 증명했다.'},
+  rich:{e:'💎',t:'자수성가 자산가',d:'부지런히 일하고 현명하게 모아 큰 자산을 일궜다.'},
+  citizen:{e:'🗳️',t:'깨어 있는 시민',d:'높은 자리에 오르지는 않았지만, 단 한 번도 투표를 거르지 않고 공동체를 위해 목소리를 냈다. 민주주의를 지탱하는 것은 바로 이런 시민들이다.'},
+  happy:{e:'🌻',t:'소소하지만 확실한 행복',d:'큰 성공보다 매일의 작은 행복을 선택했다. 사랑하는 사람들과 웃으며 보낸 시간이 가장 큰 성공이었다.'},
+  lonely:{e:'🌧️',t:'치열했지만 고독했던 삶',d:'앞만 보고 달려왔지만 돌아보니 곁에 남은 사람이 많지 않았다. 무엇을 위해 달려왔는지 생각하게 되는 마지막이었다.'},
+  teacher:{e:'🍎',t:'아이들의 선생님',d:'교단에 서서 수많은 아이들의 꿈을 지켜보았다. 교장 선생님이 된 뒤에도 가장 행복한 순간은 제자들이 찾아오는 날이었다.'},
+  creator:{e:'🎬',t:'이야기를 만드는 사람',d:'자신만의 이야기로 수많은 사람과 웃고 울었다. 꾸준함이 재능을 이긴다는 것을 증명했다.'},
+  farmer:{e:'🌾',t:'흙과 함께한 인생 2막',d:'도시를 떠나 땅을 일궜다. 스마트팜과 협동조합으로 마을에 다시 젊은 활기를 불어넣었다.'},
+  community:{e:'🏘️',t:'우리 동네를 지킨 사람',d:'큰 자리에 오르지는 않았지만, 통장과 주민자치회장으로 동네의 크고 작은 일을 함께 풀었다. 민주주의는 가장 가까운 곳에서 시작된다.'},
+  parent:{e:'👨‍👩‍👧‍👦',t:'따뜻한 우리 집의 기둥',d:'바쁜 하루 속에서도 가족과의 저녁 시간을 지켰다. 아이들이 자라 각자의 길을 걷는 모습이 가장 큰 자랑이었다.'},
+  worker:{e:'🧰',t:'한 우물을 판 직업인',d:'한 분야에서 오랫동안 성실하게 일하며 동료들의 믿음을 얻었다. 화려하지 않아도 사회를 움직인 것은 바로 이런 사람들이다.'},
+  ordinary:{e:'🏠',t:'평범해서 더 소중한 일생',d:'대단한 기록을 남기지는 않았지만, 대한민국의 한 사람으로서 성실하게 하루하루를 살아 냈다. 평범한 하루들이 모여 위대한 일생이 되었다.'},
+};
+function getEnding(){
+  if(S.flags.presWin)return'pres';
+  if(S.pol===3)return'governor';
+  if(S.pol===2)return S.minister?'minister':'mp';
+  if(S.pol===1)return'local';
+  if(S.flags.criminal)return'criminal';
+  if(S.job&&S.job.lv===4)return S.job.track==='politics'?'party':S.job.track;
+  if(assets()>=300000)return'rich';
+  if(S.flags.localRole==='주민자치회장'||(S.flags.localRole&&S.flags.advisor))return'community';
+  if(S.st.civic>=75)return'citizen';
+  if(S.kids>=2&&S.st.happy>=60)return'parent';
+  if(S.st.happy>=72)return'happy';
+  if(S.st.happy<35)return'lonely';
+  if(S.job&&S.job.lv>=2)return'worker';
+  return'ordinary'}
+
+function startEnding(){if(ENDING)return;ENDING=true;PAUSED=false;if(RAF){cancelAnimationFrame(RAF);RAF=null}sDel(SAVE);
+  if(!S.flags.presWin)lg('영면',1);
+  const id=getEnding();let got={};try{got=JSON.parse(sGet(ENDKEY)||'{}')}catch(e){}got[id]=1;sSet(ENDKEY,JSON.stringify(got));
+  hideGame();$('#main').innerHTML='';flashback(()=>ending(id))}
+
+/* --- 픽셀 장면 --- */
+function sceneFor(t){t=strip(t);
+  if(/대통령 당선/.test(t))return'president';
+  if(/낙선|패배|실패|박탈|불합격|피해|적발|상실|낙방|빚|퇴직|이혼|진단|낙마|이별|회생/.test(t))return'sad';
+  if(/반장|학생회장/.test(t))return'class';
+  if(/당선/.test(t))return'win';
+  if(/전역/.test(t))return'armyout';
+  if(/입대|복무|카투사|대민/.test(t))return'army';
+  if(/연애|설렘/.test(t))return'love';
+  if(/결혼/.test(t))return'wedding';
+  if(/출산|부모가 됨|아이/.test(t))return'baby';
+  if(/아파트|내 집|청약/.test(t))return'house';
+  if(/투표/.test(t))return'vote';
+  if(/입학|합격|진학|졸업|자격증/.test(t))return'school';
+  if(/취업|입사|사회생활|채용|입문|개업|창업|보좌/.test(t))return'office';
+  if(/승진|자리에 오름|성장|임명|재선|위원장|입당/.test(t))return'promo';
+  if(/여행|교환학생|해외|은퇴/.test(t))return'travel';
+  if(/신호등|청원|노동조합|봉사|활동|모의국회|시민단체|기부|신고|출판/.test(t))return'sign';
+  if(/영면|손주|자서전|60세|황혼/.test(t))return'old';
+  if(/수능|재수|시험|책|은사/.test(t))return'study';
+  if(/반려견/.test(t))return'house';
+  return'walk'}
+function pxSky(c,top,bot){for(let y=0;y<90;y++){const r=y/89;c.fillStyle=`rgb(${Math.round(top[0]+(bot[0]-top[0])*r)},${Math.round(top[1]+(bot[1]-top[1])*r)},${Math.round(top[2]+(bot[2]-top[2])*r)})`;c.fillRect(0,y,160,1)}}
+function pxPerson(c,x,y,o){o=o||{};const k=o.skin||'#f2c29b',h=o.hair||'#2b1d14',s=o.shirt||'#3b6fd6',p=o.pants||'#26324a';
+  x=Math.round(x);const by=Math.round(y-(o.jump||0));const lg_=o.walk?Math.floor((o.f||0)/6)%2:0;
+  c.fillStyle=p;c.fillRect(x-3,by-5,2,5-lg_);c.fillRect(x+1,by-5,2,4+lg_);
+  c.fillStyle=s;c.fillRect(x-3,by-11,6,6);
+  if(o.arms==='up'){c.fillRect(x-5,by-15,2,5);c.fillRect(x+3,by-15,2,5);c.fillStyle=k;c.fillRect(x-5,by-16,2,1);c.fillRect(x+3,by-16,2,1)}
+  else if(o.arms==='salute'){c.fillRect(x-5,by-11,2,5);c.fillRect(x+3,by-14,2,3);c.fillStyle=k;c.fillRect(x+2,by-16,3,2)}
+  else if(o.arms==='wave'){const w=Math.floor((o.f||0)/8)%2;c.fillRect(x-5,by-11,2,5);c.fillRect(x+3,by-15+w,2,5);c.fillStyle=k;c.fillRect(x+3,by-16+w,2,1)}
+  else{c.fillRect(x-5,by-11,2,5);c.fillRect(x+3,by-11,2,5);c.fillStyle=k;c.fillRect(x-5,by-6,2,1);c.fillRect(x+3,by-6,2,1)}
+  c.fillStyle=k;c.fillRect(x-3,by-17,6,6);
+  c.fillStyle=h;c.fillRect(x-3,by-18,6,2);c.fillRect(x-3,by-16,1,2);if(o.long){c.fillRect(x-4,by-17,1,6);c.fillRect(x+3,by-17,1,6)}
+  c.fillStyle='#1b1b1b';const ey=o.sad?by-13:by-14;c.fillRect(x-2,ey,1,1);c.fillRect(x+1,ey,1,1);
+  if(o.happy){c.fillStyle='#b5523b';c.fillRect(x-1,by-12,2,1)}
+  if(o.tie){c.fillStyle='#c0392b';c.fillRect(x,by-11,1,4)}
+  if(o.sash){c.fillStyle='#e6b955';for(let i=0;i<6;i++)c.fillRect(x-3+i,by-11+i,1,1)}
+  if(o.bag){c.fillStyle='#6b4a2b';c.fillRect(x+4,by-7,4,3)}
+  if(o.pack){c.fillStyle='#c0392b';c.fillRect(x-6,by-12,3,6)}
+  if(o.hat){c.fillStyle=o.hat;c.fillRect(x-4,by-19,8,2);c.fillRect(x-3,by-20,6,1)}
+  if(o.veil){c.fillStyle='#ffffff';c.fillRect(x-4,by-19,8,1);c.fillRect(x-5,by-18,1,10);c.fillRect(x+4,by-18,1,10)}}
+function pxConfetti(c,f,n,from){const cols=['#ff7166','#86abf2','#e6b955','#6fd29a','#f08bbf'];for(let i=0;i<n;i++){const x=(i*37+Math.sin(f*.05+i)*6+160)%160,y=((i*53)%90+f*(0.6+(i%3)*.3))%90;if(from&&y<from)continue;c.fillStyle=cols[i%5];c.fillRect(Math.round(x),Math.round(y),2,1)}}
+function pxHeart(c,x,y,col){c.fillStyle=col||'#ff5e7a';c.fillRect(x,y,2,1);c.fillRect(x+3,y,2,1);c.fillRect(x-1,y+1,7,2);c.fillRect(x,y+3,5,1);c.fillRect(x+1,y+4,3,1);c.fillRect(x+2,y+5,1,1)}
+function pxCrowd(c,f,y){const cols=['#2b1d14','#4a3426','#1b1b1b','#7a5a3a'];for(let i=0;i<22;i++){const x=i*7+3,b=(Math.sin(f*.2+i)>.4)?2:0;c.fillStyle='#f2c29b';c.fillRect(x,y-b,5,5);c.fillStyle=cols[i%4];c.fillRect(x,y-1-b,5,2);c.fillStyle=['#3b6fd6','#c0392b','#2e7d4f','#e6b955'][i%4];c.fillRect(x-1,y+5-b,7,6)}}
+function pxText(c,t,x,y,col){c.fillStyle=col;c.font='bold 11px "Do Hyeon",sans-serif';c.textAlign='center';c.fillText(t,x,y)}
+function pxTaeguk(c,cx,cy,r){for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if(dx*dx+dy*dy>r*r)continue;
+  const up=dy<0;let col=up?'#cd2e3a':'#0047a0';const lx=dx+r/2,rx=dx-r/2;if(lx*lx+dy*dy<=r*r/4)col='#cd2e3a';if(rx*rx+dy*dy<=r*r/4)col='#0047a0';c.fillStyle=col;c.fillRect(cx+dx,cy+dy,1,1)}}
+const SCENES={
+  love:(c,f)=>{pxSky(c,[255,190,200],[255,232,214]);c.fillStyle='#7fb069';c.fillRect(0,68,160,22);c.fillStyle='#6b4a2b';c.fillRect(56,62,48,3);c.fillRect(58,65,2,7);c.fillRect(100,65,2,7);
+    c.fillStyle='#4f8a3c';c.fillRect(14,34,18,20);c.fillRect(128,30,18,24);c.fillStyle='#6b4a2b';c.fillRect(21,54,4,14);c.fillRect(135,54,4,14);
+    const close=Math.min(6,f*.12);pxPerson(c,68+close,70,{happy:true,shirt:'#3b6fd6',long:S.gender==='f'});pxPerson(c,92-close,70,{happy:true,shirt:'#f08bbf',long:S.gender!=='f'});
+    if(f>40){const t=(f-40)%50;pxHeart(c,78,44-t*.4)}},
+  class:(c,f)=>{c.fillStyle='#e8dcc4';c.fillRect(0,0,160,90);c.fillStyle='#8b5a2b';c.fillRect(18,8,124,38);c.fillStyle='#2f5d3a';c.fillRect(20,10,120,34);
+    const n=Math.min(20,Math.floor(f/4));c.fillStyle='#f4f4f4';for(let i=0;i<n;i++){const g=Math.floor(i/5),s=i%5,bx=30+g*24,by=16;
+      if(s===0)c.fillRect(bx,by,9,1);if(s===1)c.fillRect(bx+4,by,1,9);if(s===2)c.fillRect(bx+4,by+4,4,1);if(s===3)c.fillRect(bx+1,by+5,1,4);if(s===4)c.fillRect(bx,by+9,9,1)}
+    pxText(c,'반장 선거',80,40,'#e6b955');c.fillStyle='#a0703c';for(let i=0;i<4;i++){c.fillRect(8+i*40,72,24,4);c.fillRect(10+i*40,76,2,10);c.fillRect(28+i*40,76,2,10)}
+    pxPerson(c,80,70,{arms:f>40?'up':'down',happy:true,jump:f>40?Math.abs(Math.sin(f*.18))*6:0,shirt:'#2b3a67',long:S.gender==='f'});if(f>40)pxConfetti(c,f,40)},
+  win:(c,f)=>{pxSky(c,[44,33,64],[20,16,34]);c.fillStyle='#7a4a2a';c.fillRect(0,62,160,28);c.fillStyle='#c9a227';c.fillRect(30,6,100,14);pxText(c,'당선 확정',80,17,'#1b1b1b');
+    c.fillStyle='#f4f4f4';c.fillRect(100,46,14,16);c.fillStyle='#1b1b1b';c.fillRect(104,47,6,1);
+    pxPerson(c,72,62,{arms:'up',happy:true,jump:Math.abs(Math.sin(f*.15))*4,shirt:'#2e3440',tie:true,long:S.gender==='f'});
+    for(let i=0;i<6;i++)if((f+i*7)%23<2){c.fillStyle='#fff';c.fillRect((i*29+11)%160,66+(i%3)*4,3,3)}pxCrowd(c,f,76);pxConfetti(c,f,30)},
+  president:(c,f)=>{pxSky(c,[12,20,52],[30,40,80]);
+    for(let k=0;k<3;k++){const t=(f+k*20)%60,cx=30+k*50,cy=18+(k%2)*8,r=t*.5;if(t<40)for(let a=0;a<10;a++){c.fillStyle=['#ff7166','#e6b955','#86abf2'][k];c.fillRect(Math.round(cx+Math.cos(a*.63)*r),Math.round(cy+Math.sin(a*.63)*r),2,2)}}
+    c.fillStyle='#fafafa';c.fillRect(56,24,48,32);pxTaeguk(c,80,40,8);c.fillStyle='#1b1b1b';c.fillRect(60,28,6,1);c.fillRect(94,28,6,1);c.fillRect(60,51,6,1);c.fillRect(94,51,6,1);
+    c.fillStyle='#5a3a22';c.fillRect(0,64,160,26);pxPerson(c,80,66,{arms:'up',happy:true,sash:true,shirt:'#2e3440',tie:true,jump:Math.abs(Math.sin(f*.12))*3,long:S.gender==='f'});pxCrowd(c,f,78)},
+  school:(c,f)=>{pxSky(c,[142,202,230],[200,230,245]);c.fillStyle='#7fb069';c.fillRect(0,70,160,20);c.fillStyle='#e9dcc9';c.fillRect(74,24,70,46);c.fillStyle='#b5523b';c.fillRect(72,20,74,5);
+    c.fillStyle='#5b8bd4';for(let r=0;r<3;r++)for(let i=0;i<5;i++)c.fillRect(79+i*13,29+r*12,7,6);c.fillStyle='#6b4a2b';c.fillRect(103,56,12,14);
+    for(let i=0;i<16;i++){c.fillStyle='#f6b8c8';c.fillRect(Math.round((i*37+f*.6)%160),Math.round((i*23+f*.8)%70),1,1)}
+    const x=Math.min(96,12+f*.6);pxPerson(c,x,72,{walk:x<96,f,happy:true,shirt:'#2b3a67',bag:true,long:S.gender==='f',arms:x>=96?'wave':'down'})},
+  office:(c,f)=>{pxSky(c,[155,209,229],[210,235,245]);c.fillStyle='#9aa3ad';c.fillRect(0,72,160,18);c.fillStyle='#5c6b80';c.fillRect(92,4,56,68);
+    for(let r=0;r<7;r++)for(let i=0;i<5;i++){c.fillStyle=((r*5+i+Math.floor(f/10))%7===0)?'#ffe08a':'#a9c6e8';c.fillRect(97+i*10,9+r*8,6,5)}c.fillStyle='#2e3440';c.fillRect(112,58,16,14);
+    const x=Math.min(118,10+f*.7);pxPerson(c,x,73,{walk:x<118,f,shirt:'#2e3440',pants:'#1f2430',tie:true,bag:true,happy:true,long:S.gender==='f'})},
+  promo:(c,f)=>{SCENES.office(c,200);for(let i=0;i<6;i++){const t=(f+i*9)%40;c.fillStyle='#ffe08a';const x=40+i*12,y=60-t;c.fillRect(x,y,1,3);c.fillRect(x-1,y+1,3,1)}
+    c.fillStyle='#6fd29a';const ay=40-(f%30);c.fillRect(24,ay+4,4,10);c.fillRect(22,ay+4,8,1);c.fillRect(23,ay+3,6,1);c.fillRect(24,ay+2,4,1);c.fillRect(25,ay+1,2,1);
+    pxPerson(c,50,73,{arms:'up',happy:true,shirt:'#2e3440',tie:true,jump:Math.abs(Math.sin(f*.2))*3,long:S.gender==='f'})},
+  army:(c,f)=>{pxSky(c,[168,197,218],[220,232,240]);c.fillStyle='#6b8e4e';c.fillRect(0,66,160,24);c.fillStyle='#888';c.fillRect(120,14,2,52);
+    const w=Math.floor(f/8)%2;c.fillStyle='#fafafa';c.fillRect(122,14,22,14+w);pxTaeguk(c,133,21,4);c.fillStyle='#556b2f';c.fillRect(14,48,34,18);c.fillRect(18,44,26,4);
+    pxPerson(c,80,68,{arms:'salute',shirt:'#556b2f',pants:'#4b5320',hat:'#4b5320',hair:'#2b1d14'})},
+  armyout:(c,f)=>{pxSky(c,[255,214,140],[255,240,200]);c.fillStyle='#ffd166';c.fillRect(120,10,16,16);c.fillStyle='#6b8e4e';c.fillRect(0,66,160,24);
+    pxPerson(c,80,68,{arms:'up',happy:true,shirt:'#556b2f',pants:'#4b5320'});c.fillStyle='#4b5320';const hy=Math.max(4,46-f*.8);c.fillRect(78+Math.round(Math.sin(f*.2)*4),hy,8,2);pxConfetti(c,f,20)},
+  wedding:(c,f)=>{pxSky(c,[246,214,222],[255,240,244]);c.fillStyle='#f4f4f4';c.fillRect(46,14,4,58);c.fillRect(110,14,4,58);c.fillRect(46,12,68,4);
+    for(let i=0;i<9;i++){c.fillStyle=i%2?'#ff9db0':'#ffffff';c.fillRect(48+i*7,10,4,4)}c.fillStyle='#c8a2a8';c.fillRect(0,72,160,18);
+    pxPerson(c,70,73,{shirt:'#2e3440',tie:true,happy:true});pxPerson(c,90,73,{shirt:'#ffffff',pants:'#ffffff',veil:true,long:true,happy:true});
+    for(let i=0;i<4;i++){const t=(f*.5+i*20)%70;pxHeart(c,60+i*12,62-t)}},
+  baby:(c,f)=>{c.fillStyle='#f3e6d0';c.fillRect(0,0,160,90);c.fillStyle='#d9c3a0';c.fillRect(0,70,160,20);c.fillStyle='#a9c6e8';c.fillRect(20,16,30,22);
+    pxPerson(c,66,72,{shirt:'#3b6fd6',happy:true,long:S.gender==='f'});pxPerson(c,94,72,{shirt:'#e6b955',happy:true,long:S.gender!=='f'});
+    const b=Math.round(Math.sin(f*.2));c.fillStyle='#ffffff';c.fillRect(76,54+b,8,6);c.fillStyle='#f2c29b';c.fillRect(78,55+b,4,3);for(let i=0;i<3;i++){const t=(f*.5+i*25)%60;pxHeart(c,70+i*8,48-t)}},
+  house:(c,f)=>{pxSky(c,[142,202,230],[205,233,247]);c.fillStyle='#7fb069';c.fillRect(0,70,160,20);c.fillStyle='#e9c46a';c.fillRect(70,40,50,30);
+    c.fillStyle='#b5523b';for(let i=0;i<14;i++)c.fillRect(66+i*2,40-i,58-i*4,1);c.fillStyle='#6b4a2b';c.fillRect(90,52,10,18);c.fillStyle='#a9c6e8';c.fillRect(76,48,9,8);c.fillRect(105,48,9,8);
+    c.fillStyle='#8a8a8a';c.fillRect(108,22,6,14);for(let i=0;i<3;i++){const t=(f*.4+i*12)%36;c.fillStyle='rgba(230,230,230,.85)';c.fillRect(110+Math.round(Math.sin(t*.3)*2),20-t,4,3)}
+    pxPerson(c,48,72,{arms:'wave',f,happy:true,long:S.gender==='f'});if(f%30<15){c.fillStyle='#ffe08a';c.fillRect(55,52,3,1);c.fillRect(56,51,1,3)}},
+  vote:(c,f)=>{c.fillStyle='#e8eef7';c.fillRect(0,0,160,90);c.fillStyle='#c5d3e8';c.fillRect(0,72,160,18);c.fillStyle='#3b6fd6';c.fillRect(16,10,40,62);c.fillStyle='#2b56b0';for(let i=0;i<5;i++)c.fillRect(18+i*8,10,2,62);
+    c.fillStyle='#ffffff';c.fillRect(104,50,30,22);c.fillStyle='#1b1b1b';c.fillRect(112,50,14,2);pxText(c,'투표함',119,66,'#1f4fa3');
+    pxPerson(c,80,73,{happy:true,arms:'up',long:S.gender==='f'});const t=f%60,px=80+t*.55,py=52-Math.sin(t/60*Math.PI)*14;if(t<55){c.fillStyle='#fff';c.fillRect(Math.round(px),Math.round(py),5,4);c.fillStyle='#d23b33';c.fillRect(Math.round(px)+2,Math.round(py)+1,1,2)}},
+  study:(c,f)=>{c.fillStyle='#22263a';c.fillRect(0,0,160,90);c.fillStyle='rgba(255,224,138,.18)';for(let i=0;i<30;i++)c.fillRect(60-i,30+i,40+i*2,1);c.fillStyle='#e6b955';c.fillRect(70,24,20,6);
+    pxPerson(c,80,72,{shirt:'#2b3a67',long:S.gender==='f'});c.fillStyle='#8b5a2b';c.fillRect(40,60,80,6);c.fillRect(44,66,4,20);c.fillRect(112,66,4,20);c.fillStyle='#fafafa';c.fillRect(70,56,20,4);
+    c.fillStyle='#1b1b1b';c.fillRect(72+Math.round((f%20)*.8),57,2,1)},
+  sad:(c,f)=>{pxSky(c,[74,85,104],[110,120,135]);c.fillStyle='#5a6474';c.fillRect(0,72,160,18);c.fillStyle='#a0aec0';for(let i=0;i<40;i++){const x=(i*41)%160,y=(i*17+f*2)%90;c.fillRect(x,y,1,3)}
+    c.fillStyle='#c8ced8';c.fillRect(64,14,32,8);c.fillRect(60,18,40,6);pxPerson(c,80,73,{sad:true,shirt:'#56607a',long:S.gender==='f'})},
+  travel:(c,f)=>{pxSky(c,[120,190,240],[200,230,250]);c.fillStyle='#fff';for(let i=0;i<3;i++){const x=(i*60-f*.3+200)%200-20;c.fillRect(Math.round(x),12+i*9,18,4);c.fillRect(Math.round(x)+4,9+i*9,10,3)}
+    const px=(f*1.4)%220-30;c.fillStyle='#fafafa';c.fillRect(Math.round(px),30,22,4);c.fillRect(Math.round(px)+8,26,6,12);c.fillRect(Math.round(px)+18,27,3,4);c.fillStyle='#86abf2';c.fillRect(Math.round(px)+3,31,12,1);
+    c.fillStyle='#e9d8a6';c.fillRect(0,72,160,18);pxPerson(c,70,73,{arms:'wave',f,pack:true,happy:true,long:S.gender==='f'});c.fillStyle='#c0392b';c.fillRect(82,64,8,9);c.fillStyle='#1b1b1b';c.fillRect(85,62,2,2)},
+  sign:(c,f)=>{pxSky(c,[180,210,235],[225,238,248]);c.fillStyle='#b8b8b8';c.fillRect(0,72,160,18);const b=Math.round(Math.sin(f*.2)*2);
+    for(const [x,col] of [[50,'#6fd29a'],[80,'#3b6fd6'],[110,'#e6b955']]){c.fillStyle='#8b5a2b';c.fillRect(x+4,40+b,1,22);c.fillStyle='#fafafa';c.fillRect(x-4,30+b,18,12);c.fillStyle='#d23b33';c.fillRect(x,34+b,10,1);c.fillRect(x,37+b,7,1);
+      pxPerson(c,x,73,{shirt:col,happy:true,long:x===80&&S.gender==='f'})}},
+  old:(c,f)=>{pxSky(c,[255,160,110],[90,60,110]);c.fillStyle='#ffd166';for(let dy=-10;dy<=0;dy++){const w=Math.round(Math.sqrt(100-dy*dy));c.fillRect(110-w,62+dy,w*2,1)}
+    c.fillStyle='#3a2a3a';c.fillRect(0,62,160,28);c.fillStyle='#6b4a2b';c.fillRect(48,60,40,3);c.fillRect(50,63,2,8);c.fillRect(84,63,2,8);
+    pxPerson(c,64,72,{hair:'#d9d9d9',shirt:'#8a6f9e',happy:true,long:S.gender==='f'});c.fillStyle='#1b1b1b';for(let i=0;i<3;i++){const x=Math.round((f*.5+i*30)%180)-10,y=20+i*6;c.fillRect(x,y,2,1);c.fillRect(x+3,y,2,1);c.fillRect(x+2,y+1,1,1)}},
+  walk:(c,f)=>{pxSky(c,[150,200,235],[210,235,248]);c.fillStyle='#7fb069';c.fillRect(0,66,160,24);c.fillStyle='#b8a888';c.fillRect(0,72,160,6);
+    for(let i=0;i<5;i++){const x=Math.round((i*40-f*.6)%200+200)%200-20;c.fillStyle='#6b4a2b';c.fillRect(x+4,52,3,14);c.fillStyle='#4f8a3c';c.fillRect(x,40,11,13)}
+    pxPerson(c,80,74,{walk:true,f,happy:true,long:S.gender==='f'})},
+};
+let PXRAF=null;
+function playScene(cv,type){if(PXRAF)cancelAnimationFrame(PXRAF);PXRAF=null;const c=cv&&cv.getContext?cv.getContext('2d'):null;if(!c)return;c.imageSmoothingEnabled=false;
+  const fn=SCENES[type]||SCENES.walk;let f=0,last=0;const loop=ts=>{if(!cv.isConnected){PXRAF=null;return}if(ts-last>=50){last=ts;c.clearRect(0,0,160,90);try{fn(c,f)}catch(e){}f++}PXRAF=requestAnimationFrame(loop)};PXRAF=requestAnimationFrame(loop)}
+
+function flashback(done){const f=$('#flash');let items=S.log.filter(e=>e.imp&&e.t!=='영면');
+  if(items.length>18){const n=items.length,keep=[];for(let i=0;i<18;i++)keep.push(items[Math.round(i*(n-1)/17)]);items=keep}
+  const frames=[{intro:1},...items,{outro:1}];let i=0,timer=null,stopped=false;
+  f.innerHTML=`<div class="fbg"></div><div class="fstage" id="fst" aria-live="polite"></div><button class="fskip" id="fsk">건너뛰기</button><div class="fprog"><i id="fpi"></i></div>`;
+  f.classList.remove('hide');f.classList.add('show');
+  const finish=()=>{if(stopped)return;stopped=true;clearTimeout(timer);if(PXRAF)cancelAnimationFrame(PXRAF);PXRAF=null;f.classList.add('hide');setTimeout(()=>{f.classList.remove('show','hide');f.innerHTML='';done()},600)};
+  const show=()=>{if(stopped)return;if(i>=frames.length){finish();return}const fr=frames[i];let html,dur=2900,scene=null;
+    if(fr.intro){dur=2600;html=`<div class="fx fint"><div class="fsub">${S.flags.presWin?'대통령이 되기까지':'한 사람이 걸어온 길'}</div><div class="fbig">${S.name}의<br>인생 돌아보기</div></div>`}
+    else if(fr.outro){dur=4200;scene=S.flags.presWin?'president':'old';html=`<div class="fx fout"><canvas class="pxc" width="160" height="90" aria-hidden="true"></canvas><div class="fbig">${S.flags.presWin?'대한민국 대통령':S.deathAge+'세'}</div><div class="fsub">${S.flags.presWin?`${S.age}세, ${S.name} 당선`:`${S.name}, 긴 여정을 마치다`}</div></div>`}
+    else{scene=sceneFor(fr.t);html=`<div class="fx"><canvas class="pxc" width="160" height="90" aria-hidden="true"></canvas><div class="fage">${fr.a}<small>세</small></div><div class="ftxt">${strip(fr.t)}</div></div>`}
+    $('#fst').innerHTML=html;const fx_=$('#fst .fx');fx_.style.animationDuration=dur+'ms';if(scene)playScene($('#fst canvas'),scene);
+    i++;$('#fpi').style.width=(i/frames.length*100)+'%';timer=setTimeout(show,dur)};
+  $('#fsk').onclick=finish;$('#fsk').focus({preventScroll:true});show()}
+
+const JOBINFO={
+  corp:'대기업은 공개채용이나 수시채용으로 신입을 뽑고, 서류·인적성검사·면접을 거쳐요.',
+  public:'공무원은 9급·7급·5급 공개경쟁채용 시험으로 뽑고, 국민 전체를 위해 일해요.',
+  law:'변호사가 되려면 법학전문대학원(로스쿨) 3년을 마치고 변호사시험에 합격해야 해요.',
+  med:'의사가 되려면 의과대학 6년을 마치고 의사 국가시험에 합격해야 하고, 전문의는 인턴·레지던트 수련을 더 거쳐요.',
+  startup:'창업은 아이디어를 사업으로 만드는 일이에요. 투자 유치, 그리고 실패를 견디는 힘이 중요해요.',
+  star:'연예인과 운동선수는 오랜 연습생·유망주 시절을 거치고, 은퇴 후 해설가·지도자 같은 두 번째 진로를 준비해요.',
+  tech:'마이스터고·특성화고에서 기술을 익혀 바로 취업할 수 있고, 최고의 숙련 기술인은 ‘대한민국 명장’으로 선정돼요.',
+  sme:'중소기업은 우리나라 일자리의 대부분을 차지하고, 여러 업무를 빠르게 배울 수 있어요.',
+  ngo:'시민단체 활동가는 환경·인권·복지 같은 공공의 문제를 시민의 힘으로 해결하려고 일해요.',
+  politics:'국회 보좌진은 국회의원을 도와 법안과 정책을 준비하고, 정치인으로 성장하는 길이 되기도 해요.',
+  teacher:'초등교사는 교육대학, 중등교사는 사범대학이나 교직 이수를 거쳐 교원 임용시험에 합격해야 해요.',
+  creator:'크리에이터와 작가는 자신만의 콘텐츠로 사람들과 소통해요. 무엇보다 꾸준함이 중요해요.',
+  farmer:'귀농인은 정부와 지자체의 귀농·귀촌 교육과 지원을 받아 농촌에서 새 삶을 시작할 수 있어요.',
+};
+function ending(id){const en=END[id];let got={};try{got=JSON.parse(sGet(ENDKEY)||'{}')}catch(e){}
+  hideGame();const pw=S.flags.presWin;
+  const job=pw?'대한민국 대통령 당선인':S.pol===2?(S.minister?'국회의원·장관':'국회의원'):S.pol===1?'시의원':S.job?JOBS[S.job.track].titles[S.job.lv]:'무직';
+  const imp=S.log.filter(e=>e.imp);
+  const gname={intel:'지능',health:'체력',social:'사교·인맥',civic:'시민의식·사회참여',happy:'행복·휴식',money:'아르바이트',career:'일·커리어'};
+  const fh=Object.entries(S.fh).sort((a,b)=>b[1]-a[1])[0];
+  const lastLine=pw?'':({give:'남긴 장학금은 지금도 누군가의 꿈을 키우고 있다.',letter:'남긴 편지는 가족들이 가장 아끼는 보물이 되었다.',smile:'마지막 표정은 평온한 미소였다.'}[S.flags.last]||'');
+  const life=S.gender==='m'?KSTAT.lifeM:KSTAT.lifeF,mar=S.gender==='m'?KSTAT.marM:KSTAT.marF;
+  const cmp=(good,txt)=>`<td class="${good===null?'':good?'better':'worse'}">${txt}${good===null?'':good?' ▲':' ▼'}</td>`;
+  const myAge=pw?S.age:S.deathAge;
+  $('#main').innerHTML=`<div class="card end ev">
+   <div class="big">${en.e}</div><h1>${en.t}</h1><div class="sub">${S.name}, ${S.region} 출생, ${pw?S.age+'세에 대통령 당선':'향년 '+S.deathAge+'세'}</div>
+   <p class="desc">${en.d} ${lastLine}</p>
+   <div class="sec"><h3>한 사람의 일생</h3><table class="tbl">
+    <tr><th>${pw?'지금의 자리':'마지막 직업'}</th><td>${job}</td></tr>
+    <tr><th>최종 학력</th><td>${EDU[S.edu]||'고등학교 졸업'}</td></tr>
+    <tr><th>가장 많이 집중한 것</th><td>${fh?gname[fh[0]]||'-':'-'}</td></tr>
+    <tr><th>${pw?'현재 순자산':'남긴 순자산'}</th><td>${won(assets())}${S.loan>0?` (대출 ${won(S.loan)} 포함)`:''}</td></tr>
+    <tr><th>시민 퀴즈</th><td>${S.qt} 문제 중 ${S.qc} 문제 정답 (${S.qt?Math.round(S.qc/S.qt*100):0}%)</td></tr>
+   </table></div>
+   ${(S.path&&S.path.length)?`<div class="sec"><h3>진로 발자취</h3><div class="path">${S.path.map(p=>`<span class="pstep"><small>${p.a}세</small>${p.t}</span>`).join('<span class="parr">→</span>')}</div>
+     ${[...new Set(S.path.map(p=>(Object.keys(JOBS).find(k=>JOBS[k].titles.includes(p.t)))).filter(Boolean))].map(k=>`<span class="note">💼 <b>${JOBS[k].name}</b>: ${JOBINFO[k]}</span>`).join('')}</div>`:''}
+   <div class="sec"><h3>대한민국 평균 인생과 비교</h3><table class="tbl">
+    <tr><th>항목</th><th>나</th><th>대한민국 평균</th></tr>
+    <tr><td>${pw?'나이':'수명'}</td>${pw?`<td>${S.age}세 (현역)</td>`:cmp(myAge>=life,myAge+'세')}<td>기대수명 ${S.gender==='m'?'남성':'여성'} ${life}세</td></tr>
+    <tr><td>첫 직장</td>${S.flags.firstJobAge?`<td>${S.flags.firstJobAge}세</td>`:'<td>-</td>'}<td>졸업 후 평균 11.3개월</td></tr>
+    <tr><td>결혼</td><td>${S.married||S.flags.divorced?(S.marAge+'세'+(S.flags.divorced?' (이혼)':'')):'하지 않음'}</td><td>초혼 ${S.gender==='m'?'남성':'여성'} ${mar}세</td></tr>
+    <tr><td>자녀</td><td>${S.kids}명</td><td>합계출산율 0.80명</td></tr>
+    <tr><td>대학</td><td>${S.edu&&S.edu!=='hs'?'진학':'진학하지 않음'}</td><td>대학 취학률 76.3%</td></tr>
+    <tr><td>주된 일자리 퇴직</td><td>${S.flags.retireAge?S.flags.retireAge+'세':(pw?'-':'60세 이후')}</td><td>평균 52.9세</td></tr>
+    <tr><td>자산</td>${cmp(assets()>=KSTAT.asset,won(assets()))}<td>가구 평균 5억 6,678만원</td></tr>
+   </table><span class="note">출처: 국가데이터처 2024년 생명표, 2025년 혼인·이혼 통계, 2025년 출생통계, 2025 경제활동인구조사 청년층·고령층 부가조사, 2025 가계금융복지조사, 2025 대학 취학률</span></div>
+   <div class="sec"><h3>인생의 결정적 순간</h3>${imp.map(e=>`<div class="lg imp"><span class="a">${e.a}세</span><span class="t">${e.t}</span></div>`).join('')}</div>
+   <div class="row2"><button class="btn" id="again">다시 태어나기</button><button class="btn ghost" id="replay">인생 돌아보기 다시 보기</button><button class="btn ghost" id="dexb">엔딩 도감 (${Object.keys(got).length}/${Object.keys(END).length})</button></div></div>`;
+  $('#again').onclick=()=>{S=null;ENDING=false;createScreen()};$('#dexb').onclick=dexScreen;$('#replay').onclick=()=>flashback(()=>{});toTop()}
+
+
+/* ================= 의견 보내기 ================= */
+const VERSION='베타';
+const FEEDBACK_EMAIL='';   // 받을 이메일 주소를 넣으면 ‘메일로 보내기’ 버튼이 생겨요
+const FEEDBACK_FORM='';    // 구글 설문지 등 주소를 넣으면 ‘설문지 열기’ 버튼이 생겨요
+let FB={type:'',star:0,prev:false};
+function fbContext(){if(!S)return'시작 화면';if(ENDING)return`엔딩 (${S.flags.presWin?S.age:S.deathAge}세)`;return`${S.age}세, ${stage()}`}
+function openFeedback(){const m=$('#fbm');if(m.classList.contains('show'))return;FB={type:'',star:0,prev:PAUSED};PAUSED=true;
+  m.classList.remove('hide');m.classList.add('show');renderFbForm()}
+function closeFeedback(){const m=$('#fbm');m.classList.add('hide');setTimeout(()=>{m.classList.remove('show','hide');$('#fbcard').innerHTML='';PAUSED=FB.prev;LAST=0;if(S&&!ENDING)renderFocus()},300);$('#fbbtn').focus({preventScroll:true})}
+function renderFbForm(){const types=[['bug','🐞 버그·오류'],['fun','😀 재미있어요'],['hard','🤔 어렵거나 헷갈려요'],['idea','💡 아이디어']];
+  $('#fbcard').innerHTML=`<div class="swap"><div class="head"><div class="ic">💬</div><div><span class="tag">태어난 김에 대통령까지 ${VERSION}</span><h2 id="fbt">의견 보내기</h2></div></div>
+   <p class="tx" style="font-size:15px">플레이하면서 느낀 점을 알려 주세요. 게임을 더 좋게 만드는 데 쓰여요.</p>
+   <div class="fbl">어떤 의견인가요?</div><div class="fbtypes">${types.map(([k,n])=>`<button class="fbt ${FB.type===k?'on':''}" data-k="${k}" aria-pressed="${FB.type===k}">${n}</button>`).join('')}</div>
+   <div class="fbl">전체 만족도</div><div class="fbstars" role="group" aria-label="별점">${[1,2,3,4,5].map(n=>`<button class="fbs ${n<=FB.star?'on':''}" data-n="${n}" aria-label="별 ${n}개">★</button>`).join('')}</div>
+   <div class="fbl"><label for="fbtext">자세한 내용</label></div><textarea id="fbtext" maxlength="1000" rows="5" placeholder="예) 수능 다음에 선택 창이 두 번 떴어요 / 정치 활동이 너무 어려워요 / 직업이 더 많았으면 좋겠어요">${FB.text||''}</textarea>
+   <div class="fbl"><label for="fbname">닉네임 (선택)</label></div><input id="fbname" maxlength="20" value="${FB.name||''}" autocomplete="off">
+   <p class="fbctx">함께 전달되는 정보: ${fbContext()}</p>
+   <div class="row2" style="justify-content:flex-end;margin-top:14px"><button class="btn ghost" id="fbx">닫기</button><button class="btn" id="fbgo">의견 만들기</button></div></div>`;
+  document.querySelectorAll('.fbt').forEach(b=>b.onclick=()=>{FB.type=b.dataset.k;keep();renderFbForm()});
+  document.querySelectorAll('.fbs').forEach(b=>b.onclick=()=>{FB.star=+b.dataset.n;keep();renderFbForm()});
+  const keep=()=>{FB.text=$('#fbtext').value;FB.name=$('#fbname').value};
+  $('#fbx').onclick=closeFeedback;
+  $('#fbgo').onclick=()=>{keep();if(!FB.text.trim()&&!FB.star){$('#fbtext').focus();$('#fbtext').placeholder='내용을 적거나 별점을 골라 주세요.';return}renderFbDone()}}
+function fbMessage(){const tn={bug:'버그·오류',fun:'재미있어요',hard:'어렵거나 헷갈려요',idea:'아이디어'}[FB.type]||'기타';
+  const d=new Date();return`[태어난 김에 대통령까지 ${VERSION} 의견]
+종류: ${tn}
+만족도: ${FB.star?'★'.repeat(FB.star)+'☆'.repeat(5-FB.star):'-'}
+내용: ${FB.text.trim()||'-'}
+닉네임: ${FB.name.trim()||'익명'}
+게임 상황: ${fbContext()}
+날짜: ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`}
+function renderFbDone(){const msg=fbMessage();
+  try{const a=JSON.parse(sGet('taedae_feedback_v1')||'[]');a.push(msg);sSet('taedae_feedback_v1',JSON.stringify(a.slice(-20)))}catch(e){}
+  const mail=FEEDBACK_EMAIL?`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent('[태어난 김에 대통령까지] 의견')}&body=${encodeURIComponent(msg)}`:'';
+  $('#fbcard').innerHTML=`<div class="swap"><div class="head"><div class="ic">💌</div><div><span class="tag">의견 보내기</span><h2 id="fbt">고마워요!</h2></div></div>
+   <p class="tx" style="font-size:15px">아래 의견을 복사해서, 게임 링크를 보내 준 사람에게 카카오톡이나 문자로 전해 주세요.</p>
+   <textarea id="fbout" rows="8" readonly>${msg.replace(/</g,'&lt;')}</textarea>
+   <p class="fbctx" id="fbstate" aria-live="polite"></p>
+   <div class="row2" style="justify-content:flex-end;margin-top:10px">
+    ${FEEDBACK_FORM?`<a class="btn ghost" href="${FEEDBACK_FORM}" target="_blank" rel="noopener">📝 설문지 열기</a>`:''}
+    ${mail?`<a class="btn ghost" href="${mail}" target="_blank" rel="noopener">✉️ 메일로 보내기</a>`:''}
+    <button class="btn ghost" id="fbx">닫기</button><button class="btn" id="fbcp">📋 복사하기</button></div></div>`;
+  $('#fbx').onclick=closeFeedback;
+  $('#fbcp').onclick=async()=>{const ta=$('#fbout');let ok=false;try{await navigator.clipboard.writeText(msg);ok=true}catch(e){}
+    if(!ok){try{ta.focus();ta.select();ok=document.execCommand('copy')}catch(e){}}
+    $('#fbstate').textContent=ok?'복사했어요! 이제 메신저에 붙여 넣으면 돼요.':'자동 복사가 막혀 있어요. 위 글상자를 길게 눌러 직접 복사해 주세요.';if(!ok){ta.focus();ta.select()}}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#fbm').classList.contains('show'))closeFeedback()});
+
+/* ================= 화면: 타이틀 / 생성 / 도감 ================= */
+function titleScreen(){S=null;renderHUD();const sv=sGet(SAVE);let got={};try{got=JSON.parse(sGet(ENDKEY)||'{}')}catch(e){}
+  $('#main').innerHTML=`<div class="card title ev"><div class="emblem" aria-hidden="true"></div>
+   <h1>태어난 김에<span>대통령까지</span></h1>
+   <p>중학교 1학년 교실에서 시작되는 한 사람의 일생. 반장 선거부터 대통령 선거까지, 당신의 선택이 인생을 바꾸고 나라를 바꿉니다.</p>
+   <div class="tbtns"><button class="btn" id="nw">새 인생 시작하기</button>${sv?'<button class="btn ghost" id="ld">이어서 하기</button>':''}<button class="btn ghost" id="dx">엔딩 도감 (${Object.keys(got).length}/${Object.keys(END).length})</button></div>
+   <div class="meta">한 번의 인생은 약 30분이에요. 진행 상황은 이 브라우저에 자동 저장됩니다.</div></div>`;
+  $('#nw').onclick=createScreen;$('#dx').onclick=dexScreen;
+  if(sv)$('#ld').onclick=()=>{try{S=JSON.parse(sv);resumeGame()}catch(e){sDel(SAVE);titleScreen()}}}
+
+function createScreen(){renderHUD();let g='m',t=null;
+  const names=['김민준','이서연','박지호','최하은','정우진','강지유','조현우','윤서아','한도윤','임채원','오시우','신예린'];
+  const T=[['intel','📚','총명함','지능 +12'],['health','💪','튼튼함','체력 +12'],['social','🤝','붙임성','사교 +12'],['civic','⚖️','정의감','시민의식 +12']];
+  $('#main').innerHTML=`<div class="card ev"><span class="tag">새 인생</span><h2>어떤 사람으로 태어날까?</h2>
+   <div class="field"><label for="nm">이름</label><div class="nrow"><input id="nm" maxlength="8" value="${pick(names)}" autocomplete="off"><button class="btn ghost" id="rnd">무작위</button></div></div>
+   <div class="field"><label>성별</label><div class="seg"><button class="opt on" data-g="m">남자</button><button class="opt" data-g="f">여자</button></div></div>
+   
+   <p class="tx" style="font-size:14px;color:var(--muted)">태어날 지역과 집안 형편은 무작위로 정해져요. 인생은 원래 그런 거니까요.</p>
+   <div class="next"><button class="btn" id="born">태어나기</button></div></div>`;
+  document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{g=b.dataset.g;document.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('on',x===b))});
+  $('#rnd').onclick=()=>{$('#nm').value=pick(names)};
+  $('#born').onclick=()=>{const n=($('#nm').value||'').trim()||pick(names);newState(n,g,t);birthScreen()};toTop()}
+
+const GIFT={intel:['공부 머리','책상에 오래 앉아 있지 않아도 이해가 빠르다'],health:['운동 신경','취미로 몸을 움직이기만 해도 체력이 잘 유지된다'],social:['친화력','누구와도 금방 친해진다'],civic:['공동체 감각','남의 일을 내 일처럼 여긴다']};
+function giftHtml(){return`<span class="note">🧬 이번 인생의 타고난 성장: <b>${LBL[S.gift]} ⭐</b>(${GIFT[S.gift][0]}: ${GIFT[S.gift][1]}. 집중하지 않아도 조금씩 오른다), <b>${LBL[S.gift2]} ✦</b>(잘 떨어지지 않는다). ${['intel','health','social','civic'].filter(k=>S.apt[k]<1).map(k=>LBL[k]).join(', ')}은(는) 노력한 만큼 조금 덜 오른다.</span>`}
+function birthScreen(){const fam=['넉넉한 집안','평범한 집안','형편이 어려운 집안'][S.family];
+  const fd=['부모님의 든든한 지원을 받으며 자랐다. 지능 +3, 행복 +4','평범하지만 화목한 가정에서 자랐다. 행복 +3','넉넉하지 않은 환경에서 일찍 철이 들었다. 시민의식 +4, 행복 -3'][S.family];
+  renderHUD();
+  $('#main').innerHTML=`<div class="card ev"><div class="head"><div class="ic">👶</div><div><span class="tag">탄생</span><h2>${S.region}에서 태어나다</h2></div></div>
+   <div class="tx"><b>${fam}</b>의 ${S.gender==='m'?'아들':'딸'}로 태어났다. ${fd}.<br><br>그리고 13년 뒤, ${N('은')} 중학교 교복을 입고 교문 앞에 섰다.
+   <span class="note">💡 이제부터 ${N('이')} 살아가는 모습을 지켜보세요. 현실의 약 7초가 인생의 1년처럼 흘러가요. 집중할 것을 최대 2개 골라 두면 그 방향으로 쭉 살아가고, 중요한 순간에는 선택 창이 떠요. 아래 ‘직접 고르는 활동’에서 모은 돈을 쓰거나 정치 활동, 선거 출마를 직접 고를 수도 있어요.</span><span class="note">📊 대한민국 평균 인생: 기대수명 ${S.gender==='m'?'남성 80.8세':'여성 86.6세'}, 대학 취학률 76.3%, 첫 취업까지 11.3개월, 초혼 ${S.gender==='m'?'남성 33.9세':'여성 31.6세'}, 주된 일자리 퇴직 52.9세. 선택과 운에 따라 이보다 나은 삶도, 힘든 삶도 살 수 있어요.</span></div>
+   <div class="next"><button class="btn" id="st">중학교 입학하기</button></div></div>`;
+  $('#st').onclick=startGame;toTop()}
+
+function dexScreen(){S=null;renderHUD();let got={};try{got=JSON.parse(sGet(ENDKEY)||'{}')}catch(e){}
+  $('#main').innerHTML=`<div class="card ev"><span class="tag">엔딩 도감</span><h2>모은 엔딩 ${Object.keys(got).length} / ${Object.keys(END).length}</h2>
+   <p class="tx" style="font-size:14.5px;color:var(--muted)">어디에 시간을 쓰고 어떤 선택을 하느냐에 따라 다른 결말을 만날 수 있어요.</p>
+   <div class="dex">${Object.entries(END).map(([k,v])=>got[k]?`<div><span class="e">${v.e}</span>${v.t}</div>`:'<div class="lock"><span class="e">❔</span>아직 모르는 인생</div>').join('')}</div>
+   <div class="row2"><button class="btn" id="bk">처음으로</button></div></div>`;
+  $('#bk').onclick=titleScreen;toTop()}
+
+$('#fbbtn').onclick=openFeedback;
+titleScreen();
+</script>
+</body>
+</html>
